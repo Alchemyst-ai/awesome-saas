@@ -6,32 +6,38 @@ Thanks for wanting to contribute! This repo is a curated collection of templates
 
 ## 📌 How to Contribute
 
-You don’t need to fork this repo unless you want to modify the docs itself. Just do the following for your own repo:
+Here’s how you can get started:
 
 1. Find an issue and add a comment to the issue, and let us know what you are working on.
-2. Make your repository **public** and ensure it's relevant.  
-3. **Add the topic/tag** `alchemyst-awesome-saas` and other relevant tags to your repository.   
-4. Wait - Awesome-SaaS has an automatic/daily refresh (early morning) that picks up repos with the `alchemyst-awesome-saas` topic and adds them to the listing.  
+2. **Fork/clone** the main repository.  
+3. Inside the `agents/` folder, **create a new folder** with a descriptive name for your agent.  
+4. Add:
+   - Your **agent code**  
+   - A **README.md** explaining what it does, how to run it, and any dependencies  
+   - Any required config files (e.g., `requirements.txt`, `package.json`)  
+5. Commit your changes and **open a Pull Request (PR)**.  
+
+That’s it! Once reviewed, your contribution will be merged and showcased.
 
 ---
 
 ## ✅ Contribution Guidelines
 
-- Ensure your repo actually aligns with the themes (templates, agents, memory, etc.).  
-- Use a descriptive README in your repo so people know what it does.  
-- Keep tags clean and relevant. Too many irrelevant topics dilute discoverability.  
+- Ensure your agent actually aligns with the themes (templates, agents, memory, etc.).  
+- Use a descriptive README inside your agent folder so people know what it does.  
+- Keep your implementation clean and organized (no unnecessary files).  
 - Make sure your repo doesn’t violate licensing or content rules.  
 
 ---
 
 ## 🛠 Troubleshooting
 
-If your repo doesn’t show up:
+If your PR isn’t getting merged:  
 
-- ✅ Repo is public  
-- ✅ You added the `alchemyst-awesome-saas` topic  
-- ✅ Wait until the next automatic refresh
-- ✅ If still missing, [**raise an issue**](https://github.com/Alchemyst-ai/awesome-saas/issues/new)
+- ✅ Check that your folder is inside `agents/`  
+- ✅ Make sure your agent has a README  
+- ✅ Confirm that the code runs without obvious errors  
+- ✅ If still stuck, [**raise an issue**](https://github.com/Alchemyst-ai/awesome-saas/issues/new)  
 
 ---
 

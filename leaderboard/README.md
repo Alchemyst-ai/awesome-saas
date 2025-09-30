@@ -7,8 +7,8 @@ Recognition for our amazing community of **15** contributors! 🏆
 | -------------- | -------------- | ------------ | --------------- |
 | 🥇 1 | [Coden-inja](https://github.com/Coden-inja) | [Coden-inja/alchEmaiLyst](https://github.com/Coden-inja/alchEmaiLyst) (⭐38) | 38 |
 | 🥈 2 | [soumyacodes007](https://github.com/soumyacodes007) | [soumyacodes007/AlcheAnimyst](https://github.com/soumyacodes007/AlcheAnimyst) (⭐17) | 17 |
-| 🥉 3 | [saksham-1304](https://github.com/saksham-1304) | [saksham-1304/AskMyPDF](https://github.com/saksham-1304/AskMyPDF) (⭐7) | 7 |
-| 🌟 4 | [Ayash-Bera](https://github.com/Ayash-Bera) | [Ayash-Bera/socrates](https://github.com/Ayash-Bera/socrates) (⭐7) | 7 |
+| 🥉 3 | [Ayash-Bera](https://github.com/Ayash-Bera) | [Ayash-Bera/socrates](https://github.com/Ayash-Bera/socrates) (⭐7) | 7 |
+| 🌟 4 | [saksham-1304](https://github.com/saksham-1304) | [saksham-1304/AskMyPDF](https://github.com/saksham-1304/AskMyPDF) (⭐7) | 7 |
 | 🌟 5 | [haroon0x](https://github.com/haroon0x) | [haroon0x/CrawlWise](https://github.com/haroon0x/CrawlWise) (⭐3), [haroon0x/PromoAgent](https://github.com/haroon0x/PromoAgent) (⭐2), [haroon0x/CliAgent](https://github.com/haroon0x/CliAgent) (⭐1) | 6 |
 | 🌟 6 | [srivathsav999](https://github.com/srivathsav999) | [srivathsav999/email-agent](https://github.com/srivathsav999/email-agent) (⭐5), [srivathsav999/crm-agent](https://github.com/srivathsav999/crm-agent) (⭐0) | 5 |
 | 🌟 7 | [itsshresth](https://github.com/itsshresth) | [itsshresth/brainrot](https://github.com/itsshresth/brainrot) (⭐3), [itsshresth/dmdom](https://github.com/itsshresth/dmdom) (⭐2) | 5 |
