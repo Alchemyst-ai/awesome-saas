@@ -1,0 +1,3 @@
+[submodule "agents/b2b-newsletter-writer"]
+	path = agents/b2b-newsletter-writer
+	url = https://github.com/aniketsingh1023/B2B-Newsletter-SaaS.git
