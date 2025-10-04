@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+
+# Host
+Host: https://v0-prompt-generator.vercel.app
+
+# Sitemaps
+Sitemap: https://v0-prompt-generator.vercel.app/sitemap.xml

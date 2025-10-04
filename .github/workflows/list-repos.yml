@@ -1,82 +1,13 @@
-permissions:
-  contents: write # Allows pushing code changes
-  issues: read # Example: grants read access to issues
-  pull-requests: write # Example: grants write access to PRs
-name: Readme Template
+name: List Repos
 on:
-  schedule:
-    - cron: "0 0 * * *" # everyday at 5:30 am IST
-  push:
-    branches: [main]
+  workflow_dispatch:
 jobs:
-  #   publish:
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Generate README.md
-  #       uses: probablykasper/readme-template-action@v1
-  #       with:
-  #         token: ${{ secrets.README_TEMPLATE_TOKEN }}
-  #         template: TEMPLATE.md
-  #         output: README.md
-  #     - name: Update README.md
-  #       run: |
-  #         if [[ "$(git status --porcelain)" != "" ]]; then
-  #           git config user.name "GitHub Action"
-  #           git config user.email "action@github.com"
-  #           git add .
-  #           git commit -m "Auto-update README.md"
-  #           git push
-  #         fi
-  list-repos:
+  list:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }} # Enables push access
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.7.0
-
-      - run: git pull origin main && echo > README.md && node list.js | cat >> README.md && cat README.md > index.md
-
-      - name: Commit and push if changed
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Auth for push
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: List repositories
         run: |
-          if [[ "$(git status --porcelain)" != "" ]]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add README.md index.md
-            git commit -m "Auto-update README.md and index.md"
-            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
-          fi
-  list-leaderboard:
-    needs: list-repos
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }} # Enables push access
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.7.0
-
-      - run: git pull origin main && echo > leaderboard/README.md && node leaderboard.js | cat >> leaderboard/README.md
-
-      - name: Commit and push if changed
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Auth for push
-        run: |
-          if [[ "$(git status --porcelain)" != "" ]]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add leaderboard/README.md index.md README.md
-            git commit -m "Auto-update README.md, leaderboard/README.md and index.md"
-            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
-          fi
-    # - run: npm test
+          echo "Listing repositories for ${{ github.repository }}"
+          gh repo list ${{ github.repository_owner }} --limit 100
