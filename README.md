@@ -166,7 +166,7 @@ This is an ever expanding list - we'll keep on adding open source templates!
 ### 🚀 Community Templates
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Community%20Templates-19%20(Total%2092%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
+  <img src="https://img.shields.io/badge/Community%20Templates-19%20(Total%2093%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
 </div>
 
 <br />
@@ -469,6 +469,33 @@ This is an ever expanding list - we'll keep on adding open source templates!
         <sub><b>See top contributors</b></sub>
       </td>
 </div>
+
+<br />
+
+## 🤝 Contributing
+
+We welcome contributors! Here's how to get started:
+
+### 🎯 How to Contribute
+
+1. **Fork the repository** and create your feature branch
+2. **Add the topic** `alchemyst-awesome-saas` to your repository
+3. **Make your repo public** for visibility
+4. **Submit a pull request** with your awesome project!
+
+### 🔍 Troubleshooting
+
+<details>
+<summary><b>My contribution doesn't appear in the list</b></summary>
+
+Check the following:
+
+- ✅ Repository is set to **public**
+- ✅ Added topic **"alchemyst-awesome-saas"** to your repo
+- ✅ Wait for the **daily refresh** at 12:00 AM UTC
+- ✅ If still missing, [**raise an issue**](https://github.com/Alchemyst-ai/awesome-saas/issues/new)
+
+</details>
 
 <br />
 
