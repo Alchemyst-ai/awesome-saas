@@ -15,10 +15,7 @@ if (!DISCORD_BOT_TOKEN || !ALCHEMYST_AI_API_KEY || !OPENAI_API_KEY) {
 }
 
 const discord = new Client({
-  intents: [
-    GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.MessageContent, 
-  ],
+  intents: [GatewayIntentBits.DirectMessages, GatewayIntentBits.MessageContent],
   partials: [Partials.Channel],
 });
 
@@ -33,30 +30,32 @@ discord.on("messageCreate", async (message: Message) => {
   if (message.author.bot) return;
   if (message.guild) return;
 
-  console.log(`\n💬 New message from ${message.author.tag}: ${message.content}`);
+  console.log(
+    `\n💬 New message from ${message.author.tag}: ${message.content}`
+  );
 
   try {
     const userId = message.author.id;
     const userMessage = message.content;
     const timestamp = new Date().toISOString();
-    const response:any = await alchemyst.v1.context.add({
+    await alchemyst.v1.context.add({
       documents: [
-            {
-              content: userMessage,
-            },
-          ],
-          context_type: 'resource',
-          source: `discord${userId}${timestamp}`,
-          scope: 'internal',
-          metadata: {
-            fileName: `discord${userId}${timestamp}`,
-            fileType: 'text/plain',
-            lastModified: new Date().toISOString(),
-            fileSize: 1024,
-        }
+        {
+          content: userMessage,
+        },
+      ],
+      context_type: "resource",
+      source: `discord${userId}${timestamp}`,
+      scope: "internal",
+      metadata: {
+        fileName: `discord${userId}${timestamp}`,
+        fileType: "text/plain",
+        lastModified: new Date().toISOString(),
+        fileSize: 1024,
+      },
     });
 
-    const {contexts} = await alchemyst.v1.context.search({
+    const { contexts } = await alchemyst.v1.context.search({
       query: userMessage,
       similarity_threshold: 0.8,
       minimum_similarity_threshold: 0.5,
