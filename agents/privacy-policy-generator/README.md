@@ -155,7 +155,7 @@ If you encounter any issues or have questions:
 
 1. Check the [Issues](https://github.com/Alchemyst-ai/awesome-saas/issues) page
 2. Create a new issue with detailed information
-3. Join our [Discord community](https://discord.gg/alchemyst) for real-time support
+3. Join our [Discord community](https://discord.gg/Sz35cthy) for real-time support
 
 ## 🎉 Acknowledgments
 
