@@ -1,4 +1,4 @@
-import type { Newsletter } from "./newsletterAgent"
+import type { Newsletter } from "./newsletterAgent";
 
 export function newsletterToHTML(n: Newsletter): string {
   // Minimal semantic HTML; safe for email export starting point
@@ -20,12 +20,12 @@ export function newsletterToHTML(n: Newsletter): string {
     <main class="container">
       <h1>${escapeHtml(n.subject)}</h1>
       ${paragraphsToHtml(n.shortBody)}
-      br
+      <br />
       ${paragraphsToHtml(n.longBody)}
       <p><a class="cta" href="#">${escapeHtml(n.cta)}</a></p>
     </main>
   </body>
-</html>`
+</html>`;
 }
 
 export function newsletterToMarkdown(n: Newsletter): string {
@@ -36,7 +36,7 @@ ${n.shortBody}
 ${n.longBody}
 
 **Call to Action:** ${n.cta}
-`
+`;
 }
 
 function escapeHtml(s: string) {
@@ -45,12 +45,12 @@ function escapeHtml(s: string) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;")
+    .replaceAll("'", "&#039;");
 }
 
 function paragraphsToHtml(body: string) {
   return body
     .split(/\n{2,}/g)
     .map((block) => `<p>${escapeHtml(block.trim())}</p>`)
-    .join("\n")
+    .join("\n");
 }

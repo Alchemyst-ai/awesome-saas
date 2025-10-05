@@ -11,23 +11,13 @@
       "name": "CloudSync Pro",
       "description": "Enterprise cloud synchronization platform for seamless data management",
       "target_market": "Enterprise businesses with 500+ employees",
-      "key_features": [
-        "Real-time sync",
-        "Advanced security",
-        "API integration",
-        "Multi-platform support"
-      ]
+      "key_features": ["Real-time sync", "Advanced security", "API integration", "Multi-platform support"]
     },
     {
       "name": "DataGuard Analytics",
       "description": "AI-powered data protection and compliance monitoring solution",
       "target_market": "Financial services and healthcare organizations",
-      "key_features": [
-        "Compliance monitoring",
-        "Threat detection",
-        "Automated reporting",
-        "GDPR compliance"
-      ]
+      "key_features": ["Compliance monitoring", "Threat detection", "Automated reporting", "GDPR compliance"]
     }
   ],
   "recent_news": [

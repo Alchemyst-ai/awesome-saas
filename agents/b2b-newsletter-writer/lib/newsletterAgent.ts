@@ -43,13 +43,11 @@ export async function generateNewsletter(
 
   if (!apiKey) return fallbackNewsletter(input);
 
-  if (apiKey) {
-    try {
+  try {
+    const contexts = await searchContext(topic);
 
-      const contexts = await searchContext(topic);
-
-      const client = new GoogleGenAI({ apiKey });
-      const prompt = `
+    const client = new GoogleGenAI({ apiKey });
+    const prompt = `
 You are a professional B2B newsletter writer for "${companyName}".
 Use the following company information as primary reference:
 
@@ -72,57 +70,54 @@ Return ONLY a strict JSON object with the following structure:
 Do not include anything else outside this JSON. No explanations, no greetings, no code blocks.
 `;
 
-      const res = await client.models.generateContent({
-        model: "gemini-2.5-flash-lite",
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-      });
+    const res = await client.models.generateContent({
+      model: "gemini-2.5-flash-lite",
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    });
 
-      const raw =
-        res.candidates?.[0]?.content?.parts?.map((p) => p.text).join("\n\n") ??
-        "";
+    const raw =
+      res.candidates?.[0]?.content?.parts?.map((p) => p.text).join("\n\n") ??
+      "";
 
-      const cleanedText = raw
-        .replace(/^[\s`]*```json[\s`]*/i, "") // Remove opening ```json with spaces
-        .replace(/[\s`]*```$/i, "") // Remove closing ```
-        .trim();
+    const cleanedText = raw
+      .replace(/^[\s`]*```json[\s`]*/i, "") // Remove opening ```json with spaces
+      .replace(/[\s`]*```$/i, "") // Remove closing ```
+      .trim();
 
-      const newsletterSchema = z.object({
-        subject: z.string(),
-        shortBody: z.string(),
-        longBody: z.string(),
-        cta: z.string(),
-      });
+    const newsletterSchema = z.object({
+      subject: z.string(),
+      shortBody: z.string(),
+      longBody: z.string(),
+      cta: z.string(),
+    });
 
-      let ans: Newsletter;
+    let ans: Newsletter;
 
-      try {
-        const json = JSON.parse(cleanedText);
-        const parsed = newsletterSchema.safeParse(json);
-        if (parsed.success) {
-          ans = parsed.data;
-        } else {
-          console.warn(
-            "[Gemini] Validation failed, using fallback.",
-            parsed.error
-          );
-          ans = fallbackNewsletter(input);
-        }
-      } catch (err) {
-        console.warn("[Gemini] JSON parsing failed, using fallback.", err);
+    try {
+      const json = JSON.parse(cleanedText);
+      const parsed = newsletterSchema.safeParse(json);
+      if (parsed.success) {
+        ans = parsed.data;
+      } else {
+        console.warn(
+          "[Gemini] Validation failed, using fallback.",
+          parsed.error
+        );
         ans = fallbackNewsletter(input);
       }
-
-      return {
-        subject: ans.subject,
-        shortBody: ans.shortBody,
-        longBody: ans.longBody,
-        cta: ans.cta,
-      };
-    } catch (e) {
-      console.error("[Gemini] Fallback due to error:", (e as Error).message);
-      return fallbackNewsletter(input);
+    } catch (err) {
+      console.warn("[Gemini] JSON parsing failed, using fallback.", err);
+      ans = fallbackNewsletter(input);
     }
-  } else {
+
+    return {
+      subject: ans.subject,
+      shortBody: ans.shortBody,
+      longBody: ans.longBody,
+      cta: ans.cta,
+    };
+  } catch (e) {
+    console.error("[Gemini] Fallback due to error:", (e as Error).message);
     return fallbackNewsletter(input);
   }
 }
