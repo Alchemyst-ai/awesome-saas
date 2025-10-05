@@ -1,13 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Header from "@/components/Header"
-import NewsletterForm from "@/components/NewsletterForm"
-import NewsletterEditor, { type EditorValue } from "@/components/NewsletterEditor"
-import ExportButtons from "@/components/ExportButtons"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react";
+import Header from "@/components/Header";
+import NewsletterForm from "@/components/NewsletterForm";
+import NewsletterEditor, {
+  type EditorValue,
+} from "@/components/NewsletterEditor";
+import ExportButtons from "@/components/ExportButtons";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 export default function NewsletterPage() {
   const [value, setValue] = useState<EditorValue>({
@@ -15,14 +23,14 @@ export default function NewsletterPage() {
     shortBody: "",
     longBody: "",
     cta: "",
-  })
+  });
 
-  const hasContent = value.subject || value.shortBody || value.longBody || value.cta
+  const hasContent =
+    value.subject || value.shortBody || value.longBody || value.cta;
 
   // Calculate character counts for analytics
-  const subjectLength = value.subject.length
-  const shortBodyLength = value.shortBody.length
-  const longBodyLength = value.longBody.length
+  const subjectLength = value.subject.length;
+  const shortBodyLength = value.shortBody.length;
 
   return (
     <div className="min-h-dvh bg-background">
@@ -33,7 +41,9 @@ export default function NewsletterPage() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-balance">Generate Newsletter</CardTitle>
+                <CardTitle className="text-balance">
+                  Generate Newsletter
+                </CardTitle>
                 <CardDescription className="text-balance">
                   Fill in the details to create your AI-powered newsletter
                 </CardDescription>
@@ -47,7 +57,9 @@ export default function NewsletterPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-balance">Export Options</CardTitle>
-                  <CardDescription className="text-balance">Download or copy your newsletter</CardDescription>
+                  <CardDescription className="text-balance">
+                    Download or copy your newsletter
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ExportButtons value={value} />
@@ -62,12 +74,18 @@ export default function NewsletterPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-balance">Newsletter Editor</CardTitle>
-                    <CardDescription className="text-balance">Edit and refine your generated content</CardDescription>
+                    <CardTitle className="text-balance">
+                      Newsletter Editor
+                    </CardTitle>
+                    <CardDescription className="text-balance">
+                      Edit and refine your generated content
+                    </CardDescription>
                   </div>
                   {hasContent && (
                     <div className="flex gap-2">
-                      <Badge variant="secondary">Subject: {subjectLength} chars</Badge>
+                      <Badge variant="secondary">
+                        Subject: {subjectLength} chars
+                      </Badge>
                     </div>
                   )}
                 </div>
@@ -75,7 +93,9 @@ export default function NewsletterPage() {
               <CardContent>
                 {!hasContent ? (
                   <div className="text-center py-12 text-muted-foreground">
-                    <p className="text-balance">Generate a newsletter to start editing</p>
+                    <p className="text-balance">
+                      Generate a newsletter to start editing
+                    </p>
                   </div>
                 ) : (
                   <Tabs defaultValue="edit" className="w-full">
@@ -89,23 +109,37 @@ export default function NewsletterPage() {
                     <TabsContent value="preview" className="mt-6">
                       <div className="space-y-6 p-6 border rounded-lg bg-card">
                         <div>
-                          <h3 className="text-sm font-medium text-muted-foreground mb-2">Subject Line</h3>
-                          <p className="text-lg font-semibold">{value.subject || "No subject"}</p>
+                          <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                            Subject Line
+                          </h3>
+                          <p className="text-lg font-semibold">
+                            {value.subject || "No subject"}
+                          </p>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-muted-foreground mb-2">Short Body</h3>
+                          <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                            Short Body
+                          </h3>
                           <div className="prose prose-sm max-w-none">
-                            <p className="whitespace-pre-wrap">{value.shortBody || "No content"}</p>
+                            <p className="whitespace-pre-wrap">
+                              {value.shortBody || "No content"}
+                            </p>
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-muted-foreground mb-2">Long Body</h3>
+                          <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                            Long Body
+                          </h3>
                           <div className="prose prose-sm max-w-none">
-                            <p className="whitespace-pre-wrap">{value.longBody || "No content"}</p>
+                            <p className="whitespace-pre-wrap">
+                              {value.longBody || "No content"}
+                            </p>
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-muted-foreground mb-2">Call to Action</h3>
+                          <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                            Call to Action
+                          </h3>
                           <p className="font-medium">{value.cta || "No CTA"}</p>
                         </div>
                       </div>
@@ -118,5 +152,5 @@ export default function NewsletterPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

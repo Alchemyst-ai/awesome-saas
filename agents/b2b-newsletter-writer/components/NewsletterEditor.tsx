@@ -11,10 +11,10 @@ export type EditorValue = {
   cta: string;
 };
 
-type Props = {
+interface Props {
   value: EditorValue;
-  onChange: (v: EditorValue) => void;
-};
+  onChange: (value: EditorValue) => void;
+}
 
 export default function NewsletterEditor({ value, onChange }: Props) {
   return (
