@@ -89,6 +89,9 @@ const introduction = () => {
   <a href="https://platform.getalchemystai.com" target="_blank">
     <img src="https://img.shields.io/badge/🔥%20Start%20Building-platform.getalchemystai.com-6366f1?style=for-the-badge&labelColor=1f2937" alt="Start Building" />
   </a>
+  <a href="https://discord.gg/Sz35cthy" target="_blank">
+  Join our discord click here !!
+  </a>
 </div>
 
 <br />
