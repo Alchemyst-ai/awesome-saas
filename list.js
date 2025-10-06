@@ -89,7 +89,7 @@ const introduction = () => {
   <a href="https://platform.getalchemystai.com" target="_blank">
     <img src="https://img.shields.io/badge/🔥%20Start%20Building-platform.getalchemystai.com-6366f1?style=for-the-badge&labelColor=1f2937" alt="Start Building" />
   </a>
-  <a href="https://discord.gg/Sz35cthy" target="_blank">
+  <a href="https://dub.sh/context-community" target="_blank">
   <img src="https://img.shields.io/badge/💬%20Join%20Our%20Discord-community.getalchemystai.com-5865F2?style=for-the-badge&labelColor=1f2937" alt="Join our Discord" />
 </a>
 </div>
