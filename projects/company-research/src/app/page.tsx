@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
 
-// Define types for our data
+// Define types for our enhanced data
 interface CompanyInfo {
   name: string;
   symbol: string;
+  domain: string;
   exchange: string;
   currency: string;
   sector: string;
@@ -27,16 +28,71 @@ interface FinancialData {
     QuarterlyEarningsGrowthYOY: string;
     QuarterlyRevenueGrowthYOY: string;
   };
-  currentQuote: {
+  builtWithFinancial: {
+    revenue: string;
+    employees: string;
+    funding: {
+      totalFunding: string;
+      lastRound: string;
+      investors: string[];
+    };
+  };
+  currentQuote?: {
     '05. price': string;
     '09. change': string;
     '10. change percent': string;
   };
 }
 
+interface TechnologyAnalysis {
+  domain: string;
+  hosting: {
+    provider: string;
+    ipAddress: string;
+    cdn: string;
+  };
+  analytics: {
+    tools: any[];
+    hasGoogleAnalytics: boolean;
+    hasAdvancedAnalytics: boolean;
+    toolCount: number;
+  };
+  advertising: {
+    networks: any[];
+    hasGoogleAds: boolean;
+    hasFacebookPixel: boolean; // ADDED THIS
+    networkCount: number;
+  };
+  traffic: {
+    globalRank: string;
+    estimatedVisits: string;
+    rankDescription: string;
+  };
+  social: {
+    platforms: any[];
+    hasFacebook: boolean;
+    hasTwitter: boolean;
+    hasLinkedIn: boolean;
+    hasInstagram: boolean;
+    platformCount: number;
+  };
+  security: {
+    hasSSL: boolean;
+    sslProvider: string;
+    securityScore: string;
+    technologies: any[];
+  };
+  topTechnologies: Array<{
+    name: string;
+    category: string;
+    description: string;
+  }>;
+}
+
 interface Report {
   companyInfo: CompanyInfo;
   financialData: FinancialData;
+  technologyAnalysis: TechnologyAnalysis;
   aiAnalysis: string;
   timestamp: string;
 }
@@ -78,7 +134,7 @@ export default function Home() {
   };
 
   const formatNumber = (num: string) => {
-    if (!num) return 'N/A';
+    if (!num || num === 'N/A') return 'N/A';
     const number = parseFloat(num);
     if (isNaN(number)) return num;
     
@@ -93,10 +149,28 @@ export default function Home() {
   };
 
   const formatPercent = (value: string) => {
-    if (!value) return 'N/A';
+    if (!value || value === 'N/A') return 'N/A';
     const num = parseFloat(value);
     if (isNaN(num)) return value;
     return `${(num * 100).toFixed(2)}%`;
+  };
+
+  const getSecurityColor = (score: string) => {
+    switch (score?.toLowerCase()) {
+      case 'high': return 'text-green-400';
+      case 'medium': return 'text-yellow-400';
+      case 'low': return 'text-red-400';
+      default: return 'text-gray-400';
+    }
+  };
+
+  const getTrafficColor = (rank: string) => {
+    if (rank === 'N/A') return 'text-gray-400';
+    const rankNum = parseInt(rank);
+    if (rankNum < 1000) return 'text-green-400';
+    if (rankNum < 10000) return 'text-blue-400';
+    if (rankNum < 100000) return 'text-yellow-400';
+    return 'text-orange-400';
   };
 
   return (
@@ -117,7 +191,7 @@ export default function Home() {
             </div>
           </div>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Get comprehensive AI-powered analysis of any public company with real-time financial data and intelligent insights
+            Get comprehensive AI-powered analysis with technology stack, web traffic, and financial insights
           </p>
         </div>
 
@@ -211,9 +285,9 @@ export default function Home() {
                     </span>
                     <span className="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded-lg">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                       </svg>
-                      {report.companyInfo.industry}
+                      {report.companyInfo.domain}
                     </span>
                   </div>
                 </div>
@@ -222,122 +296,224 @@ export default function Home() {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Analysis Complete
+                    Deep Analysis Complete
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Current Price Section */}
-            {report.financialData.currentQuote && (
-              <div className="mb-8 p-6 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-gray-600 shadow-lg">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-300 mb-2">Current Market Price</h3>
-                    <p className="text-4xl font-bold text-white">
-                      ${parseFloat(report.financialData.currentQuote['05. price']).toFixed(2)}
-                    </p>
+            {/* Technology Stack Overview */}
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                Technology Stack & Digital Presence
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                {/* Web Traffic */}
+                <div className="bg-gradient-to-br from-purple-900/50 to-purple-800/50 p-6 rounded-xl border border-purple-700 shadow-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-purple-300">Web Traffic</h3>
                   </div>
-                  <div className={`text-2xl font-bold ${parseFloat(report.financialData.currentQuote['09. change']) >= 0 ? 'text-green-400' : 'text-red-400'} flex items-center gap-2`}>
-                    {parseFloat(report.financialData.currentQuote['09. change']) >= 0 ? '↗' : '↘'}
-                    {report.financialData.currentQuote['09. change']} ({report.financialData.currentQuote['10. change percent']})
+                  <p className={`text-2xl font-bold ${getTrafficColor(report.technologyAnalysis.traffic.globalRank)} mb-1`}>
+                    {report.technologyAnalysis.traffic.estimatedVisits}
+                  </p>
+                  <p className="text-sm text-purple-200">
+                    Global Rank: {report.technologyAnalysis.traffic.globalRank}
+                  </p>
+                </div>
+
+                {/* Hosting Provider */}
+                <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 p-6 rounded-xl border border-blue-700 shadow-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-blue-300">Hosting</h3>
                   </div>
+                  <p className="text-xl font-bold text-white mb-1">
+                    {report.technologyAnalysis.hosting.provider}
+                  </p>
+                  <p className="text-sm text-blue-200">
+                    CDN: {report.technologyAnalysis.hosting.cdn}
+                  </p>
+                </div>
+
+                {/* Analytics Tools */}
+                <div className="bg-gradient-to-br from-green-900/50 to-green-800/50 p-6 rounded-xl border border-green-700 shadow-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-green-300">Analytics</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-white mb-1">
+                    {report.technologyAnalysis.analytics.toolCount} tools
+                  </p>
+                  <p className="text-sm text-green-200">
+                    {report.technologyAnalysis.analytics.hasGoogleAnalytics ? 'Google Analytics ✓' : 'No Google Analytics'}
+                  </p>
+                </div>
+
+                {/* Security Score */}
+                <div className="bg-gradient-to-br from-orange-900/50 to-orange-800/50 p-6 rounded-xl border border-orange-700 shadow-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-orange-300">Security</h3>
+                  </div>
+                  <p className={`text-2xl font-bold ${getSecurityColor(report.technologyAnalysis.security.securityScore)} mb-1`}>
+                    {report.technologyAnalysis.security.securityScore}
+                  </p>
+                  <p className="text-sm text-orange-200">
+                    {report.technologyAnalysis.security.hasSSL ? 'SSL Enabled ✓' : 'No SSL'}
+                  </p>
                 </div>
               </div>
-            )}
 
-            {/* Financial Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {/* Market Cap */}
-              <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 p-6 rounded-xl border border-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+              {/* Technology Details */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Top Technologies */}
+                <div className="bg-gray-700 rounded-xl p-6 border border-gray-600">
+                  <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
+                    Top Technologies
+                  </h4>
+                  <div className="space-y-2">
+                    {report.technologyAnalysis.topTechnologies.slice(0, 8).map((tech, index) => (
+                      <div key={index} className="flex justify-between items-center py-2 border-b border-gray-600 last:border-b-0">
+                        <span className="text-gray-300 text-sm">{tech.name}</span>
+                        <span className="text-gray-500 text-xs bg-gray-600 px-2 py-1 rounded">
+                          {tech.category}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                  <h3 className="font-semibold text-blue-300">Market Cap</h3>
                 </div>
-                <p className="text-2xl font-bold text-white mb-1">
-                  {formatNumber(report.financialData.overview.MarketCapitalization)}
-                </p>
-                <p className="text-sm text-blue-200">Total company value</p>
-              </div>
 
-              {/* P/E Ratio */}
-              <div className="bg-gradient-to-br from-green-900/50 to-green-800/50 p-6 rounded-xl border border-green-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center shadow-md">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                {/* Digital Marketing */}
+                <div className="bg-gray-700 rounded-xl p-6 border border-gray-600">
+                  <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
                     </svg>
+                    Digital Marketing
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Advertising Networks</span>
+                      <span className="text-white font-semibold">{report.technologyAnalysis.advertising.networkCount}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Social Platforms</span>
+                      <span className="text-white font-semibold">{report.technologyAnalysis.social.platformCount}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Google Ads</span>
+                      <span className={report.technologyAnalysis.advertising.hasGoogleAds ? "text-green-400" : "text-red-400"}>
+                        {report.technologyAnalysis.advertising.hasGoogleAds ? "✓ Enabled" : "✗ Disabled"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Facebook Pixel</span>
+                      <span className={report.technologyAnalysis.advertising.hasFacebookPixel ? "text-green-400" : "text-red-400"}>
+                        {report.technologyAnalysis.advertising.hasFacebookPixel ? "✓ Enabled" : "✗ Disabled"}
+                      </span>
+                    </div>
                   </div>
-                  <h3 className="font-semibold text-green-300">P/E Ratio</h3>
                 </div>
-                <p className="text-2xl font-bold text-white mb-1">
-                  {report.financialData.overview.PERatio || 'N/A'}
-                </p>
-                <p className="text-sm text-green-200">Valuation multiple</p>
-              </div>
-
-              {/* Profit Margin */}
-              <div className="bg-gradient-to-br from-purple-900/50 to-purple-800/50 p-6 rounded-xl border border-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center shadow-md">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-purple-300">Profit Margin</h3>
-                </div>
-                <p className="text-2xl font-bold text-white mb-1">
-                  {formatPercent(report.financialData.overview.ProfitMargin)}
-                </p>
-                <p className="text-sm text-purple-200">Net profitability</p>
-              </div>
-
-              {/* Revenue */}
-              <div className="bg-gradient-to-br from-orange-900/50 to-orange-800/50 p-6 rounded-xl border border-orange-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center shadow-md">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-orange-300">Revenue (TTM)</h3>
-                </div>
-                <p className="text-2xl font-bold text-white mb-1">
-                  {formatNumber(report.financialData.overview.RevenueTTM)}
-                </p>
-                <p className="text-sm text-orange-200">Annual sales</p>
               </div>
             </div>
 
-            {/* Additional Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              <div className="bg-gray-700 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
-                <h4 className="text-sm text-gray-400 mb-1">EPS</h4>
-                <p className="text-lg font-semibold text-white">{report.financialData.overview.EPS || 'N/A'}</p>
-              </div>
-              <div className="bg-gray-700 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
-                <h4 className="text-sm text-gray-400 mb-1">Dividend Yield</h4>
-                <p className="text-lg font-semibold text-white">{formatPercent(report.financialData.overview.DividendYield)}</p>
-              </div>
-              <div className="bg-gray-700 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
-                <h4 className="text-sm text-gray-400 mb-1">Beta</h4>
-                <p className="text-lg font-semibold text-white">{report.financialData.overview.Beta || 'N/A'}</p>
-              </div>
-              <div className="bg-gray-700 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
-                <h4 className="text-sm text-gray-400 mb-1">52W High</h4>
-                <p className="text-lg font-semibold text-white">${report.financialData.overview['52WeekHigh'] || 'N/A'}</p>
-              </div>
-              <div className="bg-gray-700 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
-                <h4 className="text-sm text-gray-400 mb-1">52W Low</h4>
-                <p className="text-lg font-semibold text-white">${report.financialData.overview['52WeekLow'] || 'N/A'}</p>
-              </div>
-              <div className="bg-gray-700 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
-                <h4 className="text-sm text-gray-400 mb-1">Revenue Growth</h4>
-                <p className="text-lg font-semibold text-white">{formatPercent(report.financialData.overview.QuarterlyRevenueGrowthYOY)}</p>
+            {/* Financial Metrics Grid */}
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
+                Financial Overview
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                {/* Market Cap */}
+                <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 p-6 rounded-xl border border-blue-700 shadow-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-blue-300">Market Cap</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-white mb-1">
+                    {formatNumber(report.financialData.overview.MarketCapitalization)}
+                  </p>
+                  <p className="text-sm text-blue-200">Total company value</p>
+                </div>
+
+                {/* Estimated Revenue */}
+                <div className="bg-gradient-to-br from-green-900/50 to-green-800/50 p-6 rounded-xl border border-green-700 shadow-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-green-300">Est. Revenue</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-white mb-1">
+                    {report.financialData.builtWithFinancial.revenue}
+                  </p>
+                  <p className="text-sm text-green-200">Annual revenue estimate</p>
+                </div>
+
+                {/* Employees */}
+                <div className="bg-gradient-to-br from-purple-900/50 to-purple-800/50 p-6 rounded-xl border border-purple-700 shadow-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-purple-300">Employees</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-white mb-1">
+                    {report.financialData.builtWithFinancial.employees}
+                  </p>
+                  <p className="text-sm text-purple-200">Team size estimate</p>
+                </div>
+
+                {/* Total Funding */}
+                <div className="bg-gradient-to-br from-orange-900/50 to-orange-800/50 p-6 rounded-xl border border-orange-700 shadow-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-orange-300">Total Funding</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-white mb-1">
+                    {report.financialData.builtWithFinancial.funding.totalFunding}
+                  </p>
+                  <p className="text-sm text-orange-200">Investment raised</p>
+                </div>
               </div>
             </div>
 
@@ -350,8 +526,8 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white">AI Analysis Report</h3>
-                  <p className="text-gray-400">Powered by Alchemyst AI</p>
+                  <h3 className="text-2xl font-bold text-white">Comprehensive AI Analysis</h3>
+                  <p className="text-gray-400">Powered by Alchemyst AI & BuiltWith Data</p>
                 </div>
               </div>
               
@@ -412,7 +588,7 @@ export default function Home() {
         {!report && (
           <div className="text-center mt-12 pt-8 border-t border-gray-700">
             <p className="text-gray-400">
-              Powered by Alpha Vantage & Alchemyst AI • Real-time financial data with intelligent analysis
+              Powered by Alchemyst AI & BuiltWith • Technology stack analysis with financial insights
             </p>
           </div>
         )}

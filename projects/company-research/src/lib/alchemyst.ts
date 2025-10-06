@@ -560,6 +560,98 @@ Provide thorough analysis with data points, comparative metrics, and actionable 
             return { success: false, error: error.message };
         }
     }
+
+    // Add this comprehensive analysis method
+    async analyzeCompanyComprehensive(
+      companyName: string, 
+      data: any
+    ): Promise<AnalysisResult> {
+      console.log(`🔍 Starting comprehensive analysis for: ${companyName}`);
+      
+      const prompt = `
+    Perform an EXTREMELY DETAILED comprehensive analysis for ${companyName} covering ALL business aspects.
+
+    COMPANY IDENTITY:
+    - Company: ${companyName}
+    - Domain: ${data.companyDomain}
+    - Primary Industry: ${data.financialData?.Sector || data.domainAnalysis?.financial?.industry}
+
+    TECHNOLOGY STACK ANALYSIS:
+    ${data.domainAnalysis ? `
+    Web Technologies: ${data.domainAnalysis.topTechnologies?.map((tech: any) => tech.name).join(', ') || 'N/A'}
+    Hosting Provider: ${data.domainAnalysis.hosting?.provider || 'N/A'}
+    CDN: ${data.domainAnalysis.hosting?.cdn || 'None'}
+    Analytics Tools: ${data.domainAnalysis.analytics?.tools?.length || 0} tools installed
+    Advertising Networks: ${data.domainAnalysis.advertising?.networks?.length || 0} networks detected
+    Social Media: ${data.domainAnalysis.social?.platforms?.map((p: any) => p.name).join(', ') || 'N/A'}
+    Security Score: ${data.domainAnalysis.security?.securityScore || 'N/A'}
+    ` : 'Technology data not available'}
+
+    DIGITAL PRESENCE & TRAFFIC:
+    ${data.domainAnalysis?.traffic ? `
+    Global Rank: ${data.domainAnalysis.traffic.globalRank}
+    Estimated Monthly Visits: ${data.domainAnalysis.traffic.estimatedVisits}
+    Rank Description: ${data.domainAnalysis.traffic.rankDescription}
+    ` : 'Traffic data not available'}
+
+    FINANCIAL OVERVIEW:
+    ${data.financialData ? `
+    Market Cap: ${data.financialData.MarketCapitalization || 'N/A'}
+    P/E Ratio: ${data.financialData.PERatio || 'N/A'}
+    Revenue (TTM): ${data.financialData.RevenueTTM || 'N/A'}
+    Profit Margin: ${data.financialData.ProfitMargin || 'N/A'}
+    EPS: ${data.financialData.EPS || 'N/A'}
+    ` : 'Financial data not available'}
+
+    ESTIMATED BUSINESS METRICS:
+    ${data.domainAnalysis?.financial ? `
+    Estimated Revenue: ${data.domainAnalysis.financial.revenue}
+    Employee Count: ${data.domainAnalysis.financial.employees}
+    Total Funding: ${data.domainAnalysis.financial.funding?.totalFunding || 'N/A'}
+    ` : 'Business metrics not available'}
+
+    Please provide a comprehensive report covering:
+
+    1. **TECHNOLOGY ASSESSMENT**
+      - Technology stack sophistication
+      - Infrastructure maturity
+      - Digital marketing capabilities
+      - Security posture
+
+    2. **DIGITAL FOOTPRINT ANALYSIS**
+      - Web traffic and engagement
+      - Market reach and visibility
+      - Social media presence
+      - Competitive digital positioning
+
+    3. **FINANCIAL HEALTH**
+      - Revenue and profitability
+      - Market valuation
+      - Growth potential
+      - Investment attractiveness
+
+    4. **BUSINESS INTELLIGENCE**
+      - Company maturity stage
+      - Market position
+      - Competitive advantages
+      - Risk factors
+
+    5. **STRATEGIC RECOMMENDATIONS**
+      - Growth opportunities
+      - Technology improvements
+      - Market expansion potential
+      - Investment considerations
+
+    Provide specific, data-driven insights with actionable recommendations. Rate the company's overall digital maturity and investment potential.
+
+    Format with clear sections, bullet points, and emphasize key findings.
+    `;
+
+      return await this.generateAnalysis(prompt, {
+        maxTokens: 5000,
+        temperature: 0.2
+      });
+    }
 }
 
 // Create and export service instance
