@@ -1,24 +1,32 @@
-import OpenAI from "openai";
 import dotenv from "dotenv";
 import readlineSync from "readline-sync";
+import AlchemystAI from "@alchemystai/sdk";
 
 dotenv.config();
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// Load environment variables
+const ALCHEMYST_AI_API_KEY = process.env.ALCHEMYST_AI_API_KEY;
 
-if (!OPENAI_API_KEY) {
-  console.error("❌ Missing OpenAI API key.");
+if (!ALCHEMYST_AI_API_KEY) {
+  console.error("❌ Missing Alchemyst AI API key.");
   process.exit(1);
 }
 
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+// Initialize Alchemyst Agent
+const alchemyst = new AlchemystAI({
+  apiKey: ALCHEMYST_AI_API_KEY,
+  agent: {
+    name: "AI Tweet Generator",
+    memory: true, // 🔥 Persistent memory layer enabled
+    personality: "Creative and witty social media strategist",
+  },
+});
 
 // Function to generate tweets
 async function generateTweets(topic: string, tone: string) {
-  try {
-    console.log(`\n📝 Generating tweets for topic: "${topic}" with tone: "${tone}"\n`);
+  console.log(`\n📝 Generating tweets for topic: "${topic}" with tone: "${tone}"\n`);
 
-    const prompt = `
+  const prompt = `
 You are a social media expert.
 Generate 5 creative, engaging, and concise tweets about the following topic.
 Tone: ${tone}.
@@ -35,22 +43,21 @@ Provide the output in a structured format:
 5.
 `;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "system", content: prompt }],
+  try {
+    // 🧠 Use the Alchemyst AI agent for contextual memory-based reasoning
+    const response = await alchemyst.respond(prompt, {
+      memoryTags: ["tweets", topic, tone], // Used for contextual recall later
       temperature: 0.7,
-      max_tokens: 500,
     });
 
-    const report = completion.choices[0]?.message?.content || "No tweets generated.";
     console.log("🐦 Generated Tweets:\n");
-    console.log(report);
+    console.log(response);
   } catch (error) {
     console.error("❌ Error generating tweets:", error);
   }
 }
 
-// CLI input
+// CLI Input
 const topic = readlineSync.question("Enter the topic for your tweets: ");
 const tone = readlineSync.question("Enter the tone (e.g., Informative, Funny, Motivational): ");
 
