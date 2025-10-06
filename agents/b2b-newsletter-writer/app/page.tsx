@@ -2,13 +2,17 @@ import Link from "next/link"
 import Header from "@/components/Header"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sparkles, FileText, Download, Zap } from "lucide-react"
+import { Sparkles, FileText, Download, Zap, Github, Twitter, Linkedin } from "lucide-react"
 
 export default function HomePage() {
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="min-h-dvh bg-background flex flex-col">
+      {/* Header */}
       <Header />
-      <main className="mx-auto max-w-6xl px-4 py-16">
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-6xl px-4 py-16 flex-1">
+        {/* Hero Section */}
         <div className="text-center space-y-6 mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
             <Sparkles className="h-4 w-4" />
@@ -31,6 +35,7 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Features Section */}
         <div className="grid md:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
@@ -70,6 +75,7 @@ export default function HomePage() {
           </Card>
         </div>
 
+        {/* How It Works Section */}
         <div className="mt-16 p-8 rounded-lg border bg-card">
           <h2 className="text-2xl font-bold mb-4 text-balance">How It Works</h2>
           <div className="grid md:grid-cols-4 gap-6">
@@ -110,6 +116,31 @@ export default function HomePage() {
           </div>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="bg-primary/5 border-t border-primary/20 mt-16">
+        <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} Your Company. All rights reserved.
+          </p>
+
+          <div className="flex items-center gap-4">
+            <Link href="https://github.com/Alchemyst-ai/awesome-saas" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
+              <Github className="h-5 w-5" />
+            </Link>
+            <Link href="https://twitter.com/yourcompany" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
+              <Twitter className="h-5 w-5" />
+            </Link>
+            <Link href="https://linkedin.com/company/yourcompany" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
+              <Linkedin className="h-5 w-5" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 py-2 text-center text-xs text-muted-foreground">
+          Made with 💙 using Next.js & Tailwind CSS
+        </div>
+      </footer>
     </div>
   )
 }
