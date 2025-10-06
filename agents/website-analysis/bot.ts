@@ -1,32 +1,36 @@
-import OpenAI from "openai";
+import AlchemystAI from "@alchemystai/sdk";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 
 dotenv.config();
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// Environment setup
+const ALCHEMYST_AI_API_KEY = process.env.ALCHEMYST_AI_API_KEY;
 
-if (!OPENAI_API_KEY) {
-  console.error("❌ Missing OpenAI API key.");
+if (!ALCHEMYST_AI_API_KEY) {
+  console.error("❌ Missing Alchemyst AI API key.");
   process.exit(1);
 }
 
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+// Initialize the Alchemyst AI SDK
+const alchemyst = new AlchemystAI({
+  apiKey: ALCHEMYST_AI_API_KEY,
+  memory: true, // enables persistent contextual memory for the agent
+});
 
-// Function to fetch website HTML
+// Fetch website HTML
 async function fetchWebsiteContent(url: string) {
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-    const html = await res.text();
-    return html;
+    return await res.text();
   } catch (error) {
     console.error("❌ Error fetching website:", error);
     return null;
   }
 }
 
-// Main website analysis function
+// Website analysis agent logic
 async function analyzeWebsite(url: string) {
   if (!url.startsWith("http")) {
     console.error("🌐 Please provide a valid website URL.");
@@ -36,11 +40,10 @@ async function analyzeWebsite(url: string) {
   const htmlContent = await fetchWebsiteContent(url);
   if (!htmlContent) return;
 
-  try {
-    console.log(`🔍 Analyzing website: ${url}...`);
+  console.log(`🔍 Analyzing website: ${url}...`);
 
-    const prompt = `
-You are a professional website auditor.
+  const prompt = `
+You are a professional website auditor with memory capabilities.
 Analyze the following website content for:
 - SEO
 - Performance
@@ -53,7 +56,7 @@ Website URL: ${url}
 Website HTML content:
 ${htmlContent}
 
-Provide a detailed report in this format:
+Provide a structured report in this format:
 
 ## Overview
 ## SEO Analysis
@@ -61,21 +64,24 @@ Provide a detailed report in this format:
 ## Accessibility & UX
 ## Security Recommendations
 ## Final Summary
-    `;
+  `;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "system", content: prompt }],
+  try {
+    // Ask the memory-powered Alchemyst AI agent
+    const response = await alchemyst.agents.run({
+      name: "website-analysis-agent",
+      instructions: prompt,
+      memoryScope: "persistent", // remembers past analyses
+      outputFormat: "markdown",
       temperature: 0.5,
-      max_tokens: 2000,
+      maxTokens: 2000,
     });
 
-    const report = completion.choices[0]?.message?.content || "No report generated.";
-    console.log("🧾 Website Analysis Report:\n", report);
+    console.log("🧾 Website Analysis Report:\n", response.output);
   } catch (error) {
     console.error("❌ Error analyzing website:", error);
   }
 }
 
-// Replace with any website you want
+// Example usage
 analyzeWebsite("https://example.com");
