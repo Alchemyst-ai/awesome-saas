@@ -1,22 +1,21 @@
 import AlchemystAI from "@alchemystai/sdk";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-import { escape } from "he"; // npm install he
+import { escape } from "he"; // npm i he
 
 dotenv.config();
 
-// Environment setup
+// Load API key
 const ALCHEMYST_AI_API_KEY = process.env.ALCHEMYST_AI_API_KEY;
-
 if (!ALCHEMYST_AI_API_KEY) {
-  console.error("❌ Missing Alchemyst AI API key.");
+  console.error("❌ Missing Alchemyst AI API key. Please set ALCHEMYST_AI_API_KEY in .env");
   process.exit(1);
 }
 
-// Initialize the Alchemyst AI SDK
+// Initialize Alchemyst AI SDK client
 const alchemyst = new AlchemystAI({
   apiKey: ALCHEMYST_AI_API_KEY,
-  memory: true, // enables persistent contextual memory for the agent
+  memory: true, // enables contextual memory
 });
 
 // Fetch website HTML
@@ -31,7 +30,7 @@ async function fetchWebsiteContent(url: string): Promise<string | null> {
   }
 }
 
-// Main website analysis function
+// Analyze website using Alchemyst memory-enabled agent
 async function analyzeWebsite(url: string) {
   if (!url.startsWith("http")) {
     console.error("🌐 Please provide a valid website URL.");
@@ -41,14 +40,13 @@ async function analyzeWebsite(url: string) {
   const htmlContent = await fetchWebsiteContent(url);
   if (!htmlContent) return;
 
-  console.log(`🔍 Analyzing website: ${url}...`);
+  console.log(`🔍 Analyzing website: ${url} ...`);
 
-  // Sanitize HTML to avoid Codacy warning
+  // Sanitize HTML to avoid raw HTML warnings
   const sanitizedHtml = escape(htmlContent);
 
-  // Create prompt with sanitized HTML
-  const analysisPrompt = `
-You are a professional website auditor with memory capabilities.
+  const prompt = `
+You are a professional website auditor.
 Analyze the following website content for:
 - SEO
 - Performance
@@ -69,26 +67,33 @@ Provide a structured report in this format:
 ## Accessibility & UX
 ## Security Recommendations
 ## Final Summary
-  `;
+`;
 
   try {
-    // Run the memory-powered agent
-    const response = await alchemyst.agents.run({
-      name: "website-analysis-agent",
-      instructions: analysisPrompt,
-      memoryScope: "persistent", // remembers past analyses
-      outputFormat: "markdown",
+    // ✅ Official Alchemyst SDK method (from the tutorial series)
+    const response = await alchemyst.respond({
+      model: "gpt-4o-mini", // or use your configured default
+      prompt,
+      memoryScope: "persistent", // stores long-term analysis memory
       temperature: 0.5,
       maxTokens: 2000,
+      metadata: {
+        agent: "website-analysis",
+        urlAnalyzed: url,
+      },
     });
 
-    console.log("🧾 Website Analysis Report:\n", response.output);
+    console.log("🧾 Website Analysis Report:\n", response.output || response.text);
   } catch (error) {
     console.error("❌ Error analyzing website:", error);
   }
 }
 
-// Execute the analysis with proper promise handling
+// Run the analysis safely
 (async () => {
-  await analyzeWebsite("https://example.com");
+  try {
+    await analyzeWebsite("https://example.com");
+  } catch (err) {
+    console.error("❌ Unexpected runtime error:", err);
+  }
 })();
