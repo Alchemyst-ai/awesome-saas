@@ -83,7 +83,9 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 
 > 💡 **Pro Tip**: Check out our [AI-native Documentation](https://zendocs.getalchemystai.com) for intelligent code examples!
 
-<br />## 📦 Templates
+<br />
+
+## 📦 Templates
 
 ### 💡 Official Templates
 
