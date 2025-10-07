@@ -5,49 +5,33 @@ import AlchemystAI from "@alchemystai/sdk";
 
 dotenv.config();
 
-// Environment variables
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const ALCHEMYST_AI_API_KEY = process.env.ALCHEMYST_AI_API_KEY;
 
-if (!OPENAI_API_KEY) {
-  console.error("❌ Missing OpenAI API key.");
+if (!OPENAI_API_KEY || !ALCHEMYST_AI_API_KEY) {
+  console.error("❌ Missing API key(s). Check your .env file.");
   process.exit(1);
 }
 
-if (!ALCHEMYST_AI_API_KEY) {
-  console.error("❌ Missing Alchemyst AI API key.");
-  process.exit(1);
-}
-
-// Initialize SDKs
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
-const alchemyst = new AlchemystAI({
-  apiKey: ALCHEMYST_AI_API_KEY,
-});
+const alchemyst = new AlchemystAI({ apiKey: ALCHEMYST_AI_API_KEY });
 
-// Main function
+// 🧠 Memory-enabled Tweet Generator
 async function generateTweets(topic: string, tone: string) {
-  console.log(`\n🧠 Using memory layer + OpenAI model...`);
+  console.log(`\n🧠 Using Alchemyst memory + OpenAI model...`);
   console.log(`📝 Topic: "${topic}" | Tone: "${tone}"\n`);
 
-  // Step 1️⃣ — Store the topic & tone context in Alchemyst memory
   await alchemyst.memory.store({
     namespace: "tweet-generator",
-    data: {
-      topic,
-      tone,
-      timestamp: new Date().toISOString(),
-    },
+    data: { topic, tone, createdAt: new Date().toISOString() },
   });
 
-  // Step 2️⃣ — Generate tweets with OpenAI
   const prompt = `
-You are a social media expert.
-Generate 5 creative, engaging, and concise tweets about the following topic.
-Tone: ${tone}.
-Each tweet should be under 280 characters.
-Provide the output in this format:
+You are a social media strategist.
+Generate 5 short, catchy tweets about "${topic}" in a ${tone} tone.
+Each tweet must be under 280 characters.
 
+Format:
 ## Topic: ${topic}
 ## Tone: ${tone}
 ## Tweets:
@@ -58,62 +42,36 @@ Provide the output in this format:
 5.
 `;
 
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "system", content: prompt }],
-      temperature: 0.7,
-      max_tokens: 500,
-    });
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [{ role: "system", content: prompt }],
+    temperature: 0.7,
+    max_tokens: 500,
+  });
 
-    const tweets = completion.choices[0]?.message?.content || "No tweets generated.";
-    console.log("🐦 Generated Tweets:\n", tweets);
+  const tweets = response.choices[0]?.message?.content || "⚠️ No tweets generated.";
+  console.log("\n🐦 Generated Tweets:\n", tweets);
 
-    // Step 3️⃣ — Store output in Alchemyst memory (for recall later)
-    await alchemyst.memory.store({
-      namespace: "tweet-generator",
-      data: {
-        topic,
-        tone,
-        tweets,
-      },
-    });
-
-  } catch (error) {
-    console.error("❌ Error generating tweets:", error);
-  }
-}
-
-// Step 4️⃣ — Recall memory (optional)
-async function showHistory() {
-  const history = await alchemyst.memory.retrieve({
+  await alchemyst.memory.store({
     namespace: "tweet-generator",
-  });
-
-  if (!history || history.length === 0) {
-    console.log("🕳️ No past tweet generations found.");
-    return;
-  }
-
-  console.log("\n🧾 Past Generations:\n");
-  history.forEach((entry: any, index: number) => {
-    console.log(`${index + 1}. Topic: ${entry.topic} | Tone: ${entry.tone}`);
+    data: { topic, tone, tweets },
   });
 }
 
-// CLI Menu
-(async () => {
-  const action = readlineSync.question(
-    "\nChoose an action:\n1️⃣ Generate Tweets\n2️⃣ View History\n> "
-  );
+async function viewHistory() {
+  const past = await alchemyst.memory.retrieve({ namespace: "tweet-generator" });
+  if (!past?.length) return console.log("📭 No previous tweet generations found.");
 
-  if (action === "2") {
-    await showHistory();
-    process.exit(0);
-  }
+  console.log("\n📜 Previous Topics:\n");
+  past.forEach((p: any, i: number) => console.log(`${i + 1}. ${p.topic} (${p.tone})`));
+}
+
+(async () => {
+  const action = readlineSync.question("\nChoose an action:\n1️⃣ Generate Tweets\n2️⃣ View History\n> ");
+
+  if (action === "2") return await viewHistory();
 
   const topic = readlineSync.question("Enter the topic for your tweets: ");
-  const tone = readlineSync.question("Enter the tone (e.g., Informative, Funny, Motivational): ");
-
+  const tone = readlineSync.question("Enter the tone (e.g., Funny, Motivational, Informative): ");
   await generateTweets(topic, tone);
 })();
