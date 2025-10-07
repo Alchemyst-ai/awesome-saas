@@ -83,7 +83,36 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 
 > 💡 **Pro Tip**: Check out our [AI-native Documentation](https://zendocs.getalchemystai.com) for intelligent code examples!
 
-<br />## 📦 Templates
+<br />
+  <h2 align="center">🧠 Community AI Agents</h2>
+  <p align="center">These agents are part of the <a href="https://github.com/Alchemyst-ai/awesome-saas">awesome-saas</a> collection.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Agent</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+  
+      <tr>
+        <td>
+          <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/b2b-newsletter-writer">
+            <img src="https://img.shields.io/badge/b2b--newsletter--writer-1f2937?style=for-the-badge&logo=github" alt="b2b-newsletter-writer" />
+          </a>
+        </td>
+        <td>AI agent built by the community</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/discord-bot">
+            <img src="https://img.shields.io/badge/discord--bot-1f2937?style=for-the-badge&logo=github" alt="discord-bot" />
+          </a>
+        </td>
+        <td>AI agent built by the community</td>
+      </tr>
+    </tbody>
+  </table>## 📦 Templates
 
 ### 💡 Official Templates
 
@@ -527,32 +556,3 @@ Check the following:
   </a>
 
 </div>
-  <h2 align="center">🧠 Community AI Agents</h2>
-  <p align="center">These agents are part of the <a href="https://github.com/Alchemyst-ai/awesome-saas">awesome-saas</a> collection.</p>
-  <table>
-    <thead>
-      <tr>
-        <th>Agent</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-  
-      <tr>
-        <td>
-          <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/b2b-newsletter-writer">
-            <img src="https://img.shields.io/badge/b2b--newsletter--writer-1f2937?style=for-the-badge&logo=github" alt="b2b-newsletter-writer" />
-          </a>
-        </td>
-        <td>AI agent built by the community</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/discord-bot">
-            <img src="https://img.shields.io/badge/discord--bot-1f2937?style=for-the-badge&logo=github" alt="discord-bot" />
-          </a>
-        </td>
-        <td>AI agent built by the community</td>
-      </tr>
-    </tbody>
-  </table>
