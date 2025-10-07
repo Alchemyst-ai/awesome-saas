@@ -1,6 +1,4 @@
 
-🚀 Fetching agents from awesome-saas...
-✅ Found 2 agents
 # 🧪 Alchemyst Platform Cookbook
 
 <div align="center">
