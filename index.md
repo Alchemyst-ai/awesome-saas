@@ -84,6 +84,14 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 <br />
   <h2 align="center">🧠 Community AI Agents</h2>
   <p align="center">These agents are part of the <a href="https://github.com/Alchemyst-ai/awesome-saas">awesome-saas</a> collection.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Agent</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
   
       <tr>
         <td>
@@ -100,7 +108,9 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
           </a>
         </td>
         <td>AI agent built by the community</td>
-      </tr>## 📦 Templates
+      </tr>
+    </tbody>
+  </table>## 📦 Templates
 
 ### 💡 Official Templates
 
