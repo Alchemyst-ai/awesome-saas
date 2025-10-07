@@ -258,14 +258,6 @@ const gatherAgentsFromAwesomeSaas = () => {
       agentsSection += `
   <h2 align="center">🧠 Community AI Agents</h2>
   <p align="center">These agents are part of the <a href="https://github.com/Alchemyst-ai/awesome-saas">awesome-saas</a> collection.</p>
-  <table>
-    <thead>
-      <tr>
-        <th>Agent</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
   `;
 
       agents.forEach((agentName) => {
@@ -279,10 +271,6 @@ const gatherAgentsFromAwesomeSaas = () => {
         <td>AI agent built by the community</td>
       </tr>`;
       });
-
-      agentsSection += `
-    </tbody>
-  </table>`;
 
       console.log(`✅ Found ${agents.length} agents`);
       return agentsSection;
