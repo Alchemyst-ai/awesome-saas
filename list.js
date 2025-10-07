@@ -234,7 +234,6 @@ const generateTopicBadges = (topics) => {
 };
 
 const gatherAgentsFromAwesomeSaas = () => {
-  console.log("🚀 Fetching agents from awesome-saas...");
   let agentsSection = '';
 
   return fetch("https://api.github.com/repos/Alchemyst-ai/awesome-saas/git/trees/main?recursive=1")
@@ -271,8 +270,7 @@ const gatherAgentsFromAwesomeSaas = () => {
         <td>AI agent built by the community</td>
       </tr>`;
       });
-
-      console.log(`✅ Found ${agents.length} agents`);
+      
       return agentsSection;
     })
     .catch((error) => {
