@@ -233,28 +233,29 @@ const generateTopicBadges = (topics) => {
   }).join('\n      ');
 };
 
-const gatherAgentsFromAwesomeSaas = async () => {
+const gatherAgentsFromAwesomeSaas = () => {
   console.log("🚀 Fetching agents from awesome-saas...");
-  const res = await fetch(
-    "https://api.github.com/repos/Alchemyst-ai/awesome-saas/git/trees/main?recursive=1"
-  );
+  let agentsSection = '';
 
-  if (!res.ok) {
-    console.error("❌ Failed to fetch repo tree:", res.status);
-    return "⚠️ Could not fetch agents from awesome-saas.";
-  }
+  return fetch("https://api.github.com/repos/Alchemyst-ai/awesome-saas/git/trees/main?recursive=1")
+    .then((res) => {
+      if (!res.ok) {
+        console.error("❌ Failed to fetch repo tree:", res.status);
+        return "⚠️ Could not fetch agents from awesome-saas.";
+      }
+      return res.json();
+    })
+    .then((tree) => {
+      const agents = tree.tree
+        .filter((item) => item.path.match(/^agents\/[^/]+\/README\.md$/))
+        .map((item) => item.path.match(/^agents\/([^/]+)\/README\.md$/)[1]);
 
-  const tree = await res.json();
-  const agents = tree.tree
-    .filter((item) => item.path.match(/^agents\/[^/]+\/README\.md$/))
-    .map((item) => item.path.match(/^agents\/([^/]+)\/README\.md$/)[1]);
+      if (agents.length === 0) {
+        console.log("⚠️ No agents found.");
+        return '';
+      }
 
-  if (agents.length === 0) {
-    console.log("⚠️ No agents found.");
-    return "";
-  }
-
-  let agentsSection = `
+      agentsSection += `
   <h2 align="center">🧠 Community AI Agents</h2>
   <p align="center">These agents are part of the <a href="https://github.com/Alchemyst-ai/awesome-saas">awesome-saas</a> collection.</p>
   <table>
@@ -267,8 +268,8 @@ const gatherAgentsFromAwesomeSaas = async () => {
     <tbody>
   `;
 
-  for (const agentName of agents) {
-    agentsSection += `
+      agents.forEach((agentName) => {
+        agentsSection += `
       <tr>
         <td>
           <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/${agentName}">
@@ -277,15 +278,21 @@ const gatherAgentsFromAwesomeSaas = async () => {
         </td>
         <td>AI agent built by the community</td>
       </tr>`;
-  }
+      });
 
-  agentsSection += `
+      agentsSection += `
     </tbody>
   </table>`;
 
-  console.log(`✅ Found ${agents.length} agents`);
-  return agentsSection;
+      console.log(`✅ Found ${agents.length} agents`);
+      return agentsSection;
+    })
+    .catch((error) => {
+      console.log("An error was encountered while gathering agents: " + error);
+      return `⚠️ Could not fetch agents from awesome-saas.`;
+    });
 };
+
 
 
 const gatherReposFromTeam = () => {
@@ -395,14 +402,14 @@ const main = async () => {
 
   finalString += learnMore();
 
+  const agentList = await gatherAgentsFromAwesomeSaas();
+  finalString += agentList;
+
   const teamRepoInfo = await gatherReposFromTeam();
   finalString += teamRepoInfo;
 
   const communityRepoInfo = await gatherReposFromCommunity();
   finalString += communityRepoInfo;
-
-  const agentList = await gatherAgentsFromAwesomeSaas();
-  finalString += agentList;
 
   const finalStringWithToc = intro + toc(finalString) + finalString;
   console.log(finalStringWithToc);
