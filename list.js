@@ -268,20 +268,19 @@ const gatherAgentsFromAwesomeSaas = () => {
   `;
 
       agents.forEach((agentName) => {
-        agentsSection += `
-      <tr>
-        <td>
-          <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/${agentName}">
-            <img src="https://img.shields.io/badge/${agentName.replace(/-/g, '--')}-1f2937?style=for-the-badge&logo=github" alt="${agentName}" />
-          </a>
-        </td>
-        <td>AI agent built by the community</td>
-      </tr>`;
+        agentsSection += `<tr>
+<td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/${agentName}">
+<img src="https://img.shields.io/badge/${agentName.replace(/-/g, '--')}-1f2937?style=for-the-badge&logo=github" alt="${agentName}" />
+</a>
+</td>
+<td>AI agent built by the community</td>
+</tr>`;
       });
 
        agentsSection += `
-    </tbody>
-  </table>`;
+</tbody>
+</table>`;
       
       return agentsSection;
     })
