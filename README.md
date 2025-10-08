@@ -91,8 +91,8 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
         <th>Description</th>
       </tr>
     </thead>
-    
     <tbody>
+  
       <tr>
         <td>
           <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/b2b-newsletter-writer">
@@ -110,7 +110,7 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
         <td>AI agent built by the community</td>
       </tr>
     </tbody>
-  </table>
+  </table>## 📦 Templates
 
 ### 💡 Official Templates
 
