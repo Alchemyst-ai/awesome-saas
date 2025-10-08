@@ -234,17 +234,17 @@ const generateTopicBadges = (topics) => {
 };
 
 const gatherAgentsFromAwesomeSaas = () => {
-  let agentsSection = '';
+ let agentsSection = '';
 
-  return fetch("https://api.github.com/repos/Alchemyst-ai/awesome-saas/git/trees/main?recursive=1")
-    .then((res) => {
+ return fetch("https://api.github.com/repos/Alchemyst-ai/awesome-saas/git/trees/main?recursive=1")
+   .then((res) => {
       if (!res.ok) {
-        console.error("❌ Failed to fetch repo tree:", res.status);
-        return "⚠️ Could not fetch agents from awesome-saas.";
+      console.error("❌ Failed to fetch repo tree:", res.status);
+      return "⚠️ Could not fetch agents from awesome-saas.";
       }
       return res.json();
-    })
-    .then((tree) => {
+   })
+   .then((tree) => {
       const agents = tree.tree
         .filter((item) => item.path.match(/^agents\/[^/]+\/README\.md$/))
         .map((item) => item.path.match(/^agents\/([^/]+)\/README\.md$/)[1]);
