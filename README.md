@@ -92,25 +92,23 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
       </tr>
     </thead>
     <tbody>
-  
-      <tr>
-        <td>
-          <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/b2b-newsletter-writer">
-            <img src="https://img.shields.io/badge/b2b--newsletter--writer-1f2937?style=for-the-badge&logo=github" alt="b2b-newsletter-writer" />
-          </a>
-        </td>
-        <td>AI agent built by the community</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/discord-bot">
-            <img src="https://img.shields.io/badge/discord--bot-1f2937?style=for-the-badge&logo=github" alt="discord-bot" />
-          </a>
-        </td>
-        <td>AI agent built by the community</td>
-      </tr>
-    </tbody>
-  </table>## 📦 Templates
+  <tr>
+<td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/b2b-newsletter-writer">
+<img src="https://img.shields.io/badge/b2b--newsletter--writer-1f2937?style=for-the-badge&logo=github" alt="b2b-newsletter-writer" />
+</a>
+</td>
+<td>AI agent built by the community</td>
+</tr><tr>
+<td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/discord-bot">
+<img src="https://img.shields.io/badge/discord--bot-1f2937?style=for-the-badge&logo=github" alt="discord-bot" />
+</a>
+</td>
+<td>AI agent built by the community</td>
+</tr>
+</tbody>
+</table>## 📦 Templates
 
 ### 💡 Official Templates
 
@@ -198,7 +196,7 @@ This is an ever expanding list - we'll keep on adding open source templates!
 ### 🚀 Community Templates
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Community%20Templates-19%20(Total%2095%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
+  <img src="https://img.shields.io/badge/Community%20Templates-19%20(Total%2096%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
 </div>
 
 <br />
