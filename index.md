@@ -263,8 +263,7 @@ This is an ever expanding list - we'll keep on adding open source templates!
     </td>
     <td>A three agent system for leveraging AI to summarise, compose, send emails. Also stay away from spam</td>
     <td>
-      <img src="https://img.shields.io/badge/email-blue?style=flat-square" alt="email" />
-      <img src="https://img.shields.io/badge/marketing-green?style=flat-square" alt="marketing" />
+      -
     </td>
   </tr>
   <tr>
