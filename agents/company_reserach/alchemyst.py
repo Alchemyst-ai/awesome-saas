@@ -86,49 +86,6 @@ def getPromptForCompanyResearch(companyName: str) -> str:
 
                 Begin your research on: {companyName}
             """
-    
-
-# def initiate_company_research(companyName: str, callback = None):
-#     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
-#     prompt = getPromptForCompanyResearch(companyName= companyName)
-    
-#     headers = {
-#         'Content-Type': 'application/json',
-#         'Authorization': ALCHEMYST_API_KEY
-#     }
-    
-#     data = {
-#         'chat_history': [ { 'content': prompt, 'role': 'user' } ],
-#         'persona': 'maya'
-#     }
-    
-#     try:
-#         response = requests.post(url, headers=headers, json=data, stream=True)
-#         response.raise_for_status()
-        
-#         # Using SSE client for Server-Sent Events
-#         client = sseclient.SSEClient(response)
-        
-#         for event in client.events():
-#             if event.data == '[DONE]':
-#                 print('Stream completed')
-#                 break
-            
-#             try:
-#                 parsed = json.loads(event.data)
-#                 content = parsed['content']
-#             except json.JSONDecodeError as e:
-#                 content = e
-#                 print(f'JSON parsing error: {e}')
-
-#             if callback:
-#                 callback(content)
-                
-#     except requests.exceptions.RequestException as e:
-#         print(f'Requesting failed: {e}')
-#         if callback:
-#             callback(e)
-
 
 def initiate_company_research(companyName: str, callback=None):
     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
@@ -150,11 +107,11 @@ def initiate_company_research(companyName: str, callback=None):
     full_content = ""
 
     try:
-        response = requests.post(url, headers=headers, json=data, stream=True, timeout=60)
+        response = requests.post(url, headers=headers, json=data, stream=True, timeout=300)
         response.raise_for_status()
 
         if callback:
-            callback("🔄 Starting analysis...")
+            callback("status", "🔄 Starting analysis...")
 
         # Manual SSE parsing - more reliable than sseclient
         for line in response.iter_lines():
@@ -168,7 +125,7 @@ def initiate_company_research(companyName: str, callback=None):
                         
                         if data_content == '[DONE]':
                             if callback:
-                                callback("✅ Analysis complete!")
+                                callback("status","✅ Analysis complete!")
                             break
                         
                         if data_content:
@@ -177,9 +134,9 @@ def initiate_company_research(companyName: str, callback=None):
                                 content = parsed.get('content', '')
                                 
                                 if content:
-                                    full_content += content
+                                    full_content = content
                                     if callback:
-                                        callback(content)
+                                        callback("status", content)
                                     print(content, end='', flush=True)
                                         
                             except json.JSONDecodeError:
@@ -187,12 +144,12 @@ def initiate_company_research(companyName: str, callback=None):
                                 if data_content and data_content != '[DONE]':
                                     full_content += data_content + " "
                                     if callback:
-                                        callback(data_content)
+                                        callback("status", data_content)
                                     print(data_content, end='', flush=True)
                                     
                 except Exception as e:
                     if callback:
-                        callback(f"⚠️ Line processing error: {str(e)}")
+                        callback("error", f"⚠️ Line processing error: {str(e)}")
                     continue
 
         return full_content
@@ -200,12 +157,12 @@ def initiate_company_research(companyName: str, callback=None):
     except requests.exceptions.RequestException as e:
         error_msg = f"Request failed: {str(e)}"
         if callback:
-            callback(error_msg)
+            callback("error", error_msg)
         print(error_msg)
         return ""
     except Exception as e:
         error_msg = f"Unexpected error: {str(e)}"
         if callback:
-            callback(error_msg)
+            callback("error", error_msg)
         print(error_msg)
         return ""
