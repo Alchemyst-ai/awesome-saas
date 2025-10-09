@@ -199,9 +199,6 @@ class StreamlitResearchApp:
                     use_container_width=True
                 )
                 
-                # Add analyze another button
-                if st.button("🔄 Analyze Another Company", use_container_width=True):
-                    st.rerun()
             else:
                 st.error("❌ Analysis failed. Please try again.")
         
@@ -213,10 +210,6 @@ class StreamlitResearchApp:
                 f'<div class="final-report">{st.session_state.final_report}</div>', 
                 unsafe_allow_html=True
             )
-            
-            if st.button("🔄 Analyze New Company", use_container_width=True):
-                del st.session_state.final_report
-                st.rerun()
         
         # Footer
         st.markdown("---")
