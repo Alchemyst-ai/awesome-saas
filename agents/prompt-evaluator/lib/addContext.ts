@@ -2,17 +2,21 @@
 import { alchemystClient } from "./client/client";
 const client = alchemystClient;
 
-export async function addContext(prompt: string) {
+export async function addContext(prompt: string, evaluationResult?: any) {
+    const content = evaluationResult 
+        ? `PROMPT: ${prompt}\n\nEVALUATION RESULT: ${JSON.stringify(evaluationResult, null, 2)}`
+        : prompt;
+        
     await client.v1.context.add({
-        documents: [{ prompt}],
+        documents: [{ content }],
         context_type: "resource",
-        source: "web-upload",
+        source: "web-uploaded",
         scope: "internal",
         metadata: {
-            fileName: "prompt",
+            fileName: `prompt-${Date.now()}.txt`,
             fileType: "text/plain",
             lastModified: new Date().toISOString(),
-            fileSize: prompt.length,
+            fileSize: content.length,
         }
     });
     console.log("Context added successfully for prompt");
