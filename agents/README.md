@@ -10,6 +10,7 @@ This is where all community-contributed AI agents live. Each sub-folder here con
 Each agent should live inside its own folder under `agents/`.  
 For example:
 
+```
 agents/
 ├── email-agent/
 │ ├── README.md
@@ -21,7 +22,7 @@ agents/
 │ ├── app.js
 │ └── ...
 └── ...
-
+```
 
 ---
 

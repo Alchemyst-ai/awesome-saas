@@ -37,7 +37,8 @@ If your PR isn’t getting merged:
 - ✅ Check that your folder is inside `agents/`  
 - ✅ Make sure your agent has a README  
 - ✅ Confirm that the code runs without obvious errors  
-- ✅ If still stuck, [**raise an issue**](https://github.com/Alchemyst-ai/awesome-saas/issues/new)  
+- ✅ If still stuck, [**raise an issue**](https://github.com/Alchemyst-ai/awesome-saas/issues/new)
+- ✅ Join our [Discord community](https://discord.gg/Sz35cthy) for real-time support
 
 ---
 

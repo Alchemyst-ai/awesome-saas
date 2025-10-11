@@ -89,6 +89,9 @@ const introduction = () => {
   <a href="https://platform.getalchemystai.com" target="_blank">
     <img src="https://img.shields.io/badge/🔥%20Start%20Building-platform.getalchemystai.com-6366f1?style=for-the-badge&labelColor=1f2937" alt="Start Building" />
   </a>
+  <a href="https://dub.sh/context-community" target="_blank">
+  <img src="https://img.shields.io/badge/💬%20Join%20Our%20Discord-community.getalchemystai.com-5865F2?style=for-the-badge&labelColor=1f2937" alt="Join our Discord" />
+</a>
 </div>
 
 <br />
@@ -230,6 +233,65 @@ const generateTopicBadges = (topics) => {
   }).join('\n      ');
 };
 
+const gatherAgentsFromAwesomeSaas = () => {
+ let agentsSection = '';
+
+ return fetch("https://api.github.com/repos/Alchemyst-ai/awesome-saas/git/trees/main?recursive=1")
+   .then((res) => {
+      if (!res.ok) {
+      console.error("❌ Failed to fetch repo tree:", res.status);
+      return "⚠️ Could not fetch agents from awesome-saas.";
+      }
+      return res.json();
+   })
+   .then((tree) => {
+      const agents = tree.tree
+        .filter((item) => item.path.match(/^agents\/[^/]+\/README\.md$/))
+        .map((item) => item.path.match(/^agents\/([^/]+)\/README\.md$/)[1]);
+
+      if (agents.length === 0) {
+        console.log("⚠️ No agents found.");
+        return '';
+      }
+
+      agentsSection += `
+  <h2 align="center">🧠 Community AI Agents</h2>
+  <p align="center">These agents are part of the <a href="https://github.com/Alchemyst-ai/awesome-saas">awesome-saas</a> collection.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Agent</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
+
+      agents.forEach((agentName) => {
+        agentsSection += `<tr>
+<td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/${agentName}">
+<img src="https://img.shields.io/badge/${agentName.replace(/-/g, '--')}-1f2937?style=for-the-badge&logo=github" alt="${agentName}" />
+</a>
+</td>
+<td>AI agent built by the community</td>
+</tr>`;
+      });
+
+       agentsSection += `
+</tbody>
+</table>`;
+      
+      return agentsSection;
+    })
+    .catch((error) => {
+      console.log("An error was encountered while gathering agents: " + error);
+      return `⚠️ Could not fetch agents from awesome-saas.`;
+    });
+};
+
+
+
 const gatherReposFromTeam = () => {
   let gatheredTeamRepoInfo = '';
   return fetch("https://api.github.com/users/alchemyst-ai/repos")
@@ -336,6 +398,9 @@ const main = async () => {
     .replace('COMMUNITY_COUNT', communityCount);
 
   finalString += learnMore();
+
+  const agentList = await gatherAgentsFromAwesomeSaas();
+  finalString += agentList;
 
   const teamRepoInfo = await gatherReposFromTeam();
   finalString += teamRepoInfo;

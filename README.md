@@ -15,6 +15,9 @@
   <a href="https://platform.getalchemystai.com" target="_blank">
     <img src="https://img.shields.io/badge/🔥%20Start%20Building-platform.getalchemystai.com-6366f1?style=for-the-badge&labelColor=1f2937" alt="Start Building" />
   </a>
+  <a href="https://dub.sh/context-community" target="_blank">
+  <img src="https://img.shields.io/badge/💬%20Join%20Our%20Discord-community.getalchemystai.com-5865F2?style=for-the-badge&labelColor=1f2937" alt="Join our Discord" />
+</a>
 </div>
 
 <br />
@@ -78,7 +81,34 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 
 > 💡 **Pro Tip**: Check out our [AI-native Documentation](https://zendocs.getalchemystai.com) for intelligent code examples!
 
-<br />## 📦 Templates
+<br />
+  <h2 align="center">🧠 Community AI Agents</h2>
+  <p align="center">These agents are part of the <a href="https://github.com/Alchemyst-ai/awesome-saas">awesome-saas</a> collection.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Agent</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+  <tr>
+<td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/b2b-newsletter-writer">
+<img src="https://img.shields.io/badge/b2b--newsletter--writer-1f2937?style=for-the-badge&logo=github" alt="b2b-newsletter-writer" />
+</a>
+</td>
+<td>AI agent built by the community</td>
+</tr><tr>
+<td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/discord-bot">
+<img src="https://img.shields.io/badge/discord--bot-1f2937?style=for-the-badge&logo=github" alt="discord-bot" />
+</a>
+</td>
+<td>AI agent built by the community</td>
+</tr>
+</tbody>
+</table>## 📦 Templates
 
 ### 💡 Official Templates
 
@@ -166,7 +196,7 @@ This is an ever expanding list - we'll keep on adding open source templates!
 ### 🚀 Community Templates
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Community%20Templates-19%20(Total%2092%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
+  <img src="https://img.shields.io/badge/Community%20Templates-19%20(Total%2098%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
 </div>
 
 <br />
@@ -233,8 +263,7 @@ This is an ever expanding list - we'll keep on adding open source templates!
     </td>
     <td>A three agent system for leveraging AI to summarise, compose, send emails. Also stay away from spam</td>
     <td>
-      <img src="https://img.shields.io/badge/email-blue?style=flat-square" alt="email" />
-      <img src="https://img.shields.io/badge/marketing-green?style=flat-square" alt="marketing" />
+      -
     </td>
   </tr>
   <tr>
