@@ -1,0 +1,21 @@
+{
+  "name": "website-analysis-agent",
+  "version": "1.0.0",
+  "description": "An AI-powered agent that analyzes websites for SEO, UX, and performance using the AlchemystAI SDK.",
+  "main": "dist/websiteAnalysisAgent.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/websiteAnalysisAgent.js"
+  },
+  "keywords": ["AI", "website", "SEO", "analysis", "agent"],
+  "author": "Dipanita Mondal",
+  "license": "MIT",
+  "dependencies": {
+    "@alchemystai/sdk": "^1.0.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/node": "^22.5.0"
+  }
+}
