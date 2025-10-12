@@ -100,78 +100,160 @@ class StreamlitResearchApp:
             
             return company_name, analyze_clicked
         
-    def reset_analysis_state(self):
+    # def reset_analysis_state(self):
+    #     """Reset state for new analysis"""
+    #     self.status_messages = []
+    #     self.current_report = ""
+
+    # def create_placeholders(self):
+    #     """Create UI placeholders"""
+    #     status_placeholder = st.empty()
+    #     report_placeholder = st.empty()
+    #     progress_bar = st.progress(0)
+    #     return status_placeholder, report_placeholder, progress_bar
+
+    
+    # def render_streaming_section(self, company_name):
+    #     """Render the streaming analysis section"""
+    #     self.reset_analysis_state()
+
+    #     status_placeholder, report_placeholder, progress_bar = self.create_placeholders()
+        
+
+    #     with st.spinner(f'Starting analysis for {company_name}...'):
+    #         final_report = initiate_company_research(
+    #             company_name, 
+    #             callback=self.update_callback
+    #         )
+            
+    #         start_time = time.time()
+    #         max_wait_time = 300  # 5 minutes timeout
+    #         while time.time() - start_time < max_wait_time:
+    #             elapsed_time = time.time() - start_time
+    #             progress = min(elapsed_time / 60, 0.9)  # Cap at 90% until complete
+    #             progress_bar.progress(progress)
+    #             if self.status_messages:
+    #                 status_html = ""
+    #                 for msg in self.status_messages:
+    #                     if "❌" in msg:
+    #                         status_html += f'<div class="error-update">{msg}</div>'
+    #                     else:
+    #                         status_html += f'<div class="streaming-update">{msg}</div>'
+                    
+    #                 status_placeholder.markdown(
+    #                     f'<div class="status-container">{status_html}</div>', 
+    #                     unsafe_allow_html=True
+    #                 )
+                
+    #             # Update report content
+    #             if self.current_report:
+    #                 report_placeholder.markdown(
+    #                     f'<div class="final-report">{self.current_report}</div>', 
+    #                     unsafe_allow_html=True
+    #                 )
+                
+    #             # If we have a final report from the function, break
+    #             if final_report and final_report != "":
+    #                 break
+    #             time.sleep(0.5)  # Update every 0.5 seconds
+    #         progress_bar.progress(1.0)
+    #         result_report = final_report if final_report else self.current_report
+            
+    #         if result_report:
+    #             status_placeholder.markdown(
+    #                 '<div class="streaming-update">✅ Analysis Complete</div>', 
+    #                 unsafe_allow_html=True
+    #             )
+    #             report_placeholder.markdown(
+    #                 f'<div class="final-report">{result_report}</div>', 
+    #                 unsafe_allow_html=True
+    #             )
+    #             return result_report
+    #         else:
+    #             st.error("❌ Analysis failed or timed out. Please try again.")
+    #             return ""
+
+    def render_streaming_section(self, company_name):
+        """Render the streaming analysis section"""
+        self._reset_analysis_state()
+        status_placeholder, report_placeholder, progress_bar = self._create_placeholders()
+        
+        final_report = self._run_analysis_with_updates(company_name, status_placeholder, report_placeholder, progress_bar)
+        return self._handle_final_result(final_report, status_placeholder, report_placeholder)
+
+    def _reset_analysis_state(self):
         """Reset state for new analysis"""
         self.status_messages = []
         self.current_report = ""
 
-    def create_placeholders(self):
+    def _create_placeholders(self):
         """Create UI placeholders"""
         status_placeholder = st.empty()
         report_placeholder = st.empty()
         progress_bar = st.progress(0)
         return status_placeholder, report_placeholder, progress_bar
 
-    
-    def render_streaming_section(self, company_name):
-        """Render the streaming analysis section"""
-        self.reset_analysis_state()
-
-        status_placeholder, report_placeholder, progress_bar = self.create_placeholders()
-        
-
+    def _run_analysis_with_updates(self, company_name, status_placeholder, report_placeholder, progress_bar):
+        """Run analysis with real-time UI updates"""
         with st.spinner(f'Starting analysis for {company_name}...'):
-            final_report = initiate_company_research(
-                company_name, 
-                callback=self.update_callback
-            )
+            final_report = initiate_company_research(company_name, callback=self.update_callback)
+            self._update_ui_while_processing(status_placeholder, report_placeholder, progress_bar, final_report)
+            return final_report
+
+    def _update_ui_while_processing(self, status_placeholder, report_placeholder, progress_bar, final_report):
+        """Update UI in real-time while processing"""
+        start_time = time.time()
+        max_wait_time = 300
+        
+        while time.time() - start_time < max_wait_time:
+            self._update_progress(progress_bar, start_time)
+            self._update_status_messages(status_placeholder)
+            self._update_report_content(report_placeholder)
             
-            start_time = time.time()
-            max_wait_time = 300  # 5 minutes timeout
-            while time.time() - start_time < max_wait_time:
-                elapsed_time = time.time() - start_time
-                progress = min(elapsed_time / 60, 0.9)  # Cap at 90% until complete
-                progress_bar.progress(progress)
-                if self.status_messages:
-                    status_html = ""
-                    for msg in self.status_messages:
-                        if "❌" in msg:
-                            status_html += f'<div class="error-update">{msg}</div>'
-                        else:
-                            status_html += f'<div class="streaming-update">{msg}</div>'
-                    
-                    status_placeholder.markdown(
-                        f'<div class="status-container">{status_html}</div>', 
-                        unsafe_allow_html=True
-                    )
-                
-                # Update report content
-                if self.current_report:
-                    report_placeholder.markdown(
-                        f'<div class="final-report">{self.current_report}</div>', 
-                        unsafe_allow_html=True
-                    )
-                
-                # If we have a final report from the function, break
-                if final_report and final_report != "":
-                    break
-                time.sleep(0.5)  # Update every 0.5 seconds
-            progress_bar.progress(1.0)
-            result_report = final_report if final_report else self.current_report
-            
-            if result_report:
-                status_placeholder.markdown(
-                    '<div class="streaming-update">✅ Analysis Complete</div>', 
-                    unsafe_allow_html=True
-                )
-                report_placeholder.markdown(
-                    f'<div class="final-report">{result_report}</div>', 
-                    unsafe_allow_html=True
-                )
-                return result_report
+            if final_report and final_report != "":
+                break
+            time.sleep(0.5)
+        
+        progress_bar.progress(1.0)
+
+    def _update_progress(self, progress_bar, start_time):
+        """Update progress bar"""
+        elapsed_time = time.time() - start_time
+        progress = min(elapsed_time / 60, 0.9)
+        progress_bar.progress(progress)
+
+    def _update_status_messages(self, status_placeholder):
+        """Update status messages in UI"""
+        if self.status_messages:
+            status_html = self._format_status_messages()
+            status_placeholder.markdown(f'<div class="status-container">{status_html}</div>', unsafe_allow_html=True)
+
+    def _update_report_content(self, report_placeholder):
+        """Update report content in UI"""
+        if self.current_report:
+            report_placeholder.markdown(f'<div class="final-report">{self.current_report}</div>', unsafe_allow_html=True)
+
+    def _format_status_messages(self):
+        """Format status messages with appropriate styling"""
+        status_html = ""
+        for msg in self.status_messages:
+            if "❌" in msg:
+                status_html += f'<div class="error-update">{msg}</div>'
             else:
-                st.error("❌ Analysis failed or timed out. Please try again.")
-                return ""
+                status_html += f'<div class="streaming-update">{msg}</div>'
+        return status_html
+
+    def _handle_final_result(self, final_report, status_placeholder, report_placeholder):
+        """Handle the final result display"""
+        result_report = final_report if final_report else self.current_report
+        
+        if result_report:
+            status_placeholder.markdown('<div class="streaming-update">✅ Analysis Complete</div>', unsafe_allow_html=True)
+            report_placeholder.markdown(f'<div class="final-report">{result_report}</div>', unsafe_allow_html=True)
+            return result_report
+        else:
+            st.error("❌ Analysis failed or timed out. Please try again.")
+            return ""
     
     def run(self):
         """Main application runner"""
