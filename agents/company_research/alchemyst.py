@@ -9,64 +9,26 @@ load_dotenv()
 ALCHEMYST_API_KEY = os.getenv("ALCHEMYST_API_KEY")
 
 def getPromptForCompanyResearch(companyName: str) -> str:
-    return f""" You are an expert business intelligence analyst and market research specialist. Your task is to conduct comprehensive research on a company and generate a detailed report.
-                **COMPANY TO RESEARCH:** {companyName}
-                **RESEARCH OBJECTIVE:**
-                Perform deep, multi-faceted analysis covering all critical business aspects including demographics, funding, web presence, and competitive landscape.
-                **REPORT STRUCTURE REQUIREMENTS:**
-                1. **EXECUTIVE SUMMARY**
-                - Company overview and core business
-                - Key findings and strategic insights
-                - Overall market position assessment
-                2. **COMPANY BACKGROUND & IDENTITY**
-                - Company history and founding story
-                - Mission, vision, and core values
-                - Leadership team and organizational structure
-                - Business model and revenue streams
-                3. **DEMOGRAPHIC ANALYSIS**
-                - Target customer segments and personas
-                - Geographic reach and market penetration
-                - User/customer demographics (age, income, education, etc.)
-                4. **FUNDING & FINANCIAL LANDSCAPE**
-                - Total funding raised and valuation history
-                - Funding rounds (Seed, Series A, B, C, etc.)
-                - Key investors and venture capital backing
-                - Revenue trends and financial performance
-                - Recent financial developments
-                5. **DIGITAL FOOTPRINT & WEB TRAFFIC**
-                - Website traffic metrics and growth trends
-                - User engagement and behavior patterns
-                - Traffic sources breakdown (direct, search, social, referral)
-                - Geographic traffic distribution
-                6. **COMPETITIVE ANALYSIS**
-                - Main competitors and market positioning
-                - Competitive advantages and differentiators
-                - Market share analysis
-                - SWOT analysis (Strengths, Weaknesses, Opportunities, Threats)
-                - Competitive threats and market gaps
-                7. **TECHNOLOGY & OPERATIONS**
-                - Technology stack and infrastructure
-                - Key partnerships and ecosystem
-                - Operational capabilities and scalability
-                8. **MARKET OPPORTUNITIES & RISKS**
-                - Growth opportunities and expansion potential
-                - Market trends and industry shifts
-                - Regulatory and competitive risks
-                - Future outlook and predictions
-                **RESEARCH METHODOLOGY:**
-                - Use multiple data sources for cross-verification
-                - Focus on recent and relevant data (last 1-3 years)
-                - Include both quantitative metrics and qualitative insights
-                - Highlight data-driven patterns and trends
-                **FORMATTING REQUIREMENTS:**
-                - Use clear headings and subheadings
-                - Include bullet points for key findings
-                - Use tables for comparative data where appropriate
-                - Bold important metrics and insights
-                - Include executive summary at the beginning
-                **DELIVERABLE:**
-                A comprehensive, well-structured research report that provides actionable intelligence for investors, strategists, and business decision-makers.
-                Begin your research on: {companyName} """
+    return f"""You are an expert business intelligence analyst. Research {companyName} and provide a comprehensive report.
+
+    **RESEARCH STRUCTURE:**
+    1. **EXECUTIVE SUMMARY** - Overview, key findings, market position
+    2. **COMPANY BACKGROUND** - History, mission, leadership, business model
+    3. **DEMOGRAPHIC ANALYSIS** - Target customers, geographic reach, user demographics
+    4. **FINANCIAL LANDSCAPE** - Funding, valuation, investors, revenue trends
+    5. **DIGITAL FOOTPRINT** - Web traffic, engagement, traffic sources, geographic distribution
+    6. **COMPETITIVE ANALYSIS** - Competitors, differentiators, market share, SWOT analysis
+    7. **TECHNOLOGY & OPERATIONS** - Tech stack, partnerships, operational capabilities
+    8. **MARKET OPPORTUNITIES & RISKS** - Growth potential, trends, regulatory risks, outlook
+
+    **METHODOLOGY:** Use multiple data sources, focus on recent data (1-3 years), include quantitative and qualitative insights.
+
+    **FORMATTING:** Use clear headings, bullet points, tables where appropriate, bold key metrics.
+
+    **DELIVERABLE:** Actionable intelligence for investors and decision-makers.
+
+    Begin research on: {companyName}"""
+
 
 def initiate_company_research(companyName: str, callback=None):
     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
