@@ -34,7 +34,7 @@ A powerful, real-time company research application built with Python, Streamlit,
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd company-research-agent
+   cd company_research
 
 2. **Install the dependencies**
    ```bash
