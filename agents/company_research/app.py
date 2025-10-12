@@ -106,23 +106,19 @@ class StreamlitResearchApp:
         self.status_messages = []
         self.current_report = ""
         
-        # Create placeholders
         status_placeholder = st.empty()
         report_placeholder = st.empty()
         progress_bar = st.progress(0)
         
         # Start analysis
         with st.spinner(f'Starting analysis for {company_name}...'):
-            # Start the streaming analysis
             final_report = initiate_company_research(
                 company_name, 
                 callback=self.update_callback
             )
             
-            # Update UI in real-time while processing
             start_time = time.time()
             max_wait_time = 300  # 5 minutes timeout
-            
             while time.time() - start_time < max_wait_time:
                 # Update progress (simulated - you might want to make this smarter)
                 elapsed_time = time.time() - start_time
