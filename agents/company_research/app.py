@@ -102,15 +102,12 @@ class StreamlitResearchApp:
     
     def render_streaming_section(self, company_name):
         """Render the streaming analysis section"""
-        # Reset state for new analysis
         self.status_messages = []
         self.current_report = ""
         
         status_placeholder = st.empty()
         report_placeholder = st.empty()
         progress_bar = st.progress(0)
-        
-        # Start analysis
         with st.spinner(f'Starting analysis for {company_name}...'):
             final_report = initiate_company_research(
                 company_name, 
@@ -120,12 +117,9 @@ class StreamlitResearchApp:
             start_time = time.time()
             max_wait_time = 300  # 5 minutes timeout
             while time.time() - start_time < max_wait_time:
-                # Update progress (simulated - you might want to make this smarter)
                 elapsed_time = time.time() - start_time
                 progress = min(elapsed_time / 60, 0.9)  # Cap at 90% until complete
                 progress_bar.progress(progress)
-                
-                # Update status messages
                 if self.status_messages:
                     status_html = ""
                     for msg in self.status_messages:
@@ -149,13 +143,8 @@ class StreamlitResearchApp:
                 # If we have a final report from the function, break
                 if final_report and final_report != "":
                     break
-                    
                 time.sleep(0.5)  # Update every 0.5 seconds
-            
-            # Final updates
             progress_bar.progress(1.0)
-            
-            # Use final report if available, otherwise use accumulated content
             result_report = final_report if final_report else self.current_report
             
             if result_report:
