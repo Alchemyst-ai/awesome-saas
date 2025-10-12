@@ -35,3 +35,15 @@ A powerful, real-time company research application built with Python, Streamlit,
    ```bash
    git clone <repository-url>
    cd company-research-agent
+
+2. **Install the dependencies**
+   ```bash
+   pip install -r requirements.txt
+
+1. **Setting the API Keys in .env**
+   ```bash
+   ALCHEMYST_API_KEY = "Your Alchemyst API key"
+
+3. **Run app.py**
+   ```bash
+   streamlit run app.py

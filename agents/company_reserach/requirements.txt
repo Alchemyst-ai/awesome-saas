@@ -1,0 +1,5 @@
+streamlit
+alchemystai 
+sseclient-py
+requests
+dotenv
