@@ -30,53 +30,141 @@ def getPromptForCompanyResearch(companyName: str) -> str:
     Begin research on: {companyName}"""
 
 
+# def initiate_company_research(companyName: str, callback=None):
+#     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
+#     headers = { 'Content-Type': 'application/json', 'Authorization': f'Bearer {ALCHEMYST_API_KEY}' }
+#     data = { 'chat_history': [ { 'content': getPromptForCompanyResearch(companyName= companyName), 'role': 'user' } ], 'persona': 'maya' }
+#     full_content = ""
+#     try:
+#         response = requests.post(url, headers=headers, json=data, stream=True, timeout=300)
+#         response.raise_for_status()
+#         if callback:
+#             callback("status", "Starting analysis...")
+#         for line in response.iter_lines():
+#             if line:
+#                 try:
+#                     line_text = line.decode('utf-8')
+#                     if line_text.startswith('data:'):
+#                         data_content = line_text[5:].strip()
+#                         if data_content == '[DONE]':
+#                             if callback:
+#                                 callback("status","Analysis complete!")
+#                             break
+#                         if data_content:
+#                             try:
+#                                 parsed = json.loads(data_content)
+#                                 content = parsed.get('content', '')
+                                
+#                                 if content:
+#                                     full_content = content
+#                                     if callback:
+#                                         callback("status", content)
+#                                     print(content, end='', flush=True)
+#                             except json.JSONDecodeError:
+#                                 # If it's not JSON, use it as plain text
+#                                 if data_content and data_content != '[DONE]':
+#                                     full_content += data_content + " "
+#                                     if callback:
+#                                         callback("status", data_content)
+#                                     print(data_content, end='', flush=True)
+#                 except Exception as e:
+#                     if callback:
+#                         callback("error", f"⚠️ Line processing error: {str(e)}")
+#                     continue
+#         return full_content
+#     except requests.exceptions.RequestException as e:
+#         if callback:
+#             callback("error", f"Request failed: {str(e)}")
+#         return ""
+#     except Exception as e:
+#         if callback:
+#             callback("error", f"Unexpected error: {str(e)}")
+#         return ""
+
+def process_stream_response(response, callback):
+    """Process the streaming response with lower complexity"""
+    full_content = ""
+    send_status(callback, "Starting analysis...")
+    
+    for line in response.iter_lines():
+        if not line:
+            continue
+            
+        content = process_line(line, callback)
+        if content == "[STREAM_END]":
+            send_status(callback, "Analysis complete!")
+            break
+        elif content:
+            full_content += content
+    
+    return full_content
+
+def process_line(line, callback):
+    """Process a single line from the stream"""
+    try:
+        line_text = line.decode('utf-8')
+        if not line_text.startswith('data:'):
+            return ""
+            
+        data_content = line_text[5:].strip()
+        
+        if data_content == '[DONE]':
+            return "[STREAM_END]"
+            
+        return parse_data_content(data_content, callback)
+        
+    except Exception as e:
+        send_error(callback, f"Line processing error: {str(e)}")
+        return ""
+
+def parse_data_content(data_content, callback):
+    """Parse the data content from SSE"""
+    try:
+        parsed = json.loads(data_content)
+        content = parsed.get('content', '')
+        if content:
+            send_content(callback, content)
+            return content
+    except json.JSONDecodeError:
+        if data_content and data_content != '[DONE]':
+            send_content(callback, data_content)
+            return data_content + " "
+    return ""
+
+def send_status(callback, message):
+    """Send status update via callback"""
+    if callback:
+        callback("status", message)
+
+def send_content(callback, content):
+    """Send content via callback and print"""
+    if callback:
+        callback("status", content)
+    print(content, end='', flush=True)
+
+def send_error(callback, error_msg):
+    """Send error via callback"""
+    if callback:
+        callback("error", error_msg)
+
+def handle_error(e, callback):
+    """Handle different types of errors"""
+    if isinstance(e, requests.exceptions.RequestException):
+        error_msg = f"Request failed: {str(e)}"
+    else:
+        error_msg = f"Unexpected error: {str(e)}"
+    
+    send_error(callback, error_msg)
+
 def initiate_company_research(companyName: str, callback=None):
     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
-    headers = { 'Content-Type': 'application/json', 'Authorization': f'Bearer {ALCHEMYST_API_KEY}' }
-    data = { 'chat_history': [ { 'content': getPromptForCompanyResearch(companyName= companyName), 'role': 'user' } ], 'persona': 'maya' }
-    full_content = ""
+    headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {ALCHEMYST_API_KEY}'}
+    data = {'chat_history': [{'content': getPromptForCompanyResearch(companyName=companyName), 'role': 'user'}], 'persona': 'maya'}
+    
     try:
         response = requests.post(url, headers=headers, json=data, stream=True, timeout=300)
         response.raise_for_status()
-        if callback:
-            callback("status", "Starting analysis...")
-        for line in response.iter_lines():
-            if line:
-                try:
-                    line_text = line.decode('utf-8')
-                    if line_text.startswith('data:'):
-                        data_content = line_text[5:].strip()
-                        if data_content == '[DONE]':
-                            if callback:
-                                callback("status","Analysis complete!")
-                            break
-                        if data_content:
-                            try:
-                                parsed = json.loads(data_content)
-                                content = parsed.get('content', '')
-                                
-                                if content:
-                                    full_content = content
-                                    if callback:
-                                        callback("status", content)
-                                    print(content, end='', flush=True)
-                            except json.JSONDecodeError:
-                                # If it's not JSON, use it as plain text
-                                if data_content and data_content != '[DONE]':
-                                    full_content += data_content + " "
-                                    if callback:
-                                        callback("status", data_content)
-                                    print(data_content, end='', flush=True)
-                except Exception as e:
-                    if callback:
-                        callback("error", f"⚠️ Line processing error: {str(e)}")
-                    continue
-        return full_content
-    except requests.exceptions.RequestException as e:
-        if callback:
-            callback("error", f"Request failed: {str(e)}")
-        return ""
+        return process_stream_response(response, callback)
     except Exception as e:
-        if callback:
-            callback("error", f"Unexpected error: {str(e)}")
+        handle_error(e, callback)
         return ""
