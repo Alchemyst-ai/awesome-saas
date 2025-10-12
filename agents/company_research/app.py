@@ -99,15 +99,27 @@ class StreamlitResearchApp:
             )
             
             return company_name, analyze_clicked
-    
-    def render_streaming_section(self, company_name):
-        """Render the streaming analysis section"""
+        
+    def reset_analysis_state(self):
+        """Reset state for new analysis"""
         self.status_messages = []
         self.current_report = ""
-        
+
+    def create_placeholders(self):
+        """Create UI placeholders"""
         status_placeholder = st.empty()
         report_placeholder = st.empty()
         progress_bar = st.progress(0)
+        return status_placeholder, report_placeholder, progress_bar
+
+    
+    def render_streaming_section(self, company_name):
+        """Render the streaming analysis section"""
+        self.reset_analysis_state()
+
+        status_placeholder, report_placeholder, progress_bar = self.create_placeholders()
+        
+
         with st.spinner(f'Starting analysis for {company_name}...'):
             final_report = initiate_company_research(
                 company_name, 
