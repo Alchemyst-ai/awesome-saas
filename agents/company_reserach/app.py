@@ -198,11 +198,10 @@ class StreamlitResearchApp:
                     mime="text/plain",
                     use_container_width=True
                 )
-                
+
             else:
                 st.error("❌ Analysis failed. Please try again.")
         
-        # Show previous report if exists
         elif 'final_report' in st.session_state:
             st.markdown("---")
             st.info(f"Showing previous analysis for {st.session_state.company_name}")

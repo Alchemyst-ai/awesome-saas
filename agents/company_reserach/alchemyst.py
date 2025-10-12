@@ -111,7 +111,7 @@ def initiate_company_research(companyName: str, callback=None):
         response.raise_for_status()
 
         if callback:
-            callback("status", "🔄 Starting analysis...")
+            callback("status", "Starting analysis...")
 
         # Manual SSE parsing - more reliable than sseclient
         for line in response.iter_lines():
@@ -121,11 +121,11 @@ def initiate_company_research(companyName: str, callback=None):
                     
                     # Check if it's SSE data line
                     if line_text.startswith('data:'):
-                        data_content = line_text[5:].strip()  # Remove 'data: ' prefix
+                        data_content = line_text[5:].strip()
                         
                         if data_content == '[DONE]':
                             if callback:
-                                callback("status","✅ Analysis complete!")
+                                callback("status","Analysis complete!")
                             break
                         
                         if data_content:
