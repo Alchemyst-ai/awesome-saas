@@ -4,7 +4,6 @@ A powerful, real-time company research application built with Python, Streamlit,
 
 ## 🚀 Features
 
-- **Real-time Analysis**: Live streaming of research results as they're generated
 - **Comprehensive Reports**: Detailed company analysis covering:
   - Executive summary and business overview
   - Financial landscape and funding history
@@ -14,15 +13,13 @@ A powerful, real-time company research application built with Python, Streamlit,
   - Market opportunities and risk assessment
 - **Downloadable Reports**: Export research findings as text files
 - **User-friendly Interface**: Clean, modern Streamlit web interface
-- **Fast Setup**: Simple one-command deployment
 
 ## 🛠️ Tech Stack
 
 - **Python** - Backend logic and API integration
+- **AlchemystAI Chat API** - AI-powered research engine
 - **Streamlit** - Web application framework
-- **AlchemystAI Chat Streaming API** - AI-powered research engine
 - **Requests** - HTTP client for API communication
-- **python-dotenv** - Environment variable management
 
 ## 📋 Prerequisites
 
