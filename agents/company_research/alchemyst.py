@@ -32,14 +32,8 @@ def getPromptForCompanyResearch(companyName: str) -> str:
 
 def initiate_company_research(companyName: str, callback=None):
     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {ALCHEMYST_API_KEY}'
-    }
-    data = {
-        'chat_history': [ { 'content': getPromptForCompanyResearch(companyName= companyName), 'role': 'user' } ],
-        'persona': 'maya'
-    }
+    headers = { 'Content-Type': 'application/json', 'Authorization': f'Bearer {ALCHEMYST_API_KEY}' }
+    data = { 'chat_history': [ { 'content': getPromptForCompanyResearch(companyName= companyName), 'role': 'user' } ], 'persona': 'maya' }
     full_content = ""
     try:
         response = requests.post(url, headers=headers, json=data, stream=True, timeout=300)
@@ -79,14 +73,10 @@ def initiate_company_research(companyName: str, callback=None):
                     continue
         return full_content
     except requests.exceptions.RequestException as e:
-        error_msg = f"Request failed: {str(e)}"
         if callback:
-            callback("error", error_msg)
-        print(error_msg)
+            callback("error", f"Request failed: {str(e)}")
         return ""
     except Exception as e:
-        error_msg = f"Unexpected error: {str(e)}"
         if callback:
-            callback("error", error_msg)
-        print(error_msg)
+            callback("error", f"Unexpected error: {str(e)}")
         return ""
