@@ -46,42 +46,42 @@ const response = {
             "groundedness": {
                 "score": 4,
                 "confidence": 0.9,
-                "reasoning": "While explaining quantum computing in simple terms ideally should not require external knowledge, the field itself is complex. The response's groundedness depends on how well it simplifies established quantum concepts without introducing inaccuracies. A high score assumes a simplified, but correct, explanation based on known principles."
+                
             },
             "conciseness": {
                 "score": 3,
                 "confidence": 0.8,
-                "reasoning": "Conciseness depends on the level of detail used in the explanation. Explaining quantum computing requires a certain amount of detail to be accurate, so conciseness must be balanced with clarity. A satisfactory response would be detailed enough to be informative but avoid unnecessary jargon or complex equations."
+                
             },
             "fluency": {
                 "score": 4,
                 "confidence": 0.9,
-                "reasoning": "Fluency will be judged on how well the concepts are presented logically and intelligibly. A high score indicates the response uses clear language, avoids overly technical terms without explanation, and organizes information in a way that's easy to follow."
+                
             },
             "referenceAlignment": {
                 "score": 5,
                 "confidence": 1,
-                "reasoning": "The prompt is self-contained so the reference alignment is perfect. No reference context is available."
+                
             },
             "tonality": {
                 "score": 5,
                 "confidence": 1,
-                "reasoning": "The tonality should be informative and accessible, avoiding condescension or excessive technical jargon. A perfect score would entail a clear, neutral, and engaging tone suited for a general audience without a scientific background."
+                
             },
             "relevance": {
                 "score": 5,
                 "confidence": 1,
-                "reasoning": "The response will be highly relevant if it explains quantum computing, and it will be irrelevant if it deviates from this topic."
+                
             },
             "intentMatch": {
                 "score": 5,
                 "confidence": 1,
-                "reasoning": "The intent is a straightforward request for an explanation. The intent match will be perfect if the response provides an explanation."
+                
             },
             "toxicity": {
                 "isToxic": false,
                 "confidence": 1,
-                "reasoning": "The prompt is not toxic."
+                
             },
             "improvementSuggestions": [
                 {
@@ -109,12 +109,15 @@ const response = {
 const evalobject = response.evaluation.evaluation
 
 export const data: DonutChartData[] = Object.keys(evalobject)
-  .filter((key) => key !== "toxicity" && key !== "overAllAssessment")
+  .filter((key) => key !== "toxicity" && key !== "overAllAssessment" && key!== "improvementSuggestions" && key !== "improvedPrompt")
   .map((key) => {
     const metric = evalobject[key as keyof Evaluation] as Metric;
-    return { name: key, value: metric.score };
+    return { name: key.toLocaleUpperCase(), value: metric.score };
   });
 
-const totalScore = evalobject.overAllAssessment.totalScore;
-
-console.log(data);
+export const totalScore = evalobject.overAllAssessment.totalScore;
+export const summary = evalobject.overAllAssessment.summary;
+export const improvedPrompt = evalobject.improvedPrompt;    
+export const improvedSuggestions = evalobject.improvementSuggestions.map((item, index) => 
+    `${index + 1}. ${item.issue}\n   Suggestion: ${item.suggestion}`
+).join('\n\n');

@@ -13,40 +13,40 @@ type DonutChartProps = {
 
 const MARGIN_X = 150;
 const MARGIN_Y = 50;
-const INFLEXION_PADDING = 20; // space between donut and label inflexion point
+const INFLEXION_PADDING = 20;
 
 const colors = [
-  "#e0ac2b",
-  "#e85252",
-  "#6689c6",
-  "#9a6fb0",
-  "#a53253",
-  "#69b3a2",
+  "#F87171", // red
+  "#FBBF24", // amber
+  "#60A5FA", // blue
+  "#A78BFA", // purple
+  "#34D399", // green
+  "#F472B6", // pink
 ];
 
 export const DonutChart = ({ width, height, data }: DonutChartProps) => {
   const radius = Math.min(width - 2 * MARGIN_X, height - 2 * MARGIN_Y) / 2;
-  const innerRadius = radius / 2;
+  const innerRadius = radius / 1.8;
 
   const pie = useMemo(() => {
-    const pieGenerator = d3.pie<any, DataItem>().value((d) => d.value);
+    const pieGenerator = d3.pie<DataItem>().value((d) => d.value);
     return pieGenerator(data);
   }, [data]);
 
   const arcGenerator = d3.arc();
 
   const shapes = pie.map((grp, i) => {
-    // First arc is for the donut
     const sliceInfo = {
       innerRadius,
       outerRadius: radius,
       startAngle: grp.startAngle,
       endAngle: grp.endAngle,
+      padAngle: 0.02,
     };
+
     const centroid = arcGenerator.centroid(sliceInfo);
     const slicePath = arcGenerator(sliceInfo);
 
-    // Second arc is for the legend inflexion point
     const inflexionInfo = {
       innerRadius: radius + INFLEXION_PADDING,
       outerRadius: radius + INFLEXION_PADDING,
@@ -56,36 +56,47 @@ export const DonutChart = ({ width, height, data }: DonutChartProps) => {
     const inflexionPoint = arcGenerator.centroid(inflexionInfo);
 
     const isRightLabel = inflexionPoint[0] > 0;
-    const labelPosX = inflexionPoint[0] + 50 * (isRightLabel ? 1 : -1);
+    const labelPosX = inflexionPoint[0] + 70 * (isRightLabel ? 1 : -1);
     const textAnchor = isRightLabel ? "start" : "end";
-    const label = grp.data.name + " (" + grp.value + ")";
+    const label = `${grp.data.name} (${grp.value})`;
 
     return (
-      <g key={i}>
-        <path d={`${slicePath}`} fill={colors[i] as string} />
-        <circle cx={centroid[0]} cy={centroid[1]} r={2} />
+      <g key={i} className="transition-all duration-300 hover:scale-[1.02]">
+        <path
+          d={`${slicePath}`}
+          fill={colors[i % colors.length]}
+          stroke="white"
+          strokeWidth={2}
+          style={{
+            filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+            transition: "all 0.3s ease",
+          }}
+        />
         <line
           x1={centroid[0]}
           y1={centroid[1]}
           x2={inflexionPoint[0]}
           y2={inflexionPoint[1]}
-          stroke={"black"}
-          fill={"black"}
+          stroke="black"
+          strokeWidth={1}
         />
         <line
           x1={inflexionPoint[0]}
           y1={inflexionPoint[1]}
           x2={labelPosX}
           y2={inflexionPoint[1]}
-          stroke={"black"}
-          fill={"black"}
+          stroke="black"
+          strokeWidth={1}
         />
         <text
-          x={labelPosX + (isRightLabel ? 2 : -2)}
+          x={labelPosX + (isRightLabel ? 4 : -4)}
           y={inflexionPoint[1]}
           textAnchor={textAnchor}
           dominantBaseline="middle"
           fontSize={14}
+          fontWeight={500}
+          fill="#374151"
+          style={{ fontFamily: "Inter, sans-serif" }}
         >
           {label}
         </text>
@@ -94,8 +105,27 @@ export const DonutChart = ({ width, height, data }: DonutChartProps) => {
   });
 
   return (
-    <svg width={width} height={height} style={{ display: "inline-block" }}>
-      <g transform={`translate(${width / 2}, ${height / 2})`}>{shapes}</g>
-    </svg>
+    <div className="flex justify-center items-center">
+      <svg
+        width={width}
+        height={height}
+        className="bg-white rounded-2xl  p-4 "
+      >
+        <g transform={`translate(${width / 2}, ${height / 2})`}>
+          {shapes}
+          <text
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontSize={28}
+            fontWeight={700}
+            fill="#111827"
+            className="font-bold"
+          >
+            {/* {totalScore} */}
+          </text>
+          
+        </g>
+      </svg>
+    </div>
   );
 };
