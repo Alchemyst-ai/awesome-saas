@@ -3,6 +3,7 @@ from alchemyst import initiate_company_research
 import time
 import os
 from io import StringIO
+import docx
 
 # Page configuration
 st.set_page_config(
@@ -149,7 +150,6 @@ class StreamlitResearchApp:
             # For Word documents
             elif uploaded_file.type in ["application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
                 try:
-                    import docx
                     doc = docx.Document(uploaded_file)
                     text = ""
                     for paragraph in doc.paragraphs:

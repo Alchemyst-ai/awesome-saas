@@ -3,3 +3,5 @@ alchemystai
 sseclient-py
 requests
 dotenv
+docx
+PyPDF2
