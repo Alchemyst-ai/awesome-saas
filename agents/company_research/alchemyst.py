@@ -132,18 +132,18 @@ def add_content(fileName: str ,fileType: str, content: str):
         #     "filetype": fileType
         # }
     }]
-
+    print("Daataa:", fileName, fileType, content)
     response = client.v1.context.add(
         documents = docs_array,
         source = fileName,
-        context_type = fileType,
+        context_type = "resource",
         scope="internal", 
         metadata={
             "fileName": fileName,
             "fileType": "resource",
-            "lastModified": int(time.time() * 1000),
+            "lastModified": str(time.time() * 1000),
             "fileSize": len(content),
         }
     )
 
-    print("@@@ Response data:", response.json())
+    print("@@@ Response data:", response)
