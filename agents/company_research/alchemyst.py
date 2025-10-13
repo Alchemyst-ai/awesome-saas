@@ -1,12 +1,17 @@
 import requests
 import json
 import sseclient  
+from alchemyst_ai import AlchemystAI
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
 ALCHEMYST_API_KEY = os.getenv("ALCHEMYST_API_KEY")
+
+client = AlchemystAI(
+    api_key = ALCHEMYST_API_KEY
+)
 
 def getPromptForCompanyResearch(companyName: str) -> str:
     return f"""You are an expert business intelligence analyst. Research {companyName} and provide a comprehensive report.
@@ -116,3 +121,26 @@ def initiate_company_research(companyName: str, callback=None):
     except Exception as e:
         handle_error(e, callback)
         return ""
+
+def add_content():
+
+    docs_array = [{
+        "content": "files content",
+        "metadata": {   # optional
+            "filename": "name of the file",
+            "filetype": "pdf/txt/json"
+        }
+    }]
+
+    response = client.v1.context.add(
+    documents=docs_array,
+    source="source of context data",
+    context_type="resource",
+    scope="internal", 
+    metadata={
+        "fileName": "file_name",
+        "fileType": "type",
+        "lastModified": "timestamp",
+        "fileSize": 1234,
+    }
+)

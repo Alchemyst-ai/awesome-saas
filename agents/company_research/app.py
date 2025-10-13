@@ -1,13 +1,15 @@
 import streamlit as st
 from alchemyst import initiate_company_research
 import time
+import os
+from io import StringIO
 
 # Page configuration
 st.set_page_config(
     page_title="Company Research AI",
     page_icon="🏢",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"  # Changed to expanded to show sidebar by default
 )
 
 # Custom CSS for streaming updates
@@ -46,6 +48,16 @@ st.markdown("""
         overflow-y: auto;
         margin-bottom: 1rem;
     }
+    .sidebar-content {
+        padding: 1rem;
+    }
+    .uploaded-file {
+        background: #1F2937;
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+        border-radius: 8px;
+        border-left: 4px solid #10B981;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -53,17 +65,126 @@ class StreamlitResearchApp:
     def __init__(self):
         self.status_messages = []
         self.current_report = ""
+        
+        # Initialize session state for uploaded files
+        if 'uploaded_files' not in st.session_state:
+            st.session_state.uploaded_files = []
+    
+    def render_sidebar(self):
+        """Render the sidebar for file uploads"""
+        with st.sidebar:
+            st.markdown("## 📁 File Upload")
+            st.markdown("Upload documents to enhance your research")
+            
+            # File uploader
+            uploaded_files = st.file_uploader(
+                "Choose files",
+                type=['txt', 'pdf', 'doc', 'docx'],
+                accept_multiple_files=True,
+                help="Upload TXT, PDF, or DOC files with additional company information"
+            )
+            
+            # Process newly uploaded files
+            if uploaded_files:
+                for uploaded_file in uploaded_files:
+                    if uploaded_file.name not in [f['name'] for f in st.session_state.uploaded_files]:
+                        file_content = self._process_uploaded_file(uploaded_file)
+                        if file_content:
+                            st.session_state.uploaded_files.append({
+                                'name': uploaded_file.name,
+                                'type': uploaded_file.type,
+                                'size': uploaded_file.size,
+                                'content': file_content
+                            })
+            
+            # Display uploaded files
+            if st.session_state.uploaded_files:
+                st.markdown("### Uploaded Files")
+                for file_info in st.session_state.uploaded_files:
+                    st.markdown(f"""
+                    <div class="uploaded-file">
+                        <strong>📄 {file_info['name']}</strong><br>
+                        <small>Type: {file_info['type']} | Size: {file_info['size']} bytes</small>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                # Clear files button
+                if st.button("🗑️ Clear All Files", use_container_width=True):
+                    st.session_state.uploaded_files = []
+                    st.rerun()
+            
+            # Add some helpful information
+            st.markdown("---")
+            st.markdown("### 💡 Tips")
+            st.markdown("""
+            - Upload financial reports
+            - Add company presentations
+            - Include market research
+            - Supported: TXT, PDF, DOC, DOCX
+            """)
+    
+    def _process_uploaded_file(self, uploaded_file):
+        """Process uploaded file and extract text content"""
+        try:
+            # For text files
+            if uploaded_file.type == "text/plain":
+                stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+                print("content Txt:", stringio.read())
+                return stringio.read()
+            
+            # For PDF files
+            elif uploaded_file.type == "application/pdf":
+                try:
+                    import PyPDF2
+                    pdf_reader = PyPDF2.PdfReader(uploaded_file)
+                    text = ""
+                    for page in pdf_reader.pages:
+                        text += page.extract_text()
+                    print("content pdf:", text)
+                    return text
+                except ImportError:
+                    st.error("PDF processing requires PyPDF2. Install with: pip install PyPDF2")
+                    return None
+            
+            # For Word documents
+            elif uploaded_file.type in ["application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
+                try:
+                    import docx
+                    doc = docx.Document(uploaded_file)
+                    text = ""
+                    for paragraph in doc.paragraphs:
+                        text += paragraph.text + "\n"
+                    print("content doc:", text)
+                    return text
+                except ImportError:
+                    st.error("DOCX processing requires python-docx. Install with: pip install python-docx")
+                    return None
+            else:
+                st.warning(f"Unsupported file type: {uploaded_file.type}")
+                return None
+                
+        except Exception as e:
+            st.error(f"Error processing file {uploaded_file.name}: {str(e)}")
+            return None
+        
+        # Add uploaded file content if available
+        if st.session_state.uploaded_files:
+            base_prompt += "\n\n**ADDITIONAL CONTEXT FROM UPLOADED FILES:**\n"
+            for file_info in st.session_state.uploaded_files:
+                base_prompt += f"\n--- Content from {file_info['name']} ---\n"
+                # Limit content to avoid token limits
+                content_preview = file_info['content'][:2000] + "..." if len(file_info['content']) > 2000 else file_info['content']
+                base_prompt += content_preview + "\n"
+        
+        base_prompt += f"\n\nBegin research on: {company_name}"
+        return base_prompt
     
     def update_callback(self, message_type, content):
         """Callback function to handle real-time updates from the streaming client"""
         if message_type == "status":
-            # Add status messages
             self.status_messages.append(f"🔄 {content}")
-            
-            # If it's actual content (not a system message), add to report
             if not any(keyword in content.lower() for keyword in ['starting', 'complete', 'analysis']):
                 self.current_report += content + " "
-                
         elif message_type == "error":
             self.status_messages.append(f"❌ {content}")
     
@@ -92,10 +213,15 @@ class StreamlitResearchApp:
                 label_visibility="collapsed"
             )
             
+            # Show uploaded files info
+            if st.session_state.uploaded_files:
+                st.info(f"📎 {len(st.session_state.uploaded_files)} file(s) uploaded for enhanced research")
+            
             analyze_clicked = st.button(
                 "🚀 Start Analysis",
                 use_container_width=True,
-                type="primary"
+                type="primary",
+                help="Start analysis with uploaded files as context" if st.session_state.uploaded_files else "Start company research"
             )
             
             return company_name, analyze_clicked
@@ -123,6 +249,10 @@ class StreamlitResearchApp:
     def _run_analysis_with_updates(self, company_name, status_placeholder, report_placeholder, progress_bar):
         """Run analysis with real-time UI updates"""
         with st.spinner(f'Starting analysis for {company_name}...'):
+            # Use enhanced prompt if files are uploaded
+            if st.session_state.uploaded_files:
+                st.info(f"Using {len(st.session_state.uploaded_files)} uploaded file(s) to enhance research")
+            
             final_report = initiate_company_research(company_name, callback=self.update_callback)
             self._update_ui_while_processing(status_placeholder, report_placeholder, progress_bar, final_report)
             return final_report
@@ -184,6 +314,10 @@ class StreamlitResearchApp:
     
     def run(self):
         """Main application runner"""
+        # Render sidebar
+        self.render_sidebar()
+        
+        # Render main content
         self.render_header()
         
         company_name, analyze_clicked = self.render_search_section()
@@ -218,7 +352,7 @@ class StreamlitResearchApp:
         
         # Footer
         st.markdown("---")
-        st.caption("Powered by Alchemyst AI • Real-time streaming analysis")
+        st.caption("Powered by Alchemyst AI • Real-time streaming analysis • File upload support")
 
 # Run the application
 if __name__ == "__main__":
