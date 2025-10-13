@@ -3,6 +3,7 @@ import json
 import sseclient  
 from alchemyst_ai import AlchemystAI
 import os
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -122,25 +123,27 @@ def initiate_company_research(companyName: str, callback=None):
         handle_error(e, callback)
         return ""
 
-def add_content():
+def add_content(fileName: str ,fileType: str, content: str):
 
     docs_array = [{
-        "content": "files content",
-        "metadata": {   # optional
-            "filename": "name of the file",
-            "filetype": "pdf/txt/json"
-        }
+        "content": content,
+        # "metadata": {  
+        #     "filename": fileName,
+        #     "filetype": fileType
+        # }
     }]
 
     response = client.v1.context.add(
-    documents=docs_array,
-    source="source of context data",
-    context_type="resource",
-    scope="internal", 
-    metadata={
-        "fileName": "file_name",
-        "fileType": "type",
-        "lastModified": "timestamp",
-        "fileSize": 1234,
-    }
-)
+        documents = docs_array,
+        source = fileName,
+        context_type = fileType,
+        scope="internal", 
+        metadata={
+            "fileName": fileName,
+            "fileType": "resource",
+            "lastModified": int(time.time() * 1000),
+            "fileSize": len(content),
+        }
+    )
+
+    print("@@@ Response data:", response.json())

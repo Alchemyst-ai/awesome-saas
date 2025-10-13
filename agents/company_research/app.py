@@ -1,9 +1,9 @@
 import streamlit as st
-from alchemyst import initiate_company_research
+from alchemyst import initiate_company_research, add_content
 import time
 import os
 from io import StringIO
-import docx
+# import docx
 
 # Page configuration
 st.set_page_config(
@@ -97,22 +97,9 @@ class StreamlitResearchApp:
                                 'size': uploaded_file.size,
                                 'content': file_content
                             })
+                        print("Hello   22222:", len(file_content))
+                        add_content(fileName= uploaded_file.name, fileType= uploaded_file.type, content = file_content)
             
-            # Display uploaded files
-            if st.session_state.uploaded_files:
-                st.markdown("### Uploaded Files")
-                for file_info in st.session_state.uploaded_files:
-                    st.markdown(f"""
-                    <div class="uploaded-file">
-                        <strong>📄 {file_info['name']}</strong><br>
-                        <small>Type: {file_info['type']} | Size: {file_info['size']} bytes</small>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                # Clear files button
-                if st.button("🗑️ Clear All Files", use_container_width=True):
-                    st.session_state.uploaded_files = []
-                    st.rerun()
             
             # Add some helpful information
             st.markdown("---")
@@ -130,7 +117,6 @@ class StreamlitResearchApp:
             # For text files
             if uploaded_file.type == "text/plain":
                 stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
-                print("content Txt:", stringio.read())
                 return stringio.read()
             
             # For PDF files
@@ -141,23 +127,9 @@ class StreamlitResearchApp:
                     text = ""
                     for page in pdf_reader.pages:
                         text += page.extract_text()
-                    print("content pdf:", text)
                     return text
                 except ImportError:
                     st.error("PDF processing requires PyPDF2. Install with: pip install PyPDF2")
-                    return None
-            
-            # For Word documents
-            elif uploaded_file.type in ["application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
-                try:
-                    doc = docx.Document(uploaded_file)
-                    text = ""
-                    for paragraph in doc.paragraphs:
-                        text += paragraph.text + "\n"
-                    print("content doc:", text)
-                    return text
-                except ImportError:
-                    st.error("DOCX processing requires python-docx. Install with: pip install python-docx")
                     return None
             else:
                 st.warning(f"Unsupported file type: {uploaded_file.type}")
@@ -212,10 +184,6 @@ class StreamlitResearchApp:
                 placeholder="e.g., Tesla, Apple, Microsoft, Google...",
                 label_visibility="collapsed"
             )
-            
-            # Show uploaded files info
-            if st.session_state.uploaded_files:
-                st.info(f"📎 {len(st.session_state.uploaded_files)} file(s) uploaded for enhanced research")
             
             analyze_clicked = st.button(
                 "🚀 Start Analysis",
