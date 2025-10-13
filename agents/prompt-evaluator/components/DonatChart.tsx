@@ -1,5 +1,9 @@
+"use client";
+
 import { useMemo } from "react";
 import * as d3 from "d3";
+import { useDonutChartData } from "./data";
+
 
 type DataItem = {
   name: string;
@@ -25,6 +29,9 @@ const colors = [
 ];
 
 export const DonutChart = ({ width, height, data }: DonutChartProps) => {
+  const {totalScore} = useDonutChartData();
+
+  
   const radius = Math.min(width - 2 * MARGIN_X, height - 2 * MARGIN_Y) / 2;
   const innerRadius = radius / 1.8;
 
@@ -121,7 +128,7 @@ export const DonutChart = ({ width, height, data }: DonutChartProps) => {
             fill="#111827"
             className="font-bold"
           >
-            {/* {totalScore} */}
+            {totalScore}
           </text>
           
         </g>

@@ -1,7 +1,11 @@
-import { totalScore } from "./data";
+"use client";
+
+
+import { useDonutChartData } from "./data";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 export default function TotalScore() {
+  const {totalScore} = useDonutChartData();
   const percentage = ((totalScore / 5) * 100).toFixed(0);
 
   return (
