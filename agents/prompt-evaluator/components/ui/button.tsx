@@ -36,16 +36,17 @@ const buttonVariants = cva(
   }
 )
 
+interface ButtonProps extends Omit<React.ComponentProps<"button">, "ref">, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
 function Button({
   className,
   variant,
   size,
   asChild = false,
   ...props
-}: Omit<React.ComponentProps<"button">, "ref"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+}: ButtonProps) {
   const Comp = asChild ? Slot : "button"
 
   return (
