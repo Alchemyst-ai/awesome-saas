@@ -1,41 +1,55 @@
-
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 
+function getChartData(evalObject: Record<string, any>) {
+  const excludedKeys = [
+    "toxicity",
+    "overAllAssessment",
+    "improvementSuggestions",
+    "improvedPrompt",
+  ];
+
+  return Object.keys(evalObject)
+    .filter((key) => !excludedKeys.includes(key))
+    .map((key) => ({
+      name: key.toUpperCase(),
+      value: evalObject[key].score,
+    }));
+}
+
+
+function formatImprovementSuggestions(suggestions: any[] = []) {
+  return suggestions
+    .map((item, index) => {
+      const typedItem = item as { issue: string; suggestion: string };
+      return `${index + 1}. ${typedItem.issue}\n   Suggestion: ${typedItem.suggestion}`;
+    })
+    .join("\n\n");
+}
+
 export function useDonutChartData() {
   const queryClient = useQueryClient();
   const cachedData = queryClient.getQueryData(["prompt-evaluator"]) as any;
 
+  const { chartData, totalScore, summary, improvedPrompt, improvedSuggestions } = useMemo(() => {
+    if (!cachedData) {
+      return { chartData: [], totalScore: 0, summary: "", improvedPrompt: "", improvedSuggestions: "" };
+    }
 
-  // Safely parse and map the data
-  const chartData = useMemo(() => {
-    if (!cachedData) return [];
     const evalObject = cachedData.evaluation.evaluation;
+    const chartData = getChartData(evalObject);
+    const totalScore = evalObject.overAllAssessment?.totalScore ?? 0;
+    const summary = evalObject.overAllAssessment?.summary ?? "";
+    const improvedPrompt = evalObject.improvedPrompt ?? "";
+    const improvedSuggestions = formatImprovementSuggestions(
+      evalObject.improvementSuggestions ?? []
+    );
 
-    return Object.keys(evalObject)
-      .filter(
-        (key) =>
-          key !== "toxicity" &&
-          key !== "overAllAssessment" &&
-          key !== "improvementSuggestions" &&
-          key !== "improvedPrompt"
-      )
-      .map((key) => ({
-        name: key.toUpperCase(),
-        value: evalObject[key].score,
-      }));
+    return { chartData, totalScore, summary, improvedPrompt, improvedSuggestions };
   }, [cachedData]);
-
-  const totalScore = cachedData?.evaluation.evaluation.overAllAssessment?.totalScore ?? 0;
-  const summary = cachedData?.evaluation.evaluation.overAllAssessment?.summary ?? "";
-  const improvedPrompt = cachedData?.evaluation.evaluation.improvedPrompt ?? "";
-  const improvedSuggestions =
-    cachedData?.evaluation.evaluation.improvementSuggestions
-      ?.map((item: any, index: number) => `${index + 1}. ${item.issue}\n   Suggestion: ${item.suggestion}`)
-      .join("\n\n") ?? "";
 
   return { chartData, totalScore, summary, improvedPrompt, improvedSuggestions };
 }

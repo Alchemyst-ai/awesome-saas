@@ -15,8 +15,13 @@ export default function EvaluatePrompt() {
     enabled: false,
   });
 
-  const handleButton = () => {
-    refetch();
+  const handleButton = async() => {
+    try{
+      await refetch();
+    }
+    catch(error){
+      console.error(error);
+    }
   };
 
   return (
@@ -32,7 +37,7 @@ export default function EvaluatePrompt() {
         <div className="flex flex-col md:flex-row items-center gap-2 w-full">
           <Input
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => {setValue(e.target.value)}}
             placeholder="Type your prompt here..."
             className="w-full h-[45px] rounded-xl border font-semibold border-slate-300 text-[15px] placeholder:text-slate-400 focus:ring-2 transition-all"
           />

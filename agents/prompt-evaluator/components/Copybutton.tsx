@@ -9,7 +9,7 @@ export default function CopyButton({textToCopy}: {textToCopy: string}) {
     const handleCopy = async () => {
         await navigator.clipboard.writeText(textToCopy);
         setCopied(true);
-        setTimeout(() => setCopied(false), 1000);
+        setTimeout(() => {setCopied(false), 1000});
     }
     return (
         <div>

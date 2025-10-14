@@ -51,11 +51,23 @@ export interface PromptImprovement{
     suggestion: string;
     expectedImpact: string
     priority: "low" | "medium" | "high";
-};
+}
 
 export interface EvaluationResults{
     promptId: string;
     originalPrompt: string;
     evaluation: EvaluationCriteria;
     
+}
+
+
+//donut chart interfaces
+export interface DataItem {
+  name: string;
+  value: number;
+}
+export interface DonutChartProps {
+  width: number;
+  height: number;
+  data: DataItem[];
 }
