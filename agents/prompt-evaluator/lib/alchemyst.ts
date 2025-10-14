@@ -10,8 +10,8 @@ export async function searchContext(query:string){
         metadata: null,
     })
     if(contexts && contexts.length > 0){
-        console.log("Found relevant contexts");
-        const formattedContexts = contexts.map((c, index) => {
+        // console.log("Found relevant contexts");
+        const formattedContexts = contexts.map((c) => {
             const content = c.content || JSON.stringify(c);
             return content;
         }).join('\n\n');

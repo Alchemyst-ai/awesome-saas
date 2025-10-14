@@ -4,14 +4,11 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-interface DonutChartData {
-  name: string;
-  value: number;
-}
 
 export function useDonutChartData() {
   const queryClient = useQueryClient();
   const cachedData = queryClient.getQueryData(["prompt-evaluator"]) as any;
+
 
   // Safely parse and map the data
   const chartData = useMemo(() => {

@@ -1,20 +1,30 @@
+"use client"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import CopyButton from "./Copybutton"
 
 export const ImprovedPrompt = ({ improvedPrompt }: { improvedPrompt: string }) => {
-    return (
-        <div className="max-w-4xl mx-auto mt-8">
-        <div className="rounded-2xl bg-white border border-gray-200 shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
-          
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-green-500 rounded-t-2xl"></div>
-  
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center justify-between gap-2">
-             Improved Prompt
+  return (
+    <div className="max-w-4xl mx-auto mt-8">
+      <Card className="relative overflow-hidden border border-border bg-card">
+        
+        <div
+          aria-hidden="true"
+          className="absolute top-0 left-0 w-full h-1"
+          style={{
+            background: "linear-gradient(to right, var(--color-chart-4), var(--color-chart-5))",
+          }}
+        />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg sm:text-xl font-semibold text-foreground flex items-center justify-between gap-2">
+            <span className="text-balance">Improved Prompt</span>
             <CopyButton textToCopy={improvedPrompt} />
-          </h2>
-          <p className="text-gray-700 leading-relaxed tracking-wide text-base">
-            {improvedPrompt}
-          </p>   
-        </div>
-      </div>
-    )
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <p className="text-muted-foreground leading-relaxed tracking-wide text-base">{improvedPrompt}</p>
+        </CardContent>
+      </Card>
+    </div>
+  )
 }

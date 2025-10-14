@@ -18,18 +18,23 @@ export default function TotalScore() {
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-3">
           <div className="relative flex items-center justify-center">
-            <div className="text-5xl font-extrabold bg-gradient-to-r from-green-500 to-emerald-400 bg-clip-text text-transparent">
+            <div className={`text-5xl
+              ${Number(percentage) < 40 ? "font-extrabold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent": "font-extrabold bg-gradient-to-r from-green-500 to-emerald-400 bg-clip-text text-transparent"}
+              `}>
               {percentage}%
             </div>
           </div>
           <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-700 ease-in-out"
+              className={`h-full 
+                ${Number(percentage) < 40 ? "bg-gradient-to-r from-red-500 to-red-400 transition-all duration-700 ease-in-out": "bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-700 ease-in-out"}
+                `}
               style={{ width: `${percentage}%` }}
-            ></div>
+            >
+            </div>
           </div>
           <p className="text-sm text-gray-500 font-medium mt-1">
-            Based on an overall score of your promot
+            Based on an overall score of your prompt
           </p>
         </CardContent>
       </Card>

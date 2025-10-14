@@ -15,9 +15,9 @@ type DonutChartProps = {
   data: DataItem[];
 };
 
-const MARGIN_X = 150;
-const MARGIN_Y = 50;
-const INFLEXION_PADDING = 20;
+const MARGIN_X = 240;
+const MARGIN_Y = 100;
+const INFLEXION_PADDING = 40;
 
 const colors = [
   "#F87171", // red
@@ -117,6 +117,7 @@ export const DonutChart = ({ width, height, data }: DonutChartProps) => {
         width={width}
         height={height}
         className="bg-white rounded-2xl  p-4 "
+        style={{ overflow: "visible" }}
       >
         <g transform={`translate(${width / 2}, ${height / 2})`}>
           {shapes}

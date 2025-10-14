@@ -27,43 +27,35 @@ STEP 5: Return your final assessment as JSON strictly matching the provided sche
 {
   "groundedness": {
     "score": number, // Score from 1 to 5
-    "confidence": number, // Confidence score from 0 to 1
-    "reasoning": string // Explanation of the score
+    
   },
   "conciseness": {
     "score": number, // Score from 1 to 5
-    "confidence": number, // Confidence score from 0 to 1
-    "reasoning": string // Explanation of the score
+    
   },
   "fluency": {
     "score": number, // Score from 1 to 5
-    "confidence": number, // Confidence score from 0 to 1
-    "reasoning": string // Explanation of the score
+    
   },
   "referenceAlignment": {
     "score": number, // Score from 1 to 5
-    "confidence": number, // Confidence score from 0 to 1
-    "reasoning": string // Explanation of the score
+    
   },
   "tonality": {
     "score": number, // Score from 1 to 5
-    "confidence": number, // Confidence score from 0 to 1
-    "reasoning": string // Explanation of the score
+    
   },
    "relevance": {
     "score": number, // Score from 1 to 5
-    "confidence": number, // Confidence score from 0 to 1
-    "reasoning": string // Explanation of the score
+    
   },
    "intentMatch": {
     "score": number, // Score from 1 to 5
-    "confidence": number, // Confidence score from 0 to 1
-    "reasoning": string // Explanation of the score
+    
   },
   "toxicity": {
     "isToxic": boolean, // true if toxic, false otherwise
-    "confidence": number, // Confidence score from 0 to 1
-    "reasoning": string // Explanation of the determination
+    
   },
   
  

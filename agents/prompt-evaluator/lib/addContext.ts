@@ -2,7 +2,7 @@
 import { alchemystClient } from "./client/client";
 const client = alchemystClient;
 
-export async function addContext(prompt: string, evaluationResult?: any) {
+export async function addContext(prompt: string, evaluationResult?: unknown) {
     const content = evaluationResult 
         ? `PROMPT: ${prompt}\n\nEVALUATION RESULT: ${JSON.stringify(evaluationResult, null, 2)}`
         : prompt;
@@ -19,5 +19,5 @@ export async function addContext(prompt: string, evaluationResult?: any) {
             fileSize: content.length,
         }
     });
-    console.log("Context added successfully for prompt");
+    // console.log("Context added successfully for prompt");
 }

@@ -1,8 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Prompt Evaluator
 
-## Getting Started
+This project is an AI-powered prompt evaluation tool built with [Next.js](https://nextjs.org). It analyzes user prompts and provides structured feedback to help improve clarity, groundedness, tonality, and overall effectiveness. The evaluation is performed using Google's Gemini LLM and context management via AlchemystAI.
 
-First, run the development server:
+## Features
+
+- Enter a prompt and receive an instant evaluation.
+- Visualize prompt quality across multiple criteria (relevance, intent match, groundedness, fluency, conciseness, reference alignment, tonality).
+- Get actionable suggestions and an improved version of your prompt.
+- Interactive charts and UI components for clear feedback.
+
+## How It Works
+
+1. Enter your prompt in the input box.
+2. Click **Evaluate**.
+3. The backend sends your prompt to a Gemini LLM, using context from previous evaluations via AlchemystAI.
+4. The LLM returns a JSON evaluation, which is visualized and displayed in the UI.
+
+## Running Locally
+
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- npm, yarn, pnpm, or bun
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory and add:
+
+```
+GOOGLE_API_KEY=your-google-generative-ai-key
+ALCHEMYST_API_KEY=your-alchemystai-sdk-key
+```
+
+### Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+### Start the Development Server
 
 ```bash
 npm run dev
@@ -14,23 +54,27 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Dependencies
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js](https://nextjs.org)
+- [React](https://react.dev)
+- [@google/generative-ai](https://www.npmjs.com/package/@google/generative-ai)
+- [@alchemystai/sdk](https://www.npmjs.com/package/@alchemystai/sdk)
+- [@tanstack/react-query](https://tanstack.com/query/latest)
+- [d3](https://d3js.org) (for charts)
+- [Tailwind CSS](https://tailwindcss.com) (for styling)
+- [Lucide React](https://lucide.dev) (icons)
+- [uuid](https://www.npmjs.com/package/uuid)
+- [axios](https://axios-http.com)
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `app/` - Next.js app directory (main pages and layout)
+- `components/` - UI components
+- `lib/` - API utilities and context management
+- `src/` - Types and config
+- `.env.local` - Environment variables (not committed)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+##
