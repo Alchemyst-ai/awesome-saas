@@ -3,14 +3,13 @@ from alchemyst import initiate_company_research, add_content
 import time
 import os
 from io import StringIO
-# import docx
 
 # Page configuration
 st.set_page_config(
     page_title="Company Research AI",
     page_icon="🏢",
     layout="wide",
-    initial_sidebar_state="expanded"  # Changed to expanded to show sidebar by default
+    initial_sidebar_state="expanded"
 )
 
 # Custom CSS for streaming updates
@@ -97,9 +96,23 @@ class StreamlitResearchApp:
                                 'size': uploaded_file.size,
                                 'content': file_content
                             })
-                        print("Hello   22222:", len(file_content))
-                        add_content(fileName= uploaded_file.name, fileType= uploaded_file.type, content = file_content)
+                            add_content(fileName=uploaded_file.name, fileType=uploaded_file.type, content=file_content)
             
+            # Display uploaded files (without count)
+            if st.session_state.uploaded_files:
+                st.markdown("### Uploaded Files")
+                for file_info in st.session_state.uploaded_files:
+                    st.markdown(f"""
+                    <div class="uploaded-file">
+                        <strong>📄 {file_info['name']}</strong><br>
+                        <small>Type: {file_info['type']} | Size: {file_info['size']} bytes</small>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                # Clear files button
+                if st.button("🗑️ Clear All Files", use_container_width=True):
+                    st.session_state.uploaded_files = []
+                    st.rerun()
             
             # Add some helpful information
             st.markdown("---")
@@ -138,18 +151,6 @@ class StreamlitResearchApp:
         except Exception as e:
             st.error(f"Error processing file {uploaded_file.name}: {str(e)}")
             return None
-        
-        # Add uploaded file content if available
-        if st.session_state.uploaded_files:
-            base_prompt += "\n\n**ADDITIONAL CONTEXT FROM UPLOADED FILES:**\n"
-            for file_info in st.session_state.uploaded_files:
-                base_prompt += f"\n--- Content from {file_info['name']} ---\n"
-                # Limit content to avoid token limits
-                content_preview = file_info['content'][:2000] + "..." if len(file_info['content']) > 2000 else file_info['content']
-                base_prompt += content_preview + "\n"
-        
-        base_prompt += f"\n\nBegin research on: {company_name}"
-        return base_prompt
     
     def update_callback(self, message_type, content):
         """Callback function to handle real-time updates from the streaming client"""
@@ -157,6 +158,9 @@ class StreamlitResearchApp:
             self.status_messages.append(f"🔄 {content}")
             if not any(keyword in content.lower() for keyword in ['starting', 'complete', 'analysis']):
                 self.current_report += content + " "
+        elif message_type == "content":
+            # Handle actual content separately from status messages
+            self.current_report += content
         elif message_type == "error":
             self.status_messages.append(f"❌ {content}")
     
@@ -185,11 +189,11 @@ class StreamlitResearchApp:
                 label_visibility="collapsed"
             )
             
+            # Simple button without file count info
             analyze_clicked = st.button(
                 "🚀 Start Analysis",
                 use_container_width=True,
-                type="primary",
-                help="Start analysis with uploaded files as context" if st.session_state.uploaded_files else "Start company research"
+                type="primary"
             )
             
             return company_name, analyze_clicked
@@ -197,9 +201,9 @@ class StreamlitResearchApp:
     def render_streaming_section(self, company_name):
         """Render the streaming analysis section"""
         self._reset_analysis_state()
-        status_placeholder, report_placeholder, progress_bar = self._create_placeholders()
+        status_placeholder, report_placeholder = self._create_placeholders()
         
-        final_report = self._run_analysis_with_updates(company_name, status_placeholder, report_placeholder, progress_bar)
+        final_report = self._run_analysis_with_updates(company_name, status_placeholder, report_placeholder)
         return self._handle_final_result(final_report, status_placeholder, report_placeholder)
 
     def _reset_analysis_state(self):
@@ -208,44 +212,34 @@ class StreamlitResearchApp:
         self.current_report = ""
 
     def _create_placeholders(self):
-        """Create UI placeholders"""
+        """Create UI placeholders (without progress bar)"""
         status_placeholder = st.empty()
         report_placeholder = st.empty()
-        progress_bar = st.progress(0)
-        return status_placeholder, report_placeholder, progress_bar
+        return status_placeholder, report_placeholder
 
-    def _run_analysis_with_updates(self, company_name, status_placeholder, report_placeholder, progress_bar):
+    def _run_analysis_with_updates(self, company_name, status_placeholder, report_placeholder):
         """Run analysis with real-time UI updates"""
         with st.spinner(f'Starting analysis for {company_name}...'):
-            # Use enhanced prompt if files are uploaded
+            # Don't show file count to user
             if st.session_state.uploaded_files:
-                st.info(f"Using {len(st.session_state.uploaded_files)} uploaded file(s) to enhance research")
+                st.info("Using uploaded documents to enhance research")
             
             final_report = initiate_company_research(company_name, callback=self.update_callback)
-            self._update_ui_while_processing(status_placeholder, report_placeholder, progress_bar, final_report)
+            self._update_ui_while_processing(status_placeholder, report_placeholder, final_report)
             return final_report
 
-    def _update_ui_while_processing(self, status_placeholder, report_placeholder, progress_bar, final_report):
+    def _update_ui_while_processing(self, status_placeholder, report_placeholder, final_report):
         """Update UI in real-time while processing"""
         start_time = time.time()
         max_wait_time = 300
         
         while time.time() - start_time < max_wait_time:
-            self._update_progress(progress_bar, start_time)
             self._update_status_messages(status_placeholder)
             self._update_report_content(report_placeholder)
             
             if final_report and final_report != "":
                 break
             time.sleep(0.5)
-        
-        progress_bar.progress(1.0)
-
-    def _update_progress(self, progress_bar, start_time):
-        """Update progress bar"""
-        elapsed_time = time.time() - start_time
-        progress = min(elapsed_time / 60, 0.9)
-        progress_bar.progress(progress)
 
     def _update_status_messages(self, status_placeholder):
         """Update status messages in UI"""

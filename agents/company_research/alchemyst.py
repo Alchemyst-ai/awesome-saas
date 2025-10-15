@@ -11,35 +11,34 @@ load_dotenv()
 
 ALCHEMYST_API_KEY = os.getenv("ALCHEMYST_API_KEY")
 
-client = AlchemystAI(
-    api_key = ALCHEMYST_API_KEY
-)
+client = AlchemystAI(api_key=ALCHEMYST_API_KEY)
 
 def getPromptForCompanyResearch(companyName: str) -> str:
     return f"""You are an expert business intelligence analyst. Research {companyName} and provide a comprehensive report.
 
-    **RESEARCH STRUCTURE:**
-    1. **EXECUTIVE SUMMARY** - Overview, key findings, market position
-    2. **COMPANY BACKGROUND** - History, mission, leadership, business model
-    3. **DEMOGRAPHIC ANALYSIS** - Target customers, geographic reach, user demographics
-    4. **FINANCIAL LANDSCAPE** - Funding, valuation, investors, revenue trends
-    5. **DIGITAL FOOTPRINT** - Web traffic, engagement, traffic sources, geographic distribution
-    6. **COMPETITIVE ANALYSIS** - Competitors, differentiators, market share, SWOT analysis
-    7. **TECHNOLOGY & OPERATIONS** - Tech stack, partnerships, operational capabilities
-    8. **MARKET OPPORTUNITIES & RISKS** - Growth potential, trends, regulatory risks, outlook
+**RESEARCH STRUCTURE:**
+1. **EXECUTIVE SUMMARY** - Overview, key findings, market position
+2. **COMPANY BACKGROUND** - History, mission, leadership, business model
+3. **DEMOGRAPHIC ANALYSIS** - Target customers, geographic reach, user demographics
+4. **FINANCIAL LANDSCAPE** - Funding, valuation, investors, revenue trends
+5. **DIGITAL FOOTPRINT** - Web traffic, engagement, traffic sources, geographic distribution
+6. **COMPETITIVE ANALYSIS** - Competitors, differentiators, market share, SWOT analysis
+7. **TECHNOLOGY & OPERATIONS** - Tech stack, partnerships, operational capabilities
+8. **MARKET OPPORTUNITIES & RISKS** - Growth potential, trends, regulatory risks, outlook
 
-    **METHODOLOGY:** Use multiple data sources, focus on recent data (1-3 years), include quantitative and qualitative insights.
+**METHODOLOGY:** Use multiple data sources, focus on recent data (1-3 years), include quantitative and qualitative insights.
 
-    **FORMATTING:** Use clear headings, bullet points, tables where appropriate, bold key metrics.
+**FORMATTING:** Use clear headings, bullet points, tables where appropriate, bold key metrics.
 
-    **DELIVERABLE:** Actionable intelligence for investors and decision-makers.
+**DELIVERABLE:** Actionable intelligence for investors and decision-makers.
 
-    Begin research on: {companyName}"""
+Begin research on: {companyName}"""
 
 def process_stream_response(response, callback):
-    """Process the streaming response with lower complexity"""
+    """Process the streaming response"""
     full_content = ""
-    send_status(callback, "Starting analysis...")
+    if callback:
+        callback("status", "🔄 Starting analysis...")
     
     for line in response.iter_lines():
         if not line:
@@ -47,7 +46,8 @@ def process_stream_response(response, callback):
             
         content = process_line(line, callback)
         if content == "[STREAM_END]":
-            send_status(callback, "Analysis complete!")
+            if callback:
+                callback("status", "✅ Analysis complete!")
             break
         elif content:
             full_content += content
@@ -69,7 +69,8 @@ def process_line(line, callback):
         return parse_data_content(data_content, callback)
         
     except Exception as e:
-        send_error(callback, f"Line processing error: {str(e)}")
+        if callback:
+            callback("error", f"⚠️ Line processing error: {str(e)}")
         return ""
 
 def parse_data_content(data_content, callback):
@@ -78,40 +79,18 @@ def parse_data_content(data_content, callback):
         parsed = json.loads(data_content)
         content = parsed.get('content', '')
         if content:
-            send_content(callback, content)
+            if callback:
+                callback("content", content)  # Use "content" type for actual report content
             return content
     except json.JSONDecodeError:
         if data_content and data_content != '[DONE]':
-            send_content(callback, data_content)
+            if callback:
+                callback("content", data_content)
             return data_content + " "
     return ""
 
-def send_status(callback, message):
-    """Send status update via callback"""
-    if callback:
-        callback("status", message)
-
-def send_content(callback, content):
-    """Send content via callback and print"""
-    if callback:
-        callback("status", content)
-    print(content, end='', flush=True)
-
-def send_error(callback, error_msg):
-    """Send error via callback"""
-    if callback:
-        callback("error", error_msg)
-
-def handle_error(e, callback):
-    """Handle different types of errors"""
-    if isinstance(e, requests.exceptions.RequestException):
-        error_msg = f"Request failed: {str(e)}"
-    else:
-        error_msg = f"Unexpected error: {str(e)}"
-    
-    send_error(callback, error_msg)
-
 def perform_deep_research(companyName: str, callback=None):
+    """Use Alchemyst API for deep research when no context is available"""
     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
     headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {ALCHEMYST_API_KEY}'}
     data = {'chat_history': [{'content': getPromptForCompanyResearch(companyName=companyName), 'role': 'user'}], 'persona': 'maya'}
@@ -121,43 +100,91 @@ def perform_deep_research(companyName: str, callback=None):
         response.raise_for_status()
         return process_stream_response(response, callback)
     except Exception as e:
-        handle_error(e, callback)
+        error_msg = f"Request failed: {str(e)}"
+        if callback:
+            callback("error", error_msg)
         return ""
 
-def add_content(fileName: str ,fileType: str, content: str):
-    docs_array = [{ "content": content }]
-    response = client.v1.context.add(
-        documents = docs_array,
-        source = fileName,
-        context_type = "resource",
-        scope="internal", 
-        metadata={
-            "fileName": fileName,
-            "fileType": "resource",
-            "lastModified": str(time.time() * 1000),
-            "fileSize": len(content),
-        }
-    )
-    print("@@@ Response data:", response)
+def add_content(fileName: str, fileType: str, content: str):
+    """Add content to Alchemyst context"""
+    try:
+        docs_array = [{ "content": content }]
+        response = client.v1.context.add(
+            documents=docs_array,
+            source=fileName,
+            context_type="resource",
+            scope="internal", 
+            metadata={
+                "fileName": fileName,
+                "fileType": "resource",
+                "lastModified": str(time.time() * 1000),
+                "fileSize": len(content),
+            }
+        )
+        print(f"✅ Added context: {fileName}")
+        return True
+    except Exception as e:
+        print(f"❌ Error adding context: {str(e)}")
+        return False
 
-def search_context(user_query) -> str:
-    results = client.v1.context.search(
-        query = user_query,
-        similarity_threshold = 0.8,
-        minimum_similarity_threshold = 0.4,
-        scope = "internal",
-        metadata = None
-    )
-    result = ",".join(x.content for x in results.contexts)
-    return result
+def search_context(user_query: str) -> str:
+    """Search for relevant context in Alchemyst"""
+    try:
+        results = client.v1.context.search(
+            query=user_query,
+            similarity_threshold=0.8,
+            minimum_similarity_threshold=0.4,
+            scope="internal",
+            metadata=None
+        )
+        if results.contexts:
+            return " ".join(x.content for x in results.contexts)
+        return ""
+    except Exception as e:
+        print(f"❌ Context search error: {str(e)}")
+        return ""
 
-def initiate_company_research(query: str, callback = None):
-    results = search_context(query)
-    if results != "":
-        ### Run gemini model data
-        report = generate_research_report(query, ",".join(results))
-        print("Report", report)
-        callback('status', report)
-    else:
-        print("Report Chat", report)
-        perform_deep_research(query, callback= callback)
+def initiate_company_research(query: str, uploaded_files_content: str = "", callback=None):
+    """
+    Main research function that uses Gemini with context when available,
+    falls back to Alchemyst deep research when no context
+    """
+    try:
+        if callback:
+            callback("status", "🔍 Searching for relevant context...")
+        
+        # Combine uploaded files content with searched context
+        searched_context = search_context(query)
+        combined_context = ""
+        
+        if uploaded_files_content:
+            combined_context += f"UPLOADED FILES CONTEXT:\n{uploaded_files_content}\n\n"
+        
+        if searched_context:
+            combined_context += f"SEARCHED CONTEXT:\n{searched_context}\n\n"
+        
+        # If we have context, use Gemini for faster, context-aware research
+        if combined_context.strip():
+            if callback:
+                callback("status", "📚 Using uploaded context for enhanced research...")
+            
+            report = generate_research_report(query, combined_context)
+            
+            if callback:
+                # Send the complete report as content
+                callback("content", report)
+                callback("status", "✅ Context-enhanced analysis complete!")
+            
+            return report
+        else:
+            # No context available, use Alchemyst for deep research
+            if callback:
+                callback("status", "🌐 Performing deep web research...")
+            
+            return perform_deep_research(query, callback)
+            
+    except Exception as e:
+        error_msg = f"Research error: {str(e)}"
+        if callback:
+            callback("error", error_msg)
+        return ""
