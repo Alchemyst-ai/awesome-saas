@@ -1,6 +1,0 @@
----
-exclude_paths:
-  - "agents/prompt-evaluator/package-lock.json"
-  - "**/package-lock.json"  # Excludes all package-lock.json files
-  - "**/yarn.lock"          # Also exclude yarn.lock if you use it
-  - "**/pnpm-lock.yaml"     # Also exclude pnpm-lock.yaml if you use it
