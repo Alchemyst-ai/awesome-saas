@@ -106,6 +106,13 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 </a>
 </td>
 <td>AI agent built by the community</td>
+</tr><tr>
+<td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/prompt-evaluator">
+<img src="https://img.shields.io/badge/prompt--evaluator-1f2937?style=for-the-badge&logo=github" alt="prompt-evaluator" />
+</a>
+</td>
+<td>AI agent built by the community</td>
 </tr>
 </tbody>
 </table>## 📦 Templates
