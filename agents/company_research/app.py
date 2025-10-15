@@ -228,7 +228,6 @@ class StreamlitResearchApp:
             # Call initiate_company_research with uploaded content
             final_report = initiate_company_research(
                 query=company_name,
-                uploaded_files_content=uploaded_content,
                 callback=self.update_callback
             )
             

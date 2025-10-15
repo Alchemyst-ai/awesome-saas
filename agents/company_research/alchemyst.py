@@ -34,11 +34,87 @@ def getPromptForCompanyResearch(companyName: str) -> str:
 
 Begin research on: {companyName}"""
 
+# def process_stream_response(response, callback):
+#     """Process the streaming response"""
+#     full_content = ""
+#     if callback:
+#         callback("status", "🔄 Starting analysis...")
+    
+#     for line in response.iter_lines():
+#         print("full context 1", full_content)
+#         if not line:
+#             print("full context 2", full_content)
+#             continue
+            
+#         content = process_line(line, callback)
+#         if content == "[STREAM_END]":
+#             if callback:
+#                 callback("status", "✅ Analysis complete!")
+#             break
+#         elif content:
+#             full_content += content
+            
+    
+#     return full_content
+
+# def process_line(line, callback):
+#     """Process a single line from the stream"""
+#     try:
+#         line_text = line.decode('utf-8')
+#         if not line_text.startswith('data:'):
+#             return ""
+            
+#         data_content = line_text[5:].strip()
+        
+#         if data_content == '[DONE]':
+#             return "[STREAM_END]"
+            
+#         return parse_data_content(data_content, callback)
+        
+#     except Exception as e:
+#         if callback:
+#             callback("error", f"⚠️ Line processing error: {str(e)}")
+#         return ""
+
+# def parse_data_content(data_content, callback):
+#     """Parse the data content from SSE"""
+#     try:
+#         parsed = json.loads(data_content)
+#         content = parsed.get('content', '')
+#         if content:
+#             if callback:
+#                 callback("content", content)  # Use "content" type for actual report content
+#             return content
+#     except json.JSONDecodeError:
+#         if data_content and data_content != '[DONE]':
+#             if callback:
+#                 callback("content", data_content)
+#             return data_content + " "
+#     return ""
+
+# def perform_deep_research(companyName: str, callback=None):
+#     """Use Alchemyst API for deep research when no context is available"""
+#     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
+#     prompt = getPromptForCompanyResearch(companyName = companyName)
+#     headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {ALCHEMYST_API_KEY}'}
+#     data = {'chat_history': [{'content': getPromptForCompanyResearch(companyName=companyName), 'role': 'user'}], 'persona': 'maya'}
+
+#     try:
+#         response = requests.post(url, headers=headers, json=data, stream=True, timeout=300)
+#         response.raise_for_status()
+#         print("Response ", response)
+#         return process_stream_response(response, callback)
+#     except Exception as e:
+#         print("API Failed")
+#         error_msg = f"Request failed: {str(e)}"
+#         if callback:
+#             callback("error", error_msg)
+#         return ""
+
 def process_stream_response(response, callback):
-    """Process the streaming response"""
+    """Process the streaming response with lower complexity"""
     full_content = ""
-    if callback:
-        callback("status", "🔄 Starting analysis...")
+    send_status(callback, "Starting analysis...")
     
     for line in response.iter_lines():
         if not line:
@@ -46,8 +122,7 @@ def process_stream_response(response, callback):
             
         content = process_line(line, callback)
         if content == "[STREAM_END]":
-            if callback:
-                callback("status", "✅ Analysis complete!")
+            send_status(callback, "Analysis complete!")
             break
         elif content:
             full_content += content
@@ -69,8 +144,7 @@ def process_line(line, callback):
         return parse_data_content(data_content, callback)
         
     except Exception as e:
-        if callback:
-            callback("error", f"⚠️ Line processing error: {str(e)}")
+        send_error(callback, f"Line processing error: {str(e)}")
         return ""
 
 def parse_data_content(data_content, callback):
@@ -79,18 +153,40 @@ def parse_data_content(data_content, callback):
         parsed = json.loads(data_content)
         content = parsed.get('content', '')
         if content:
-            if callback:
-                callback("content", content)  # Use "content" type for actual report content
+            send_content(callback, content)
             return content
     except json.JSONDecodeError:
         if data_content and data_content != '[DONE]':
-            if callback:
-                callback("content", data_content)
+            send_content(callback, data_content)
             return data_content + " "
     return ""
 
+def send_status(callback, message):
+    """Send status update via callback"""
+    if callback:
+        callback("status", message)
+
+def send_content(callback, content):
+    """Send content via callback and print"""
+    if callback:
+        callback("status", content)
+    print(content, end='', flush=True)
+
+def send_error(callback, error_msg):
+    """Send error via callback"""
+    if callback:
+        callback("error", error_msg)
+
+def handle_error(e, callback):
+    """Handle different types of errors"""
+    if isinstance(e, requests.exceptions.RequestException):
+        error_msg = f"Request failed: {str(e)}"
+    else:
+        error_msg = f"Unexpected error: {str(e)}"
+    
+    send_error(callback, error_msg)
+
 def perform_deep_research(companyName: str, callback=None):
-    """Use Alchemyst API for deep research when no context is available"""
     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
     headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {ALCHEMYST_API_KEY}'}
     data = {'chat_history': [{'content': getPromptForCompanyResearch(companyName=companyName), 'role': 'user'}], 'persona': 'maya'}
@@ -100,9 +196,7 @@ def perform_deep_research(companyName: str, callback=None):
         response.raise_for_status()
         return process_stream_response(response, callback)
     except Exception as e:
-        error_msg = f"Request failed: {str(e)}"
-        if callback:
-            callback("error", error_msg)
+        handle_error(e, callback)
         return ""
 
 def add_content(fileName: str, fileType: str, content: str):
@@ -144,43 +238,24 @@ def search_context(user_query: str) -> str:
         print(f"❌ Context search error: {str(e)}")
         return ""
 
-def initiate_company_research(query: str, uploaded_files_content: str = "", callback=None):
+def initiate_company_research(query: str, callback=None):
     """
     Main research function that uses Gemini with context when available,
     falls back to Alchemyst deep research when no context
     """
     try:
-        if callback:
-            callback("status", "🔍 Searching for relevant context...")
+        combined_context = search_context(query)
         
-        # Combine uploaded files content with searched context
-        searched_context = search_context(query)
-        combined_context = ""
-        
-        if uploaded_files_content:
-            combined_context += f"UPLOADED FILES CONTEXT:\n{uploaded_files_content}\n\n"
-        
-        if searched_context:
-            combined_context += f"SEARCHED CONTEXT:\n{searched_context}\n\n"
-        
-        # If we have context, use Gemini for faster, context-aware research
-        if combined_context.strip():
-            if callback:
-                callback("status", "📚 Using uploaded context for enhanced research...")
-            
+        if combined_context.strip():            
             report = generate_research_report(query, combined_context)
             
             if callback:
-                # Send the complete report as content
                 callback("content", report)
                 callback("status", "✅ Context-enhanced analysis complete!")
-            
             return report
         else:
-            # No context available, use Alchemyst for deep research
             if callback:
                 callback("status", "🌐 Performing deep web research...")
-            
             return perform_deep_research(query, callback)
             
     except Exception as e:
