@@ -1,7 +1,8 @@
+from alchemyst_ai import AlchemystAI
+from gemini import generate_research_report
 import requests
 import json
 import sseclient  
-from alchemyst_ai import AlchemystAI
 import os
 import time
 from dotenv import load_dotenv
@@ -110,7 +111,7 @@ def handle_error(e, callback):
     
     send_error(callback, error_msg)
 
-def initiate_company_research(companyName: str, callback=None):
+def perform_deep_research(companyName: str, callback=None):
     url = 'https://platform-backend.getalchemystai.com/api/v1/chat/generate/stream'
     headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {ALCHEMYST_API_KEY}'}
     data = {'chat_history': [{'content': getPromptForCompanyResearch(companyName=companyName), 'role': 'user'}], 'persona': 'maya'}
@@ -124,15 +125,7 @@ def initiate_company_research(companyName: str, callback=None):
         return ""
 
 def add_content(fileName: str ,fileType: str, content: str):
-
-    docs_array = [{
-        "content": content,
-        # "metadata": {  
-        #     "filename": fileName,
-        #     "filetype": fileType
-        # }
-    }]
-    print("Daataa:", fileName, fileType, content)
+    docs_array = [{ "content": content }]
     response = client.v1.context.add(
         documents = docs_array,
         source = fileName,
@@ -145,5 +138,26 @@ def add_content(fileName: str ,fileType: str, content: str):
             "fileSize": len(content),
         }
     )
-
     print("@@@ Response data:", response)
+
+def search_context(user_query) -> str:
+    results = client.v1.context.search(
+        query = user_query,
+        similarity_threshold = 0.8,
+        minimum_similarity_threshold = 0.4,
+        scope = "internal",
+        metadata = None
+    )
+    result = ",".join(x.content for x in results.contexts)
+    return result
+
+def initiate_company_research(query: str, callback = None):
+    results = search_context(query)
+    if results != "":
+        ### Run gemini model data
+        report = generate_research_report(query, ",".join(results))
+        print("Report", report)
+        callback('status', report)
+    else:
+        print("Report Chat", report)
+        perform_deep_research(query, callback= callback)
