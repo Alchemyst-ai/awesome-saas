@@ -15,5 +15,4 @@ pnpm-debug.log*
 .idea
 *.iml
 coverage
-package-lock.json    
-pnpm-lock.yaml
+package-lock.json
