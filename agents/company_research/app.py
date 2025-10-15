@@ -85,37 +85,13 @@ class StreamlitResearchApp:
                 help="Upload TXT, PDF, or DOC files with additional company information"
             )
             
-            # Process newly uploaded files
-            if uploaded_files:
-                for uploaded_file in uploaded_files:
-                    if uploaded_file.name not in [f['name'] for f in st.session_state.uploaded_files]:
-                        file_content = self._process_uploaded_file(uploaded_file)
-                        if file_content:
-                            st.session_state.uploaded_files.append({
-                                'name': uploaded_file.name,
-                                'type': uploaded_file.type,
-                                'size': uploaded_file.size,
-                                'content': file_content
-                            })
-                            add_content(fileName=uploaded_file.name, fileType=uploaded_file.type, content=file_content)
+            # Process uploaded files
+            self._process_file_uploads(uploaded_files)
             
-            # Display uploaded files
-            if st.session_state.uploaded_files:
-                st.markdown("### Uploaded Files")
-                for file_info in st.session_state.uploaded_files:
-                    st.markdown(f"""
-                    <div class="uploaded-file">
-                        <strong>📄 {file_info['name']}</strong><br>
-                        <small>Type: {file_info['type']} | Size: {file_info['size']} bytes</small>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                # Clear files button
-                if st.button("🗑️ Clear All Files", use_container_width=True):
-                    st.session_state.uploaded_files = []
-                    st.rerun()
+            # Display uploaded files section
+            self._render_files_section()
             
-            # Add some helpful information
+            # Tips section
             st.markdown("---")
             st.markdown("### 💡 Tips")
             st.markdown("""
@@ -124,6 +100,44 @@ class StreamlitResearchApp:
             - Include market research
             - Supported: TXT, PDF, DOC, DOCX
             """)
+
+    def _process_file_uploads(self, uploaded_files):
+        """Process uploaded files"""
+        if not uploaded_files:
+            return
+        
+        for uploaded_file in uploaded_files:
+            if uploaded_file.name in [f['name'] for f in st.session_state.uploaded_files]:
+                continue
+                
+            file_content = self._process_uploaded_file(uploaded_file)
+            if file_content:
+                st.session_state.uploaded_files.append({
+                    'name': uploaded_file.name,
+                    'type': uploaded_file.type,
+                    'size': uploaded_file.size,
+                    'content': file_content
+                })
+                add_content(
+                    fileName=uploaded_file.name,
+                    fileType=uploaded_file.type, 
+                    content=file_content
+                )
+
+    def _render_files_section(self):
+        """Render uploaded files section"""
+        if not st.session_state.uploaded_files:
+            return
+        
+        st.markdown("### Uploaded Files")
+        
+        for file_info in st.session_state.uploaded_files:
+            st.markdown(f"""
+            <div class="uploaded-file">
+                <strong>📄 {file_info['name']}</strong><br>
+                <small>Type: {file_info['type']} | Size: {file_info['size']} bytes</small>
+            </div>
+            """, unsafe_allow_html=True)
     
     def _process_uploaded_file(self, uploaded_file):
         """Process uploaded file and extract text content"""
