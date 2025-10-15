@@ -65,6 +65,7 @@ class StreamlitResearchApp:
     def __init__(self):
         self.status_messages = []
         self.current_report = ""
+        self.has_error = False  # Add error flag
         
         # Initialize session state for uploaded files
         if 'uploaded_files' not in st.session_state:
@@ -98,7 +99,7 @@ class StreamlitResearchApp:
                             })
                             add_content(fileName=uploaded_file.name, fileType=uploaded_file.type, content=file_content)
             
-            # Display uploaded files (without count)
+            # Display uploaded files
             if st.session_state.uploaded_files:
                 st.markdown("### Uploaded Files")
                 for file_info in st.session_state.uploaded_files:
@@ -156,13 +157,12 @@ class StreamlitResearchApp:
         """Callback function to handle real-time updates from the streaming client"""
         if message_type == "status":
             self.status_messages.append(f"🔄 {content}")
-            if not any(keyword in content.lower() for keyword in ['starting', 'complete', 'analysis']):
-                self.current_report += content + " "
         elif message_type == "content":
-            # Handle actual content separately from status messages
-            self.current_report += content
+            # Replace the entire report with new content (complete report)
+            self.current_report = content
         elif message_type == "error":
             self.status_messages.append(f"❌ {content}")
+            self.has_error = True  # Set error flag
     
     def render_header(self):
         """Render the main header"""
@@ -189,7 +189,6 @@ class StreamlitResearchApp:
                 label_visibility="collapsed"
             )
             
-            # Simple button without file count info
             analyze_clicked = st.button(
                 "🚀 Start Analysis",
                 use_container_width=True,
@@ -210,9 +209,10 @@ class StreamlitResearchApp:
         """Reset state for new analysis"""
         self.status_messages = []
         self.current_report = ""
+        self.has_error = False  # Reset error flag
 
     def _create_placeholders(self):
-        """Create UI placeholders (without progress bar)"""
+        """Create UI placeholders"""
         status_placeholder = st.empty()
         report_placeholder = st.empty()
         return status_placeholder, report_placeholder
@@ -220,26 +220,42 @@ class StreamlitResearchApp:
     def _run_analysis_with_updates(self, company_name, status_placeholder, report_placeholder):
         """Run analysis with real-time UI updates"""
         with st.spinner(f'Starting analysis for {company_name}...'):
-            # Don't show file count to user
+            # Get uploaded files content
+            uploaded_content = ""
             if st.session_state.uploaded_files:
-                st.info("Using uploaded documents to enhance research")
+                uploaded_content = "\n".join([file['content'] for file in st.session_state.uploaded_files])
             
-            final_report = initiate_company_research(company_name, callback=self.update_callback)
+            # Call initiate_company_research with uploaded content
+            final_report = initiate_company_research(
+                query=company_name,
+                uploaded_files_content=uploaded_content,
+                callback=self.update_callback
+            )
+            
             self._update_ui_while_processing(status_placeholder, report_placeholder, final_report)
             return final_report
 
     def _update_ui_while_processing(self, status_placeholder, report_placeholder, final_report):
         """Update UI in real-time while processing"""
         start_time = time.time()
-        max_wait_time = 300
+        max_wait_time = 60  # Reduced timeout since we're not streaming
         
         while time.time() - start_time < max_wait_time:
             self._update_status_messages(status_placeholder)
             self._update_report_content(report_placeholder)
             
-            if final_report and final_report != "":
+            # Check stopping conditions:
+            # 1. We have a final report from the function return
+            # 2. There's an error flagged in callback
+            # 3. We have content from callback (report is complete)
+            if (final_report and final_report != "") or self.has_error or self.current_report:
                 break
+                
             time.sleep(0.5)
+        
+        # One final update to show everything
+        self._update_status_messages(status_placeholder)
+        self._update_report_content(report_placeholder)
 
     def _update_status_messages(self, status_placeholder):
         """Update status messages in UI"""
@@ -264,14 +280,20 @@ class StreamlitResearchApp:
 
     def _handle_final_result(self, final_report, status_placeholder, report_placeholder):
         """Handle the final result display"""
+        # Use the final_report returned by the function, or fall back to current_report
         result_report = final_report if final_report else self.current_report
         
-        if result_report:
+        if result_report and result_report.strip():
             status_placeholder.markdown('<div class="streaming-update">✅ Analysis Complete</div>', unsafe_allow_html=True)
             report_placeholder.markdown(f'<div class="final-report">{result_report}</div>', unsafe_allow_html=True)
             return result_report
         else:
-            st.error("❌ Analysis failed or timed out. Please try again.")
+            # If no report was generated, show appropriate error
+            if self.has_error:
+                # Error already shown in status messages
+                pass
+            else:
+                st.error("❌ No research report generated. Please try again with different context or company name.")
             return ""
     
     def run(self):
@@ -302,14 +324,25 @@ class StreamlitResearchApp:
                 )
 
             else:
-                st.error("❌ Analysis failed. Please try again.")
+                # Error is already shown in the streaming section
+                pass
         
+        # Show previous report if exists
         elif 'final_report' in st.session_state:
             st.markdown("---")
             st.info(f"Showing previous analysis for {st.session_state.company_name}")
             st.markdown(
                 f'<div class="final-report">{st.session_state.final_report}</div>', 
                 unsafe_allow_html=True
+            )
+            
+            # Add download button for previous report
+            st.download_button(
+                label="📄 Download Previous Report",
+                data=st.session_state.final_report,
+                file_name=f"{st.session_state.company_name}_research_report.txt",
+                mime="text/plain",
+                use_container_width=True
             )
         
         # Footer
