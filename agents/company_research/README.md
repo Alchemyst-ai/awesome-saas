@@ -18,13 +18,15 @@ A powerful, real-time company research application built with Python, Streamlit,
 
 - **Python** - Backend logic and API integration
 - **AlchemystAI Chat API** - AI-powered research engine
+- **AlchemystAI SDK** - AI-powered research engine
 - **Streamlit** - Web application framework
 - **Requests** - HTTP client for API communication
 
 ## 📋 Prerequisites
 
 - Python 3.8+
-- AlchemystAI API key
+- AlchemystAI API Key
+- Gemini API Key
 
 ## ⚡ Quick Start
 
@@ -40,6 +42,7 @@ A powerful, real-time company research application built with Python, Streamlit,
 1. **Setting the API Keys in .env**
    ```bash
    ALCHEMYST_API_KEY = "Your Alchemyst API key"
+   GEMINI_API_KEY = "Your Gemini API Key"
 
 3. **Run app.py**
    ```bash
