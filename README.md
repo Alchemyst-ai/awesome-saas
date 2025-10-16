@@ -101,6 +101,13 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 <td>AI agent built by the community</td>
 </tr><tr>
 <td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/company_research">
+<img src="https://img.shields.io/badge/company_research-1f2937?style=for-the-badge&logo=github" alt="company_research" />
+</a>
+</td>
+<td>AI agent built by the community</td>
+</tr><tr>
+<td>
 <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/discord-bot">
 <img src="https://img.shields.io/badge/discord--bot-1f2937?style=for-the-badge&logo=github" alt="discord-bot" />
 </a>
