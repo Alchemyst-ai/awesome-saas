@@ -7,6 +7,7 @@ Features:
 - Export to PNG, SVG, and interactive HTML
 @version 1.0
 @package data-analytics-agent
+@author iamtensaiii
 """
 
 import pandas as pd

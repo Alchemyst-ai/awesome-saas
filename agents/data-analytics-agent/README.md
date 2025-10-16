@@ -302,11 +302,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Alchemyst Community Discord](https://dub.sh/context-community)
 - [awesome-saas Repository](https://github.com/Alchemyst-ai/awesome-saas)
 
+## 👥 Contributors
+
+- **[iamtensaiii](https://github.com/iamtensaiii)** - Creator and maintainer of the Data Analytics Agent
+
 ## 🙏 Acknowledgments
 
 - Built with [Alchemyst AI Platform](https://platform.getalchemystai.com)
 - Part of the [awesome-saas](https://github.com/Alchemyst-ai/awesome-saas) collection
-- Created for Hacktoberfest 2025
+- Created for Hacktoberfest 2025 by [iamtensaiii](https://github.com/iamtensaiii)
 
 ## 📧 Support
 

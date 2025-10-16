@@ -8,6 +8,7 @@ Features:
 - Automated report structure
 @version 1.0
 @package data-analytics-agent
+@author iamtensaiii
 """
 
 import pandas as pd

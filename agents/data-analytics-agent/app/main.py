@@ -8,6 +8,7 @@ Features:
 - Query command for natural language Q&A
 @version 1.0
 @package data-analytics-agent
+@author iamtensaiii
 """
 
 import click
