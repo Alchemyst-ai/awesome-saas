@@ -1,0 +1,8 @@
+streamlit
+alchemystai 
+sseclient-py
+requests
+dotenv
+docx
+PyPDF2
+langchain_google_genai
