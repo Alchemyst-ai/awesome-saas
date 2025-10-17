@@ -53,6 +53,37 @@ class AlchemystInsights:
             'Authorization': f'Bearer {self.api_key}'
         }
     
+    def _prepare_request_data(self, prompt: str) -> Dict[str, Any]:
+        """Prepare request data for API call"""
+        return {
+            'chat_history': [
+                {'content': prompt, 'role': 'user'}
+            ],
+            'persona': 'maya'
+        }
+    
+    def _handle_streaming_response(self, response: requests.Response) -> str:
+        """Handle streaming response from API"""
+        full_response = ""
+        for line in response.iter_lines():
+            if line:
+                try:
+                    decoded = line.decode('utf-8')
+                    if decoded.startswith('data: '):
+                        json_data = json.loads(decoded[6:])
+                        if 'content' in json_data:
+                            full_response += json_data['content']
+                except (json.JSONDecodeError, UnicodeDecodeError, KeyError) as e:
+                    # Log the error but continue processing other lines
+                    print(f"Warning: Failed to parse streaming response line: {e}")
+                    continue
+        return full_response
+    
+    def _handle_regular_response(self, response: requests.Response) -> str:
+        """Handle regular (non-streaming) response from API"""
+        result = response.json()
+        return result.get('content', result.get('response', str(result)))
+
     def _generate_response(self, prompt: str, stream: bool = False) -> str:
         """
         Generate AI response using Alchemyst chat API
@@ -63,12 +94,7 @@ class AlchemystInsights:
         """
         try:
             url = f"{self.base_url}/chat/generate/stream" if stream else f"{self.base_url}/chat/generate"
-            data = {
-                'chat_history': [
-                    {'content': prompt, 'role': 'user'}
-                ],
-                'persona': 'maya'
-            }
+            data = self._prepare_request_data(prompt)
             
             response = requests.post(
                 url,
@@ -79,22 +105,9 @@ class AlchemystInsights:
             response.raise_for_status()
             
             if stream:
-                # Handle streaming response
-                full_response = ""
-                for line in response.iter_lines():
-                    if line:
-                        try:
-                            decoded = line.decode('utf-8')
-                            if decoded.startswith('data: '):
-                                json_data = json.loads(decoded[6:])
-                                if 'content' in json_data:
-                                    full_response += json_data['content']
-                        except:
-                            continue
-                return full_response
+                return self._handle_streaming_response(response)
             else:
-                result = response.json()
-                return result.get('content', result.get('response', str(result)))
+                return self._handle_regular_response(response)
                 
         except requests.exceptions.RequestException as e:
             raise Exception(f"Alchemyst API error: {str(e)}")

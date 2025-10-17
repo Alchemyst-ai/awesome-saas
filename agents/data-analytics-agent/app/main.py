@@ -14,7 +14,7 @@ Features:
 import click
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any, List
 import json
 
 from analyzer import DataAnalyzer
@@ -34,6 +34,61 @@ def cli():
     """
     pass
 
+
+def _analyze_specific_columns(analyzer: DataAnalyzer, df: pd.DataFrame, columns: str) -> None:
+    """Analyze specific columns if provided"""
+    col_list = [c.strip() for c in columns.split(',')]
+    click.echo(f"🔎 Analyzing specified columns: {', '.join(col_list)}\n")
+    
+    for col in col_list:
+        if col in df.columns:
+            summary = analyzer.get_column_summary(col)
+            click.echo(f"   {col}:")
+            click.echo(f"      Type: {summary['dtype']}")
+            click.echo(f"      Unique: {summary['unique_values']}")
+            click.echo(f"      Missing: {summary['missing_percentage']}%")
+
+def _calculate_correlations(analyzer: DataAnalyzer, stats: Dict[str, Any]) -> None:
+    """Calculate and display correlations"""
+    if len(stats['numeric_columns']) > 1:
+        click.echo("\n🔗 Calculating correlations...")
+        corr_results = analyzer.calculate_correlation_matrix()
+        
+        if corr_results['strong_correlations']:
+            click.echo("   Strong correlations found:")
+            for corr in corr_results['strong_correlations'][:5]:
+                click.echo(f"      {corr['column1']} ↔ {corr['column2']}: {corr['correlation']:.3f}")
+
+def _analyze_missing_values(analyzer: DataAnalyzer) -> None:
+    """Analyze and display missing values"""
+    click.echo("\n🔍 Analyzing missing values...")
+    missing_analysis = analyzer.analyze_missing_values()
+    click.echo(f"   Total missing: {missing_analysis['total_missing_values']}")
+    click.echo(f"   Rows affected: {missing_analysis['rows_with_missing']} ({missing_analysis['rows_with_missing_percentage']}%)")
+
+def _generate_ai_insights(df: pd.DataFrame) -> str:
+    """Generate AI insights and return summary"""
+    click.echo("\n🤖 Generating AI insights (this may take a moment)...")
+    try:
+        ai_insights = AlchemystInsights()
+        summary = ai_insights.generate_summary(df)
+        
+        click.echo(click.style("\n📋 AI Summary:", fg='green', bold=True))
+        click.echo(summary)
+        return summary
+    except Exception as e:
+        click.echo(click.style(f"\n⚠️  AI insights unavailable: {str(e)}", fg='yellow'))
+        return ""
+
+def _generate_visualizations(df: pd.DataFrame, output_dir: Path, visualize: bool) -> List[str]:
+    """Generate visualizations if requested"""
+    chart_paths = []
+    if visualize:
+        click.echo("\n📈 Generating visualizations...")
+        visualizer = DataVisualizer(df, str(output_dir))
+        chart_paths = visualizer.auto_visualize(max_charts=6)
+        click.echo(f"   Created {len(chart_paths)} charts in {output_dir}")
+    return chart_paths
 
 @cli.command()
 @click.argument('file_path', type=click.Path(exists=True))
@@ -73,52 +128,20 @@ def analyze(file_path: str, columns: Optional[str], output: str, correlations: b
         
         # Analyze specific columns if provided
         if columns:
-            col_list = [c.strip() for c in columns.split(',')]
-            click.echo(f"🔎 Analyzing specified columns: {', '.join(col_list)}\n")
-            
-            for col in col_list:
-                if col in df.columns:
-                    summary = analyzer.get_column_summary(col)
-                    click.echo(f"   {col}:")
-                    click.echo(f"      Type: {summary['dtype']}")
-                    click.echo(f"      Unique: {summary['unique_values']}")
-                    click.echo(f"      Missing: {summary['missing_percentage']}%")
+            _analyze_specific_columns(analyzer, df, columns)
         
         # Calculate correlations
-        if correlations and len(stats['numeric_columns']) > 1:
-            click.echo("\n🔗 Calculating correlations...")
-            corr_results = analyzer.calculate_correlation_matrix()
-            
-            if corr_results['strong_correlations']:
-                click.echo("   Strong correlations found:")
-                for corr in corr_results['strong_correlations'][:5]:
-                    click.echo(f"      {corr['column1']} ↔ {corr['column2']}: {corr['correlation']:.3f}")
+        if correlations:
+            _calculate_correlations(analyzer, stats)
         
         # Missing value analysis
-        click.echo("\n🔍 Analyzing missing values...")
-        missing_analysis = analyzer.analyze_missing_values()
-        click.echo(f"   Total missing: {missing_analysis['total_missing_values']}")
-        click.echo(f"   Rows affected: {missing_analysis['rows_with_missing']} ({missing_analysis['rows_with_missing_percentage']}%)")
+        _analyze_missing_values(analyzer)
         
         # Generate AI insights
-        click.echo("\n🤖 Generating AI insights (this may take a moment)...")
-        try:
-            ai_insights = AlchemystInsights()
-            summary = ai_insights.generate_summary(df)
-            
-            click.echo(click.style("\n📋 AI Summary:", fg='green', bold=True))
-            click.echo(summary)
-        except Exception as e:
-            click.echo(click.style(f"\n⚠️  AI insights unavailable: {str(e)}", fg='yellow'))
-            summary = ""
+        summary = _generate_ai_insights(df)
         
         # Generate visualizations
-        chart_paths = []
-        if visualize:
-            click.echo("\n📈 Generating visualizations...")
-            visualizer = DataVisualizer(df, str(output_dir))
-            chart_paths = visualizer.auto_visualize(max_charts=6)
-            click.echo(f"   Created {len(chart_paths)} charts in {output_dir}")
+        chart_paths = _generate_visualizations(df, output_dir, visualize)
         
         # Export analysis results
         analysis_file = output_dir / "analysis_results.json"
@@ -178,8 +201,8 @@ def report(file_path: str, output: str, format: str, charts: bool):
         # Calculate correlations and missing values
         try:
             analyzer.calculate_correlation_matrix()
-        except:
-            pass
+        except Exception as e:
+            print(f"Warning: Could not calculate correlation matrix: {e}")
         
         analyzer.analysis_results['missing_values'] = analyzer.analyze_missing_values()
         

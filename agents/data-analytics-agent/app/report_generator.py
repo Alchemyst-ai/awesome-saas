@@ -75,6 +75,95 @@ class ReportGenerator:
             alignment=TA_LEFT
         ))
     
+    def _create_title_page(self, story: List) -> None:
+        """Create title page for PDF report"""
+        story.append(Spacer(1, 2*inch))
+        story.append(Paragraph(
+            "Data Analytics Report",
+            self.styles['CustomTitle']
+        ))
+        story.append(Spacer(1, 0.5*inch))
+        story.append(Paragraph(
+            f"Generated on: {datetime.now().strftime('%B %d, %Y at %H:%M')}",
+            self.styles['CustomBody']
+        ))
+        story.append(PageBreak())
+    
+    def _add_executive_summary(self, story: List, ai_summary: str) -> None:
+        """Add executive summary section to PDF"""
+        if ai_summary:
+            story.append(Paragraph("Executive Summary", self.styles['CustomHeading']))
+            story.append(Spacer(1, 12))
+            
+            # Split summary into paragraphs
+            for para in ai_summary.split('\n\n'):
+                if para.strip():
+                    story.append(Paragraph(para.strip(), self.styles['CustomBody']))
+                    story.append(Spacer(1, 6))
+            
+            story.append(PageBreak())
+    
+    def _add_dataset_overview(self, story: List) -> None:
+        """Add dataset overview section to PDF"""
+        story.append(Paragraph("Dataset Overview", self.styles['CustomHeading']))
+        story.append(Spacer(1, 12))
+        
+        if 'basic_stats' in self.analysis_data:
+            stats = self.analysis_data['basic_stats']
+            
+            overview_data = [
+                ['Metric', 'Value'],
+                ['Total Rows', str(stats.get('shape', {}).get('rows', 'N/A'))],
+                ['Total Columns', str(stats.get('shape', {}).get('columns', 'N/A'))],
+                ['Numeric Columns', str(len(stats.get('numeric_columns', [])))],
+                ['Categorical Columns', str(len(stats.get('categorical_columns', [])))]
+            ]
+            
+            table = Table(overview_data, colWidths=[3*inch, 3*inch])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            
+            story.append(table)
+            story.append(Spacer(1, 20))
+    
+    def _add_missing_values_analysis(self, story: List) -> None:
+        """Add missing values analysis section to PDF"""
+        if 'missing_values' in self.analysis_data:
+            story.append(Paragraph("Missing Values Analysis", self.styles['CustomHeading']))
+            story.append(Spacer(1, 12))
+            
+            missing = self.analysis_data['missing_values']
+            missing_text = f"Total missing values: {missing.get('total_missing_values', 0)}<br/>"
+            missing_text += f"Rows with missing data: {missing.get('rows_with_missing', 0)} "
+            missing_text += f"({missing.get('rows_with_missing_percentage', 0)}%)<br/>"
+            
+            story.append(Paragraph(missing_text, self.styles['CustomBody']))
+            story.append(Spacer(1, 20))
+    
+    def _add_visualizations(self, story: List) -> None:
+        """Add visualizations section to PDF"""
+        if self.chart_paths:
+            story.append(PageBreak())
+            story.append(Paragraph("Data Visualizations", self.styles['CustomHeading']))
+            story.append(Spacer(1, 12))
+            
+            for chart_path in self.chart_paths[:6]:  # Limit to 6 charts
+                if Path(chart_path).exists() and chart_path.endswith('.png'):
+                    try:
+                        img = Image(chart_path, width=6*inch, height=3.5*inch)
+                        story.append(img)
+                        story.append(Spacer(1, 20))
+                    except Exception as e:
+                        print(f"Warning: Could not add chart {chart_path} to PDF: {e}")
+
     def generate_pdf_report(self, output_path: str, ai_summary: str = "") -> str:
         """
         Generate PDF report with analysis results
@@ -95,89 +184,12 @@ class ReportGenerator:
             
             story = []
             
-            # Title Page
-            story.append(Spacer(1, 2*inch))
-            story.append(Paragraph(
-                "Data Analytics Report",
-                self.styles['CustomTitle']
-            ))
-            story.append(Spacer(1, 0.5*inch))
-            story.append(Paragraph(
-                f"Generated on: {datetime.now().strftime('%B %d, %Y at %H:%M')}",
-                self.styles['CustomBody']
-            ))
-            story.append(PageBreak())
-            
-            # Executive Summary
-            if ai_summary:
-                story.append(Paragraph("Executive Summary", self.styles['CustomHeading']))
-                story.append(Spacer(1, 12))
-                
-                # Split summary into paragraphs
-                for para in ai_summary.split('\n\n'):
-                    if para.strip():
-                        story.append(Paragraph(para.strip(), self.styles['CustomBody']))
-                        story.append(Spacer(1, 6))
-                
-                story.append(PageBreak())
-            
-            # Dataset Overview
-            story.append(Paragraph("Dataset Overview", self.styles['CustomHeading']))
-            story.append(Spacer(1, 12))
-            
-            if 'basic_stats' in self.analysis_data:
-                stats = self.analysis_data['basic_stats']
-                
-                overview_data = [
-                    ['Metric', 'Value'],
-                    ['Total Rows', str(stats.get('shape', {}).get('rows', 'N/A'))],
-                    ['Total Columns', str(stats.get('shape', {}).get('columns', 'N/A'))],
-                    ['Numeric Columns', str(len(stats.get('numeric_columns', [])))],
-                    ['Categorical Columns', str(len(stats.get('categorical_columns', [])))]
-                ]
-                
-                table = Table(overview_data, colWidths=[3*inch, 3*inch])
-                table.setStyle(TableStyle([
-                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                    ('FONTSIZE', (0, 0), (-1, 0), 12),
-                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
-                ]))
-                
-                story.append(table)
-                story.append(Spacer(1, 20))
-            
-            # Missing Values Analysis
-            if 'missing_values' in self.analysis_data:
-                story.append(Paragraph("Missing Values Analysis", self.styles['CustomHeading']))
-                story.append(Spacer(1, 12))
-                
-                missing = self.analysis_data['missing_values']
-                missing_text = f"Total missing values: {missing.get('total_missing_values', 0)}<br/>"
-                missing_text += f"Rows with missing data: {missing.get('rows_with_missing', 0)} "
-                missing_text += f"({missing.get('rows_with_missing_percentage', 0)}%)<br/>"
-                
-                story.append(Paragraph(missing_text, self.styles['CustomBody']))
-                story.append(Spacer(1, 20))
-            
-            # Visualizations
-            if self.chart_paths:
-                story.append(PageBreak())
-                story.append(Paragraph("Data Visualizations", self.styles['CustomHeading']))
-                story.append(Spacer(1, 12))
-                
-                for chart_path in self.chart_paths[:6]:  # Limit to 6 charts
-                    if Path(chart_path).exists() and chart_path.endswith('.png'):
-                        try:
-                            img = Image(chart_path, width=6*inch, height=3.5*inch)
-                            story.append(img)
-                            story.append(Spacer(1, 20))
-                        except:
-                            pass
+            # Build report sections
+            self._create_title_page(story)
+            self._add_executive_summary(story, ai_summary)
+            self._add_dataset_overview(story)
+            self._add_missing_values_analysis(story)
+            self._add_visualizations(story)
             
             # Build PDF
             doc.build(story)
@@ -187,16 +199,9 @@ class ReportGenerator:
         except Exception as e:
             raise Exception(f"Error generating PDF report: {str(e)}")
     
-    def generate_html_report(self, output_path: str, ai_summary: str = "") -> str:
-        """
-        Generate HTML report with analysis results
-        @param str output_path: Path to save HTML report
-        @param str ai_summary: AI-generated summary
-        @return str: Path to generated HTML
-        @throws Exception: When HTML generation fails
-        """
-        try:
-            html_template = """
+    def _get_html_template(self) -> str:
+        """Get HTML template for report generation"""
+        return """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -405,31 +410,46 @@ class ReportGenerator:
     </div>
 </body>
 </html>
-            """
-            
-            # Prepare template data
-            stats = self.analysis_data.get('basic_stats', {})
-            
-            column_info = []
-            if 'columns' in stats and 'dtypes' in stats:
-                for col in stats['columns']:
-                    column_info.append({
-                        'name': col,
-                        'dtype': str(stats['dtypes'].get(col, 'unknown')),
-                        'missing': stats.get('missing_values', {}).get(col, 0)
-                    })
+        """
+    
+    def _prepare_template_data(self, ai_summary: str) -> Dict[str, Any]:
+        """Prepare data for HTML template rendering"""
+        stats = self.analysis_data.get('basic_stats', {})
+        
+        column_info = []
+        if 'columns' in stats and 'dtypes' in stats:
+            for col in stats['columns']:
+                column_info.append({
+                    'name': col,
+                    'dtype': str(stats['dtypes'].get(col, 'unknown')),
+                    'missing': stats.get('missing_values', {}).get(col, 0)
+                })
+        
+        return {
+            'timestamp': datetime.now().strftime('%B %d, %Y at %H:%M'),
+            'ai_summary': ai_summary,
+            'rows': stats.get('shape', {}).get('rows', 0),
+            'columns': stats.get('shape', {}).get('columns', 0),
+            'numeric_cols': len(stats.get('numeric_columns', [])),
+            'categorical_cols': len(stats.get('categorical_columns', [])),
+            'column_info': column_info,
+            'charts': self.chart_paths
+        }
+
+    def generate_html_report(self, output_path: str, ai_summary: str = "") -> str:
+        """
+        Generate HTML report with analysis results
+        @param str output_path: Path to save HTML report
+        @param str ai_summary: AI-generated summary
+        @return str: Path to generated HTML
+        @throws Exception: When HTML generation fails
+        """
+        try:
+            html_template = self._get_html_template()
+            template_data = self._prepare_template_data(ai_summary)
             
             template = Template(html_template)
-            html_content = template.render(
-                timestamp=datetime.now().strftime('%B %d, %Y at %H:%M'),
-                ai_summary=ai_summary,
-                rows=stats.get('shape', {}).get('rows', 0),
-                columns=stats.get('shape', {}).get('columns', 0),
-                numeric_cols=len(stats.get('numeric_columns', [])),
-                categorical_cols=len(stats.get('categorical_columns', [])),
-                column_info=column_info,
-                charts=self.chart_paths
-            )
+            html_content = template.render(**template_data)
             
             # Write HTML file
             with open(output_path, 'w', encoding='utf-8') as f:

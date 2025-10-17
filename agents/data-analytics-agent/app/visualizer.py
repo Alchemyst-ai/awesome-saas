@@ -46,6 +46,41 @@ class DataVisualizer:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.charts_created = []
     
+    def _auto_detect_chart_type(self, col_data: pd.Series) -> str:
+        """Auto-detect appropriate chart type based on data"""
+        if pd.api.types.is_numeric_dtype(col_data):
+            return 'histogram'
+        else:
+            return 'bar'
+    
+    def _create_histogram(self, ax: plt.Axes, col_data: pd.Series, column: str) -> None:
+        """Create histogram plot"""
+        ax.hist(col_data, bins=30, edgecolor='black', alpha=0.7)
+        ax.set_title(f'Distribution of {column}', fontsize=14, fontweight='bold')
+        ax.set_xlabel(column)
+        ax.set_ylabel('Frequency')
+    
+    def _create_boxplot(self, ax: plt.Axes, col_data: pd.Series, column: str) -> None:
+        """Create box plot"""
+        ax.boxplot(col_data)
+        ax.set_title(f'Box Plot of {column}', fontsize=14, fontweight='bold')
+        ax.set_ylabel(column)
+    
+    def _create_violin_plot(self, ax: plt.Axes, col_data: pd.Series, column: str) -> None:
+        """Create violin plot"""
+        parts = ax.violinplot([col_data], showmeans=True, showmedians=True)
+        ax.set_title(f'Violin Plot of {column}', fontsize=14, fontweight='bold')
+        ax.set_ylabel(column)
+    
+    def _create_bar_chart(self, ax: plt.Axes, col_data: pd.Series, column: str) -> None:
+        """Create bar chart for categorical data"""
+        value_counts = col_data.value_counts().head(20)
+        ax.bar(range(len(value_counts)), value_counts.values)
+        ax.set_xticks(range(len(value_counts)))
+        ax.set_xticklabels(value_counts.index, rotation=45, ha='right')
+        ax.set_title(f'Top Values in {column}', fontsize=14, fontweight='bold')
+        ax.set_ylabel('Count')
+
     def create_distribution_plot(self, column: str, chart_type: str = 'auto') -> str:
         """
         Create distribution plot for a column
@@ -62,36 +97,19 @@ class DataVisualizer:
             
             # Auto-detect chart type
             if chart_type == 'auto':
-                if pd.api.types.is_numeric_dtype(col_data):
-                    chart_type = 'histogram'
-                else:
-                    chart_type = 'bar'
+                chart_type = self._auto_detect_chart_type(col_data)
             
             fig, ax = plt.subplots(figsize=(12, 6))
             
+            # Create appropriate chart type
             if chart_type == 'histogram':
-                ax.hist(col_data, bins=30, edgecolor='black', alpha=0.7)
-                ax.set_title(f'Distribution of {column}', fontsize=14, fontweight='bold')
-                ax.set_xlabel(column)
-                ax.set_ylabel('Frequency')
-            
+                self._create_histogram(ax, col_data, column)
             elif chart_type == 'boxplot':
-                ax.boxplot(col_data)
-                ax.set_title(f'Box Plot of {column}', fontsize=14, fontweight='bold')
-                ax.set_ylabel(column)
-            
+                self._create_boxplot(ax, col_data, column)
             elif chart_type == 'violin':
-                parts = ax.violinplot([col_data], showmeans=True, showmedians=True)
-                ax.set_title(f'Violin Plot of {column}', fontsize=14, fontweight='bold')
-                ax.set_ylabel(column)
-            
+                self._create_violin_plot(ax, col_data, column)
             elif chart_type == 'bar':
-                value_counts = col_data.value_counts().head(20)
-                ax.bar(range(len(value_counts)), value_counts.values)
-                ax.set_xticks(range(len(value_counts)))
-                ax.set_xticklabels(value_counts.index, rotation=45, ha='right')
-                ax.set_title(f'Top Values in {column}', fontsize=14, fontweight='bold')
-                ax.set_ylabel('Count')
+                self._create_bar_chart(ax, col_data, column)
             
             plt.tight_layout()
             
@@ -226,6 +244,50 @@ class DataVisualizer:
         except Exception as e:
             raise Exception(f"Error creating time series plot: {str(e)}")
     
+    def _create_plotly_figure(self, chart_type: str, **kwargs) -> go.Figure:
+        """Create Plotly figure based on chart type"""
+        title_map = {
+            'scatter': 'Interactive Scatter Plot',
+            'line': 'Interactive Line Chart',
+            'bar': 'Interactive Bar Chart',
+            'box': 'Interactive Box Plot'
+        }
+        
+        if chart_type == 'scatter':
+            return px.scatter(
+                self.df,
+                x=kwargs.get('x'),
+                y=kwargs.get('y'),
+                color=kwargs.get('color'),
+                title=kwargs.get('title', title_map['scatter'])
+            )
+        elif chart_type == 'line':
+            return px.line(
+                self.df,
+                x=kwargs.get('x'),
+                y=kwargs.get('y'),
+                color=kwargs.get('color'),
+                title=kwargs.get('title', title_map['line'])
+            )
+        elif chart_type == 'bar':
+            return px.bar(
+                self.df,
+                x=kwargs.get('x'),
+                y=kwargs.get('y'),
+                color=kwargs.get('color'),
+                title=kwargs.get('title', title_map['bar'])
+            )
+        elif chart_type == 'box':
+            return px.box(
+                self.df,
+                x=kwargs.get('x'),
+                y=kwargs.get('y'),
+                color=kwargs.get('color'),
+                title=kwargs.get('title', title_map['box'])
+            )
+        else:
+            raise ValueError(f"Unknown chart type: {chart_type}")
+
     def create_interactive_plot(self, chart_type: str, **kwargs) -> str:
         """
         Create interactive Plotly chart
@@ -234,44 +296,7 @@ class DataVisualizer:
         @return str: Path to saved HTML file
         """
         try:
-            if chart_type == 'scatter':
-                fig = px.scatter(
-                    self.df,
-                    x=kwargs.get('x'),
-                    y=kwargs.get('y'),
-                    color=kwargs.get('color'),
-                    title=kwargs.get('title', 'Interactive Scatter Plot')
-                )
-            
-            elif chart_type == 'line':
-                fig = px.line(
-                    self.df,
-                    x=kwargs.get('x'),
-                    y=kwargs.get('y'),
-                    color=kwargs.get('color'),
-                    title=kwargs.get('title', 'Interactive Line Chart')
-                )
-            
-            elif chart_type == 'bar':
-                fig = px.bar(
-                    self.df,
-                    x=kwargs.get('x'),
-                    y=kwargs.get('y'),
-                    color=kwargs.get('color'),
-                    title=kwargs.get('title', 'Interactive Bar Chart')
-                )
-            
-            elif chart_type == 'box':
-                fig = px.box(
-                    self.df,
-                    x=kwargs.get('x'),
-                    y=kwargs.get('y'),
-                    color=kwargs.get('color'),
-                    title=kwargs.get('title', 'Interactive Box Plot')
-                )
-            
-            else:
-                raise ValueError(f"Unknown chart type: {chart_type}")
+            fig = self._create_plotly_figure(chart_type, **kwargs)
             
             # Customize layout
             fig.update_layout(
@@ -288,6 +313,70 @@ class DataVisualizer:
         except Exception as e:
             raise Exception(f"Error creating interactive plot: {str(e)}")
     
+    def _create_correlation_heatmap_if_possible(self, numeric_cols: List[str], charts: List[str], chart_count: int, max_charts: int) -> int:
+        """Create correlation heatmap if conditions are met"""
+        if len(numeric_cols) > 1 and chart_count < max_charts:
+            try:
+                charts.append(self.create_correlation_heatmap())
+                return chart_count + 1
+            except Exception as e:
+                print(f"Warning: Could not create correlation heatmap: {e}")
+        return chart_count
+    
+    def _create_numeric_distributions(self, numeric_cols: List[str], charts: List[str], chart_count: int, max_charts: int) -> int:
+        """Create distribution plots for numeric columns"""
+        for col in numeric_cols[:3]:
+            if chart_count >= max_charts:
+                break
+            try:
+                charts.append(self.create_distribution_plot(col, 'histogram'))
+                chart_count += 1
+            except Exception as e:
+                print(f"Warning: Could not create histogram for column '{col}': {e}")
+        return chart_count
+    
+    def _create_categorical_charts(self, categorical_cols: List[str], charts: List[str], chart_count: int, max_charts: int) -> int:
+        """Create bar charts for categorical columns"""
+        for col in categorical_cols[:2]:
+            if chart_count >= max_charts:
+                break
+            if self.df[col].nunique() < 50:  # Only if not too many categories
+                try:
+                    charts.append(self.create_distribution_plot(col, 'bar'))
+                    chart_count += 1
+                except Exception as e:
+                    print(f"Warning: Could not create bar chart for column '{col}': {e}")
+        return chart_count
+    
+    def _create_scatter_plot_if_possible(self, numeric_cols: List[str], charts: List[str], chart_count: int, max_charts: int) -> int:
+        """Create scatter plot for top correlated pair if conditions are met"""
+        if len(numeric_cols) >= 2 and chart_count < max_charts:
+            try:
+                corr_matrix = self.df[numeric_cols].corr()
+                correlations = self._find_correlations(corr_matrix)
+                
+                if correlations:
+                    top_pair = max(correlations, key=lambda x: x['corr'])
+                    charts.append(
+                        self.create_scatter_plot(top_pair['col1'], top_pair['col2'])
+                    )
+                    return chart_count + 1
+            except Exception as e:
+                print(f"Warning: Could not create scatter plot: {e}")
+        return chart_count
+    
+    def _find_correlations(self, corr_matrix: pd.DataFrame) -> List[Dict[str, Any]]:
+        """Find correlation pairs from correlation matrix"""
+        correlations = []
+        for i in range(len(corr_matrix.columns)):
+            for j in range(i+1, len(corr_matrix.columns)):
+                correlations.append({
+                    'col1': corr_matrix.columns[i],
+                    'col2': corr_matrix.columns[j],
+                    'corr': abs(corr_matrix.iloc[i, j])
+                })
+        return correlations
+
     def auto_visualize(self, max_charts: int = 10) -> List[str]:
         """
         Automatically create relevant visualizations based on data types
@@ -298,59 +387,14 @@ class DataVisualizer:
             charts = []
             chart_count = 0
             
-            # 1. Create correlation heatmap if numeric columns exist
             numeric_cols = self.df.select_dtypes(include=[np.number]).columns.tolist()
-            if len(numeric_cols) > 1 and chart_count < max_charts:
-                try:
-                    charts.append(self.create_correlation_heatmap())
-                    chart_count += 1
-                except:
-                    pass
-            
-            # 2. Create distributions for first few numeric columns
-            for col in numeric_cols[:3]:
-                if chart_count >= max_charts:
-                    break
-                try:
-                    charts.append(self.create_distribution_plot(col, 'histogram'))
-                    chart_count += 1
-                except:
-                    pass
-            
-            # 3. Create bar charts for categorical columns
             categorical_cols = self.df.select_dtypes(include=['object']).columns.tolist()
-            for col in categorical_cols[:2]:
-                if chart_count >= max_charts:
-                    break
-                if self.df[col].nunique() < 50:  # Only if not too many categories
-                    try:
-                        charts.append(self.create_distribution_plot(col, 'bar'))
-                        chart_count += 1
-                    except:
-                        pass
             
-            # 4. Create scatter plots for top correlated pairs
-            if len(numeric_cols) >= 2 and chart_count < max_charts:
-                try:
-                    corr_matrix = self.df[numeric_cols].corr()
-                    # Find top correlation pair
-                    correlations = []
-                    for i in range(len(corr_matrix.columns)):
-                        for j in range(i+1, len(corr_matrix.columns)):
-                            correlations.append({
-                                'col1': corr_matrix.columns[i],
-                                'col2': corr_matrix.columns[j],
-                                'corr': abs(corr_matrix.iloc[i, j])
-                            })
-                    
-                    if correlations:
-                        top_pair = max(correlations, key=lambda x: x['corr'])
-                        charts.append(
-                            self.create_scatter_plot(top_pair['col1'], top_pair['col2'])
-                        )
-                        chart_count += 1
-                except:
-                    pass
+            # Create different types of visualizations
+            chart_count = self._create_correlation_heatmap_if_possible(numeric_cols, charts, chart_count, max_charts)
+            chart_count = self._create_numeric_distributions(numeric_cols, charts, chart_count, max_charts)
+            chart_count = self._create_categorical_charts(categorical_cols, charts, chart_count, max_charts)
+            chart_count = self._create_scatter_plot_if_possible(numeric_cols, charts, chart_count, max_charts)
             
             self.charts_created = charts
             return charts

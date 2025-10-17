@@ -14,15 +14,15 @@ jobs:
         python-version: ['3.10', '3.11', '3.12']
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@8f4b7f84861384cbb38fd579973d0e3c8f672892
     
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@a1a7e6f7f619c3e75f015d7709f4b9d0eee115a4
       with:
         python-version: ${{ matrix.python-version }}
     
     - name: Cache pip dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@88522ab9f39a2e970b61b92e19f7e6c762f8d3bb
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -59,7 +59,7 @@ jobs:
         pytest tests/ -v --cov=app --cov-report=xml --cov-report=html --cov-report=term
     
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b72056ca90276faea08e5a2e
       with:
         file: ./coverage.xml
         fail_ci_if_error: false
@@ -74,10 +74,10 @@ jobs:
     needs: test
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@8f4b7f84861384cbb38fd579973d0e3c8f672892
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@a1a7e6f7f619c3e75f015d7709f4b9d0eee115a4
       with:
         python-version: '3.10'
     
@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@8f4b7f84861384cbb38fd579973d0e3c8f672892
     
     - name: Check README exists
       run: |
@@ -122,7 +122,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@8f4b7f84861384cbb38fd579973d0e3c8f672892
     
     - name: Check for secrets
       run: |

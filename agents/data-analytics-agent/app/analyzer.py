@@ -124,6 +124,34 @@ class DataAnalyzer:
         except Exception as e:
             raise Exception(f"Error calculating basic stats: {str(e)}")
     
+    def _detect_outliers_iqr(self, col_data: pd.Series) -> Tuple[pd.Series, float, float]:
+        """Detect outliers using IQR method"""
+        Q1 = col_data.quantile(0.25)
+        Q3 = col_data.quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        outliers = self.df[(self.df[col_data.name] < lower_bound) | (self.df[col_data.name] > upper_bound)][col_data.name]
+        return outliers, lower_bound, upper_bound
+    
+    def _detect_outliers_zscore(self, col_data: pd.Series) -> pd.Series:
+        """Detect outliers using Z-score method"""
+        z_scores = np.abs(stats.zscore(col_data))
+        return col_data[z_scores > 3]
+    
+    def _validate_outlier_inputs(self, column: str) -> pd.Series:
+        """Validate inputs for outlier detection"""
+        if self.df is None:
+            raise Exception("No data loaded")
+        
+        if column not in self.df.columns:
+            raise ValueError(f"Column '{column}' not found")
+        
+        if not pd.api.types.is_numeric_dtype(self.df[column]):
+            raise ValueError(f"Column '{column}' is not numeric")
+        
+        return self.df[column].dropna()
+
     def detect_outliers(self, column: str, method: str = 'iqr') -> Dict[str, Any]:
         """
         Detect outliers in numeric column
@@ -133,29 +161,14 @@ class DataAnalyzer:
         @throws Exception: When column is not numeric or doesn't exist
         """
         try:
-            if self.df is None:
-                raise Exception("No data loaded")
-            
-            if column not in self.df.columns:
-                raise ValueError(f"Column '{column}' not found")
-            
-            if not pd.api.types.is_numeric_dtype(self.df[column]):
-                raise ValueError(f"Column '{column}' is not numeric")
-            
-            col_data = self.df[column].dropna()
+            col_data = self._validate_outlier_inputs(column)
             
             if method == 'iqr':
-                Q1 = col_data.quantile(0.25)
-                Q3 = col_data.quantile(0.75)
-                IQR = Q3 - Q1
-                lower_bound = Q1 - 1.5 * IQR
-                upper_bound = Q3 + 1.5 * IQR
-                outliers = self.df[(self.df[column] < lower_bound) | (self.df[column] > upper_bound)][column]
-            
+                outliers, lower_bound, upper_bound = self._detect_outliers_iqr(col_data)
+                bounds = {'lower': float(lower_bound), 'upper': float(upper_bound)}
             elif method == 'zscore':
-                z_scores = np.abs(stats.zscore(col_data))
-                outliers = col_data[z_scores > 3]
-            
+                outliers = self._detect_outliers_zscore(col_data)
+                bounds = {'lower': None, 'upper': None}
             else:
                 raise ValueError(f"Unknown method: {method}. Use 'iqr' or 'zscore'")
             
@@ -165,10 +178,7 @@ class DataAnalyzer:
                 'total_outliers': int(len(outliers)),
                 'outlier_percentage': float(round(len(outliers) / len(col_data) * 100, 2)),
                 'outlier_values': outliers.tolist()[:50],  # Limit to first 50
-                'bounds': {
-                    'lower': float(lower_bound) if method == 'iqr' else None,
-                    'upper': float(upper_bound) if method == 'iqr' else None
-                }
+                'bounds': bounds
             }
             
             return result
@@ -176,6 +186,29 @@ class DataAnalyzer:
         except Exception as e:
             raise Exception(f"Error detecting outliers: {str(e)}")
     
+    def _extract_correlations(self, corr_matrix: pd.DataFrame) -> List[Dict[str, Any]]:
+        """Extract correlation pairs from correlation matrix"""
+        correlations = []
+        for i in range(len(corr_matrix.columns)):
+            for j in range(i+1, len(corr_matrix.columns)):
+                correlations.append({
+                    'column1': corr_matrix.columns[i],
+                    'column2': corr_matrix.columns[j],
+                    'correlation': float(corr_matrix.iloc[i, j])
+                })
+        return correlations
+    
+    def _categorize_correlations(self, correlations: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+        """Categorize correlations into positive, negative, and strong"""
+        # Sort by absolute correlation value
+        correlations.sort(key=lambda x: abs(x['correlation']), reverse=True)
+        
+        return {
+            'top_positive_correlations': [c for c in correlations if c['correlation'] > 0][:10],
+            'top_negative_correlations': [c for c in correlations if c['correlation'] < 0][:10],
+            'strong_correlations': [c for c in correlations if abs(c['correlation']) > 0.7]
+        }
+
     def calculate_correlation_matrix(self, method: str = 'pearson') -> Dict[str, Any]:
         """
         Calculate correlation matrix for numeric columns
@@ -195,25 +228,14 @@ class DataAnalyzer:
             # Calculate correlation matrix
             corr_matrix = numeric_df.corr(method=method)
             
-            # Find top correlations (excluding diagonal)
-            correlations = []
-            for i in range(len(corr_matrix.columns)):
-                for j in range(i+1, len(corr_matrix.columns)):
-                    correlations.append({
-                        'column1': corr_matrix.columns[i],
-                        'column2': corr_matrix.columns[j],
-                        'correlation': float(corr_matrix.iloc[i, j])
-                    })
-            
-            # Sort by absolute correlation value
-            correlations.sort(key=lambda x: abs(x['correlation']), reverse=True)
+            # Extract and categorize correlations
+            correlations = self._extract_correlations(corr_matrix)
+            categorized = self._categorize_correlations(correlations)
             
             result = {
                 'method': method,
                 'matrix': corr_matrix.to_dict(),
-                'top_positive_correlations': [c for c in correlations if c['correlation'] > 0][:10],
-                'top_negative_correlations': [c for c in correlations if c['correlation'] < 0][:10],
-                'strong_correlations': [c for c in correlations if abs(c['correlation']) > 0.7]
+                **categorized
             }
             
             self.analysis_results['correlation'] = result
@@ -271,8 +293,9 @@ class DataAnalyzer:
                 try:
                     self.df[col] = pd.to_datetime(self.df[col])
                     datetime_cols.append(col)
-                except:
-                    pass
+                except (ValueError, TypeError) as e:
+                    # Column is not a datetime format, skip it
+                    print(f"Info: Column '{col}' is not a datetime format: {e}")
             
             if not datetime_cols:
                 return None
