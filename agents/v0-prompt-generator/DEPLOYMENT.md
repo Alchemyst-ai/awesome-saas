@@ -5,7 +5,7 @@
 ### Prerequisites
 
 1. **Vercel Account**: Sign up at [vercel.com](https://vercel.com)
-2. **Alchemyst AI API Key**: Obtain from [Alchemyst AI Dashboard](https://dashboard.getalchemystai.com)
+2. **Alchemyst AI API Key**: Obtain from [Alchemyst AI Dashboard](https://platform.getalchemystai.com/dashboard)
 3. **GitHub Repository**: Code should be pushed to a GitHub repository
 
 ### Environment Variables Setup
@@ -15,7 +15,7 @@ Before deploying, configure the following environment variables in your Vercel d
 #### Required Variables
 
 - `ALCHEMYST_API_KEY`: Your Alchemyst AI API key
-- `ALCHEMYST_BASE_URL`: https://api.getalchemystai.com
+- `ALCHEMYST_BASE_URL`: https://platform.getalchemystai.com/getstarted
 
 #### Optional Variables
 
@@ -83,4 +83,4 @@ Before deploying, configure the following environment variables in your Vercel d
 #### Support
 
 - Vercel Documentation: [vercel.com/docs](https://vercel.com/docs)
-- Alchemyst AI Support: [support.getalchemystai.com](https://support.getalchemystai.com)
+- Alchemyst AI Support: [support.getalchemystai.com](https://platform.getalchemystai.com/getstarted)
