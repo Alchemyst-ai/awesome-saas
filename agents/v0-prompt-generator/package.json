@@ -17,6 +17,7 @@
     "test:integration": "jest --selectProjects integration",
     "test:integration:watch": "jest --selectProjects integration --watch",
     "test:ai-workflow": "jest --testPathPatterns=ai-workflow",
+  "test:alchemyst-live": "node ./scripts/test-alchemyst-live.js",
     "analyze": "cross-env ANALYZE=true next build",
     "bundle-analyzer": "npx @next/bundle-analyzer",
     "performance:monitor": "node scripts/performance-monitor.js",
