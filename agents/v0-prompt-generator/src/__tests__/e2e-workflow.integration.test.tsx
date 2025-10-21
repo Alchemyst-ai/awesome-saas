@@ -24,7 +24,17 @@ import type { UserInput, GeneratedPrompt } from '@/types';
 // Mock the AI services
 jest.mock('@/lib/prompt-generation-service');
 jest.mock('@/lib/ai-client');
-jest.mock('@alchemystai/sdk');
+jest.mock('@alchemystai/sdk', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    v1: {
+      context: {
+        add: jest.fn().mockResolvedValue({}),
+        search: jest.fn().mockResolvedValue({ contexts: [] }),
+      },
+    },
+  })),
+}));
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({

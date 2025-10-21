@@ -1,4 +1,4 @@
-import { AlchemystAI } from '@alchemystai/sdk';
+import AlchemystAI from '@alchemystai/sdk';
 import type {
   UserInput,
   GeneratedPrompt,

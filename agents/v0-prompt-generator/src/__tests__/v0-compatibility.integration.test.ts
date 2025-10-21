@@ -16,7 +16,17 @@ import type { UserInput, GeneratedPrompt } from '@/types';
 import { industryTestData } from '@/src/__tests__/setup/integration-test-setup';
 
 // Mock the Alchemyst AI SDK
-jest.mock('@alchemystai/sdk');
+jest.mock('@alchemystai/sdk', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    v1: {
+      context: {
+        add: jest.fn().mockResolvedValue({}),
+        search: jest.fn().mockResolvedValue({ contexts: [] }),
+      },
+    },
+  })),
+}));
 
 // Mock performance monitoring
 jest.mock('@/lib/performance-monitor', () => ({

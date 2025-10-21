@@ -10,7 +10,8 @@ import { promptGenerationService } from '@/lib/prompt-generation-service';
 
 // Mock the Alchemyst AI SDK
 jest.mock('@alchemystai/sdk', () => ({
-  AlchemystAI: jest.fn().mockImplementation(() => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
     v1: {
       context: {
         add: jest.fn().mockResolvedValue({}),

@@ -10,7 +10,7 @@
  * Requirements: 1.1, 1.2, 1.3, 2.1
  */
 
-import { AlchemystAI } from '@alchemystai/sdk';
+import AlchemystAI from '@alchemystai/sdk';
 import {
   alchemystClient,
   generatePrompt,

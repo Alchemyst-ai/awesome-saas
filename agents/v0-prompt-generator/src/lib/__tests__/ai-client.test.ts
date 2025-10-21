@@ -8,7 +8,8 @@ import type { UserInput, IndustryConfig, PromptTemplate } from '@/types';
 
 // Mock the Alchemyst AI SDK
 jest.mock('@alchemystai/sdk', () => ({
-  AlchemystAI: jest.fn().mockImplementation(() => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
     v1: {
       context: {
         add: jest.fn(),
@@ -89,9 +90,9 @@ describe('AlchemystClient', () => {
       },
     };
 
-    // Mock the AlchemystAI constructor to return our mock client
-    const { AlchemystAI } = require('@alchemystai/sdk');
-    AlchemystAI.mockImplementation(() => mockClient);
+  // Mock the AlchemystAI constructor to return our mock client
+  const AlchemystAI = require('@alchemystai/sdk').default;
+  AlchemystAI.mockImplementation(() => mockClient);
   });
 
   describe('generatePrompt', () => {
@@ -186,8 +187,8 @@ describe('AlchemystClient', () => {
         },
       };
 
-      const { AlchemystAI } = require('@alchemystai/sdk');
-      AlchemystAI.mockImplementation(() => contextMockClient);
+  const AlchemystAI = require('@alchemystai/sdk').default;
+  AlchemystAI.mockImplementation(() => contextMockClient);
 
       // Create a new client instance
       const testClient = new AlchemystClient();
@@ -229,8 +230,8 @@ describe('AlchemystClient', () => {
         },
       };
 
-      const { AlchemystAI } = require('@alchemystai/sdk');
-      AlchemystAI.mockImplementation(() => contextMockClient);
+  const AlchemystAI = require('@alchemystai/sdk').default;
+  AlchemystAI.mockImplementation(() => contextMockClient);
 
       // Create a new client instance
       const testClient = new AlchemystClient();
