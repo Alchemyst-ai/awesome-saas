@@ -16,7 +16,7 @@ An AI-powered tool that transforms minimal website information into comprehensiv
 ### Prerequisites
 
 - Node.js 18+ and npm
-- Alchemyst AI API key ([Get one here](https://dashboard.getalchemystai.com))
+- Alchemyst AI API key ([Get one here]((https://platform.getalchemystai.com/getstarted)))
 
 ### Installation
 
