@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alchemyst Platform Cookbook</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #1f2937;
+      color: #e5e7eb;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body class="scroll-smooth">
+
+  <!-- Hero Section -->
+  <section class="text-center py-10 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+    <h1 class="text-4xl md:text-6xl font-bold text-white mb-3">🧪 Alchemyst Platform Cookbook</h1>
+    <p class="text-lg md:text-2xl text-gray-100 mb-6">Empowering developers and builders with cutting-edge AI tools and templates</p>
+
+    <div class="flex justify-center gap-3 flex-wrap mb-5">
+      <img src="https://img.shields.io/badge/AI-Platform-blue?style=for-the-badge&logo=artificial-intelligence" alt="AI Platform" />
+      <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status" />
+      <img src="https://img.shields.io/badge/Community-19%20Projects-orange?style=for-the-badge" alt="Community Projects" />
+      <img src="https://img.shields.io/badge/Team-4%20Templates-purple?style=for-the-badge" alt="Team Templates" />
+    </div>
+
+    <div class="flex justify-center gap-3 flex-wrap">
+      <a href="https://platform.getalchemystai.com" target="_blank">
+        <img src="https://img.shields.io/badge/🔥%20Start%20Building-platform.getalchemystai.com-6366f1?style=for-the-badge&labelColor=1f2937" alt="Start Building" />
+      </a>
+      <a href="https://dub.sh/context-community" target="_blank">
+        <img src="https://img.shields.io/badge/💬%20Join%20Our%20Discord-community.getalchemystai.com-5865F2?style=for-the-badge&labelColor=1f2937" alt="Join our Discord" />
+      </a>
+    </div>
+  </section>
+
+  <!-- Rainbow Divider -->
+  <div class="my-6 text-center">
+    <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" alt="Rainbow line" class="mx-auto" />
+  </div>
+
+  <!-- Table of Contents -->
+  <section class="px-5 md:px-20 mb-10">
+    <h2 class="text-2xl font-bold mb-4">📋 Table of Contents</h2>
+    <ul class="list-disc ml-5 space-y-2">
+      <li><a href="#api-documentation" class="text-indigo-400">🔗 API Documentation</a></li>
+      <li><a href="#quick-start" class="text-indigo-400">🎯 Quick Start</a></li>
+      <li>Get started with the Alchemyst Platform
+        <ul class="list-disc ml-5">
+          <li><a href="#official-templates" class="text-indigo-400">💡 Official Templates</a></li>
+          <li><a href="#community-templates" class="text-indigo-400">🚀 Community Templates</a></li>
+        </ul>
+      </li>
+      <li><a href="#community" class="text-indigo-400">🏆 Community</a></li>
+      <li><a href="#contributing" class="text-indigo-400">🤝 Contributing</a></li>
+      <ul class="list-disc ml-5">
+        <li><a href="#how-to-contribute" class="text-indigo-400">🎯 How to Contribute</a></li>
+        <li><a href="#troubleshooting" class="text-indigo-400">🔍 Troubleshooting</a></li>
+      </ul>
+    </ul>
+  </section>
+
+  <!-- API Documentation -->
+  <section id="api-documentation" class="px-5 md:px-20 mb-10">
+    <h2 class="text-2xl font-bold mb-4">🔗 API Documentation</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-gray-800 p-5 rounded-lg text-center shadow-lg hover:shadow-xl transition card">
+        <a href="https://platform-backend.getalchemystai.com/api/v1/docs" target="_blank">
+          <img src="https://img.shields.io/badge/OpenAPI-Documentation-85EA2D?style=for-the-badge&logo=swagger&logoColor=white" alt="OpenAPI" class="mx-auto mb-2" />
+        </a>
+        <p><b>Interactive API Explorer</b></p>
+      </div>
+      <div class="bg-gray-800 p-5 rounded-lg text-center shadow-lg hover:shadow-xl transition card">
+        <a href="https://docs.getalchemystai.com" target="_blank">
+          <img src="https://img.shields.io/badge/API-Documentation-4FC08D?style=for-the-badge&logo=gitbook&logoColor=white" alt="API Docs" class="mx-auto mb-2" />
+        </a>
+        <p><b>Technical Documentation</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section id="quick-start" class="px-5 md:px-20 mb-10">
+    <h2 class="text-2xl font-bold mb-4">🎯 Quick Start</h2>
+    <pre class="bg-gray-800 p-5 rounded-lg overflow-x-auto text-green-400">
+<code>
+# Get started with the Alchemyst Platform
+curl -X GET https://platform.getalchemystai.com/api/v1/
+</code>
+    </pre>
+    <p class="mt-2 text-gray-300">💡 <b>Pro Tip:</b> Check out our <a href="https://zendocs.getalchemystai.com" target="_blank" class="text-indigo-400">AI-native Documentation</a> for intelligent code examples!</p>
+  </section>
+
+  <!-- Templates -->
+  <section id="official-templates" class="px-5 md:px-20 mb-10">
+    <h2 class="text-2xl font-bold mb-4">📦 Templates</h2>
+
+    <!-- Official -->
+    <h3 class="text-xl font-semibold mb-3">💡 Official Templates</h3>
+    <div class="flex justify-center mb-5">
+      <img src="https://img.shields.io/badge/Official%20Templates-4%20Available-4F46E5?style=for-the-badge" alt="Official Templates" />
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Card Template Example -->
+      <div class="bg-gray-800 p-5 rounded-lg shadow-lg hover:shadow-xl transition card">
+        <a href="https://github.com/Alchemyst-ai/agent0-email" target="_blank">
+          <img src="https://img.shields.io/badge/agent0--email-1f2937?style=for-the-badge&logo=github" alt="agent0-email" class="mx-auto mb-2" />
+        </a>
+        <p class="text-center mb-1">Agentic email automation for your inbox, built without 3rd party dependencies.</p>
+        <div class="flex justify-center gap-1 flex-wrap">
+          <img src="https://img.shields.io/badge/email-blue?style=flat-square" alt="email">
+          <img src="https://img.shields.io/badge/marketing-green?style=flat-square" alt="marketing">
+        </div>
+      </div>
+
+      <div class="bg-gray-800 p-5 rounded-lg shadow-lg hover:shadow-xl transition card">
+        <a href="https://github.com/Alchemyst-ai/pitch-o-scope" target="_blank">
+          <img src="https://img.shields.io/badge/pitch--o--scope-1f2937?style=for-the-badge&logo=github" alt="pitch-o-scope" class="mx-auto mb-2" />
+        </a>
+        <p class="text-center mb-1">Pitch your idea according to the interests of your target company.</p>
+        <div class="flex justify-center gap-1 flex-wrap">
+          <img src="https://img.shields.io/badge/b2b-blue?style=flat-square" alt="b2b">
+          <img src="https://img.shields.io/badge/sales-green?style=flat-square" alt="sales">
+        </div>
+      </div>
+      <!-- Add all other official templates here in similar cards -->
+    </div>
+  </section>
+
+  <!-- Community Templates -->
+  <section id="community-templates" class="px-5 md:px-20 mb-10">
+    <h3 class="text-xl font-semibold mb-3">🚀 Community Templates</h3>
+    <div class="flex justify-center mb-5">
+      <img src="https://img.shields.io/badge/Community%20Templates-19%20(Total%2094%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Example Community Card -->
+      <div class="bg-gray-800 p-5 rounded-lg shadow-lg hover:shadow-xl transition card">
+        <a href="https://github.com/asengupta07/MASHire" target="_blank">
+          <img src="https://img.shields.io/badge/MASHire-1f2937?style=for-the-badge&logo=github" alt="MASHire" class="mx-auto mb-2" />
+        </a>
+        <p class="text-center mb-1">Intelligent job posting & recruitment platform powered by AI.</p>
+        <div class="flex justify-center gap-1 flex-wrap">
+          <img src="https://img.shields.io/badge/hiring-blue?style=flat-square" alt="hiring">
+          <img src="https://img.shields.io/badge/hr-green?style=flat-square" alt="hr">
+          <img src="https://img.shields.io/badge/recruitment-purple?style=flat-square" alt="recruitment">
+        </div>
+      </div>
+      <!-- Repeat all other community templates in same card style -->
+    </div>
+  </section>
+
+  <!-- Community Leaderboard -->
+  <section id="community" class="px-5 md:px-20 mb-10 text-center">
+    <h2 class="text-2xl font-bold mb-4">🏆 Community</h2>
+    <a href="https://github.com/Alchemyst-ai/awesome-saas/blob/main/leaderboard/README.md" target="_blank">
+      <img src="https://img.shields.io/badge/🏆%20Community-Leaderboard-FFD700?style=for-the-badge&logo=trophy" alt="Leaderboard" />
+    </a>
+    <p class="mt-2">See top contributors</p>
+  </section>
+
+  <!-- Contributing -->
+  <section id="contributing" class="px-5 md:px-20 mb-10">
+    <h2 class="text-2xl font-bold mb-4">🤝 Contributing</h2>
+
+    <h3 id="how-to-contribute" class="text-xl font-semibold mb-2">🎯 How to Contribute</h3>
+    <ol class="list-decimal ml-5 mb-4 space-y-1">
+      <li>Fork the repository and create your feature branch</li>
+      <li>Add the topic <b>alchemyst-awesome-saas</b> to your repository</li>
+      <li>Make your repo public for visibility</li>
+      <li>Submit a pull request with your awesome project!</li>
+    </ol>
+
+    <h3 id="troubleshooting" class="text-xl font-semibold mb-2">🔍 Troubleshooting</h3>
+    <details class="mb-4 p-4 bg-gray-800 rounded-lg">
+      <summary class="cursor-pointer">My contribution doesn't appear in the list</summary>
+      <ul class="list-disc ml-5 mt-2 space-y-1">
+        <li>✅ Repository is set to <b>public</b></li>
+        <li>✅ Added topic <b>"alchemyst-awesome-saas"</b> to your repo</li>
+        <li>✅ Wait for the <b>daily refresh</b> at 12:00 AM UTC</li>
+        <li>✅ If still missing, <a href="https://github.com/Alchemyst-ai/awesome-saas/issues/new" class="text-indigo-400" target="_blank">raise an issue</a></li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- Footer -->
+  <section class="text-center py-10 bg-gradient-to-r from-purple-600 via-pink-600 to-red-500">
+    <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" alt="Rainbow line" class="mx-auto mb-5" />
+    <h3 class="text-2xl font-bold mb-3">🚀 Ready to build something amazing?</h3>
+    <a href="https://platform.getalchemystai.com" target="_blank">
+      <img src="https://img.shields.io/badge/Get%20Started%20Now-6366f1?style=for-the-badge&logo=rocket&logoColor=white" alt="Get Started" />
+    </a>
+    <p class="mt-5">Made with ❤️ by the Alchemyst AI Team</p>
+    <div class="flex justify-center gap-3 mt-3">
+      <a href="https://github.com/Alchemyst-ai/awesome-saas/stargazers" target="_blank">
+        <img src="https://img.shields.io/github/stars/Alchemyst-ai/awesome-saas?style=social" alt="GitHub Stars" />
+      </a>
+      <a href="https://github.com/Alchemyst-ai/awesome-saas/network/members" target="_blank">
+        <img src="https://img.shields.io/github/forks/Alchemyst-ai/awesome-saas?style=social" alt="GitHub Forks" />
+      </a>
+    </div>
+  </section>
+
+</body>
+</html>
