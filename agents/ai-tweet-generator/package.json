@@ -1,0 +1,25 @@
+
+{
+  "name": "ai-tweet-generator",
+  "version": "1.0.0",
+  "description": "CLI tool to generate AI-powered tweets using OpenAI GPT.",
+  "main": "ai-tweet-generator.ts",
+  "scripts": {
+    "start": "ts-node ai-tweet-generator.ts",
+    "build": "tsc"
+  },
+  "keywords": ["AI", "OpenAI", "GPT", "tweets", "CLI"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "openai": "^4.10.0",
+    "readline-sync": "^1.4.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.0",
+    "@types/readline-sync": "^1.4.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.0"
+  }
+}
