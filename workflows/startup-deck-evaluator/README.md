@@ -1,3 +1,12 @@
+## Quickstart
+- Add your OpenAI Key.
+- Add your Alchemyst AI API Key. If you don't have one, sign up for one at https://platform.getalchemystai.com
+- Send the following curl request to kick off the evaluation procedure:
+```sh
+curl -X POST http://localhost:5678/webhook-test/user-input-webhook   -H "Content-Type: application/json" \
+  -d '{"message": "Tell me about Alchemyst AI founders", "user_id": "1234", "organization_id": "abcd", "session_id": "lorem_ipsum" }'
+```
+
 ## **What This Prompt Does**
 
 This prompt defines an AI assistant designed to act like a knowledgeable startup advisor who specializes in analyzing and improving pitch decks. Its purpose is to help founders refine their decks so they are clearer, more compelling, and more investor-ready.
