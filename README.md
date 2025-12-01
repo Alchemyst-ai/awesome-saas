@@ -4,7 +4,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/AI-Platform-blue?style=for-the-badge&logo=artificial-intelligence" alt="AI Platform" />
   <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status" />
-  <img src="https://img.shields.io/badge/Community-20%20Projects-orange?style=for-the-badge" alt="Community Projects" />
+  <img src="https://img.shields.io/badge/Community-21%20Projects-orange?style=for-the-badge" alt="Community Projects" />
   <img src="https://img.shields.io/badge/Team-4%20Templates-purple?style=for-the-badge" alt="Team Templates" />
 </div>
 
@@ -210,7 +210,7 @@ This is an ever expanding list - we'll keep on adding open source templates!
 ### 🚀 Community Templates
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Community%20Templates-20%20(Total%20101%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
+  <img src="https://img.shields.io/badge/Community%20Templates-21%20(Total%20101%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
 </div>
 
 <br />
@@ -338,6 +338,20 @@ This is an ever expanding list - we'll keep on adding open source templates!
     <td>
       <img src="https://img.shields.io/badge/marketing-blue?style=flat-square" alt="marketing" />
       <img src="https://img.shields.io/badge/promotion-green?style=flat-square" alt="promotion" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/harshit07kr/Insta-Caption-Generator">
+        <img src="https://img.shields.io/badge/Insta--Caption--Generator-1f2937?style=for-the-badge&logo=github" alt="Insta-Caption-Generator" />
+      </a>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/github/stars/harshit07kr/Insta-Caption-Generator?style=social" alt="Stars" />
+    </td>
+    <td>No description available</td>
+    <td>
+      -
     </td>
   </tr>
   <tr>
