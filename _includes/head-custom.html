@@ -1,1 +1,29 @@
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<style>
+  /* 1. Force the page container to be at least as tall as the phone screen */
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* 2. Target the main content. This tells it to 'grow' and take up 
+     all available empty space, which pushes the footer to the bottom. */
+  main, #content, .container, .wrapper {
+    flex: 1 0 auto;
+  }
+
+  /* 3. Style the footer so it stays anchored */
+  footer, .site-footer {
+    flex-shrink: 0;
+    padding: 2rem 1rem;
+    background: #000;
+    text-align: center;
+    width: 100%;
+  }
+</style>
