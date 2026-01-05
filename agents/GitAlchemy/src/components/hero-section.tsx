@@ -4,9 +4,10 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Search, FlaskConical, Sparkles, Loader2 } from "lucide-react"
+import { Search, FlaskConical, Sparkles, Loader2, Lock } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { SettingsDialog, getStoredGitHubToken } from "@/components/settings-dialog"
 
 export function HeroSection() {
   const [repoUrl, setRepoUrl] = useState("")
@@ -35,6 +36,9 @@ export function HeroSection() {
         normalizedUrl = `https://github.com/${normalizedUrl}`
       }
 
+      // Get user's GitHub token if available
+      const userToken = getStoredGitHubToken()
+
       // Call the ingest API
       const response = await fetch("/api/ingest", {
         method: "POST",
@@ -43,6 +47,7 @@ export function HeroSection() {
         },
         body: JSON.stringify({
           repoUrl: normalizedUrl,
+          userToken, // Pass user token for private repo access
         }),
       })
 
@@ -65,12 +70,26 @@ export function HeroSection() {
     }
   }
 
+  // Check if user has a token saved
+  const hasToken = typeof window !== "undefined" && getStoredGitHubToken()
+
   return (
     <section className="relative overflow-hidden border-b border-border">
       {/* Background gradient effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-accent/20 to-transparent" />
       <div className="absolute top-20 left-1/4 h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
       <div className="absolute top-40 right-1/4 h-96 w-96 rounded-full bg-chart-2/5 blur-3xl" />
+
+      {/* Settings button in top right */}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        {hasToken && (
+          <span className="text-xs text-green-500 flex items-center gap-1">
+            <Lock className="h-3 w-3" />
+            Private repos enabled
+          </span>
+        )}
+        <SettingsDialog />
+      </div>
 
       <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
         {/* Logo */}
@@ -107,9 +126,9 @@ export function HeroSection() {
                   className="h-14 rounded-xl border-border bg-card pl-12 pr-4 text-base text-card-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
                 />
               </div>
-              <Button 
-                type="submit" 
-                size="lg" 
+              <Button
+                type="submit"
+                size="lg"
                 className="h-14 rounded-xl px-6 font-medium"
                 disabled={loading}
               >

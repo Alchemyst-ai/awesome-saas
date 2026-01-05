@@ -16,28 +16,39 @@ function parseRepoUrl(repoUrl: string) {
   }
 }
 
-async function ghFetch(url: string) {
+// Get GitHub token - prefer user token, fallback to env var
+function getGitHubToken(userToken?: string): string {
+  const token = userToken || process.env.GITHUB_TOKEN;
+  if (!token) {
+    throw new Error("No GitHub token available. Please add your token in Settings or configure GITHUB_TOKEN.");
+  }
+  return token;
+}
+
+async function ghFetch(url: string, token: string) {
   const headers: Record<string, string> = {
     Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
   };
-
-  if (!process.env.GITHUB_TOKEN) {
-    throw new Error("Missing GITHUB_TOKEN (required to avoid rate limits)");
-  }
-
-  headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 
   const res = await fetch(url, { headers });
   if (!res.ok) {
-    throw new Error(`GitHub API error ${res.status}: ${await res.text()}`);
+    const errorText = await res.text();
+    if (res.status === 404) {
+      throw new Error("Repository not found. Check the URL or add your GitHub token for private repos.");
+    }
+    if (res.status === 401 || res.status === 403) {
+      throw new Error("Access denied. Your GitHub token may be invalid or lack permissions.");
+    }
+    throw new Error(`GitHub API error ${res.status}: ${errorText}`);
   }
   return res.json();
 }
 
-async function ghFetchRaw(url: string) {
+async function ghFetchRaw(url: string, token: string) {
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3.raw",
-    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    Authorization: `Bearer ${token}`,
   };
 
   const res = await fetch(url, { headers });
@@ -58,12 +69,19 @@ async function ghFetchRaw(url: string) {
 
 export async function POST(req: Request) {
   try {
-    const { repoUrl, ref, groupName } = await req.json();
+    const { repoUrl, ref, groupName, userToken } = await req.json();
     const { owner, repo } = parseRepoUrl(repoUrl);
+
+    // Get token - user token takes priority
+    const token = getGitHubToken(userToken);
+    const isUsingUserToken = !!userToken;
+
+    console.log(`🔑 Using ${isUsingUserToken ? "user" : "server"} GitHub token`);
 
     /* 1️⃣ Repo info */
     const repoInfo = await ghFetch(
-      `https://api.github.com/repos/${owner}/${repo}`
+      `https://api.github.com/repos/${owner}/${repo}`,
+      token
     );
 
     /* 2️⃣ Resolve branch safely */
@@ -72,12 +90,14 @@ export async function POST(req: Request) {
 
     try {
       branchInfo = await ghFetch(
-        `https://api.github.com/repos/${owner}/${repo}/branches/${branchName}`
+        `https://api.github.com/repos/${owner}/${repo}/branches/${branchName}`,
+        token
       );
     } catch {
       branchName = repoInfo.default_branch;
       branchInfo = await ghFetch(
-        `https://api.github.com/repos/${owner}/${repo}/branches/${branchName}`
+        `https://api.github.com/repos/${owner}/${repo}/branches/${branchName}`,
+        token
       );
     }
 
@@ -85,7 +105,8 @@ export async function POST(req: Request) {
 
     /* 3️⃣ Fetch full tree */
     const tree = await ghFetch(
-      `https://api.github.com/repos/${owner}/${repo}/git/trees/${treeSha}?recursive=1`
+      `https://api.github.com/repos/${owner}/${repo}/git/trees/${treeSha}?recursive=1`,
+      token
     );
 
     const files = (tree.tree ?? [])
@@ -117,7 +138,7 @@ export async function POST(req: Request) {
           f.path
         )}?ref=${encodeURIComponent(branchName)}`;
 
-        const content = await ghFetchRaw(rawUrl);
+        const content = await ghFetchRaw(rawUrl, token);
 
         // Prepend filename to content so it's available in search results
         // (Alchemyst SDK doesn't return metadata in search, only content)
@@ -160,6 +181,8 @@ export async function POST(req: Request) {
       totalFiles: files.length,
       filesProcessed: successCount,
       filesSkipped: Math.max(0, files.length - maxFiles),
+      isPrivate: repoInfo.private,
+      usedUserToken: isUsingUserToken,
       errors: errors.length > 0 ? errors : undefined,
     });
 

@@ -21,8 +21,17 @@ Automatically generate comprehensive documentation for any repository, including
 - **Quick Start** - Get up and running quickly
 - **Architecture** - Understand the codebase structure
 
+### 🔐 **Private Repository Support**
+Access your private repositories by adding your GitHub Personal Access Token in Settings. Your token is stored securely in your browser and never sent to our servers.
+
 ### 🚀 **Easy Repository Ingestion**
-Simply paste a GitHub URL or `owner/repo` format to instantly index and explore any public repository. Supports multiple file types including TypeScript, JavaScript, Python, Go, Rust, and more.
+Simply paste a GitHub URL or `owner/repo` format to instantly index and explore any repository. Supports multiple file types including TypeScript, JavaScript, Python, Go, Rust, and more.
+
+### 📊 **Visual Architecture Diagrams**
+Automatically generated Mermaid flowcharts visualize your codebase structure, component relationships, and data flows.
+
+### 🔗 **Shareable Documentation**
+Share generated documentation with anyone via public URLs. Perfect for onboarding new team members or sharing with stakeholders.
 
 ### 💾 **Persistent Knowledge Base**
 Ingested repositories are stored in your knowledge base, allowing you to return and continue exploring without re-indexing.
@@ -39,6 +48,8 @@ Ingested repositories are stored in your knowledge base, allowing you to return 
 | **UI Components** | [Radix UI](https://radix-ui.com) + [shadcn/ui](https://ui.shadcn.com) |
 | **AI/RAG** | [Alchemyst AI SDK](https://alchemyst.ai) |
 | **LLM** | [OpenRouter](https://openrouter.ai) |
+| **Database** | [Supabase](https://supabase.com) (PostgreSQL) |
+| **Diagrams** | [Mermaid](https://mermaid.js.org) |
 | **Markdown** | react-markdown, KaTeX, Syntax Highlighting |
 
 ---
