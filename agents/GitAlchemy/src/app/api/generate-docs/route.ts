@@ -34,16 +34,87 @@ const sectionPrompts: Record<string, string> = {
 - Target audience
 - Brief overview of the codebase structure
 
+Include a HIGH-LEVEL Mermaid diagram showing the main layers/components:
+\`\`\`mermaid
+flowchart TB
+    subgraph Frontend["Frontend Layer"]
+        UI["UI Components"]
+    end
+    
+    subgraph Backend["Backend/API"]
+        API["API Routes"]
+    end
+    
+    subgraph Services["External Services"]
+        DB["Database/Storage"]
+    end
+    
+    Frontend --> Backend --> Services
+\`\`\`
+
 Base your response on the actual code files provided. Be specific and reference actual components/files.`,
 
-  architecture: `Analyze and document the architecture of this repository:
-- Overall system architecture and design patterns
-- Key components/modules and their relationships
-- Directory structure and organization
-- How different parts of the system interact
-- Data flow and component hierarchy
+  architecture: `Analyze and document the architecture of this repository in detail.
 
-Reference actual files and components from the codebase.`,
+## Your response MUST include:
+
+### 1. Repository Structure Diagram
+Create a comprehensive Mermaid flowchart showing the ENTIRE codebase structure. Use subgraphs to group related files by their purpose/layer.
+
+Example format:
+\`\`\`mermaid
+flowchart TD
+    subgraph Infrastructure["Development Infrastructure"]
+        CI[".github/workflows/ci.yml"]
+        REQ["requirements.lock"]
+    end
+    
+    subgraph Config["Configuration"]
+        PKG["package.json<br/>Dependencies"]
+        ENV[".env.example"]
+        TS["tsconfig.json"]
+    end
+    
+    subgraph Core["Core Application"]
+        subgraph API["API Layer"]
+            CHAT["api/chat/route.ts"]
+            INGEST["api/ingest/route.ts"]
+        end
+        
+        subgraph Components["UI Components"]
+            HERO["hero-section.tsx"]
+            DOCS["repo-documentation.tsx"]
+        end
+    end
+    
+    subgraph Lib["Libraries/Utils"]
+        UTILS["lib/utils.ts"]
+        CLIENT["lib/alchemyst.ts"]
+    end
+    
+    Config --> Core
+    Core --> Lib
+    API --> CLIENT
+    Components --> UTILS
+\`\`\`
+
+### 2. Data Flow Diagram  
+Show how data flows between major components:
+\`\`\`mermaid
+flowchart LR
+    subgraph Client["Client Layer"]
+        A["Main Client"] --> B["API Client"]
+    end
+    
+    B -->|"HTTP requests"| C["API Backend"]
+\`\`\`
+
+### 3. Component Table
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| ComponentName | Description | \`path/to/file.ts\` |
+
+Reference ACTUAL files and directories from the codebase. Be thorough and include all major files.`,
 
   "quick-start": `Create a quick start guide for this repository:
 - Prerequisites and requirements

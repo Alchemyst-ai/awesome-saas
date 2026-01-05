@@ -74,6 +74,8 @@ Ingested repositories are stored in your knowledge base, allowing you to return 
    GITHUB_TOKEN=your_github_personal_access_token
    ALCHEMYST_AI_API_KEY=your_alchemyst_api_key
    OPENROUTER_API_KEY=your_openrouter_api_key
+   NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+   SUPABASE_SERVICE_KEY=your_supabase_service_role_key
    ```
 
 4. **Run the development server**
@@ -151,12 +153,15 @@ GitAlchemy/
 | `GITHUB_TOKEN` | GitHub Personal Access Token for API requests | ✅ Yes |
 | `ALCHEMYST_AI_API_KEY` | Alchemyst AI API key for RAG functionality | ✅ Yes |
 | `OPENROUTER_API_KEY` | OpenRouter API key for LLM access | ✅ Yes |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | ✅ Yes |
+| `SUPABASE_SERVICE_KEY` | Supabase service role key (server-side) | ✅ Yes |
 
 ### Getting API Keys
 
 1. **GitHub Token**: [Create a Personal Access Token](https://github.com/settings/tokens) with `repo` scope
 2. **Alchemyst AI**: Sign up at [alchemyst.ai](https://alchemyst.ai) to get your API key
 3. **OpenRouter**: Create an account at [openrouter.ai](https://openrouter.ai) for LLM access
+4. **Supabase**: Create a project at [supabase.com](https://supabase.com) and get your keys from Project Settings → API
 
 ---
 

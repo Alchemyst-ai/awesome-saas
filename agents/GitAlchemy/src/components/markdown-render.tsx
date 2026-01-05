@@ -8,9 +8,67 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme-provider";
 import Markdown, { RuleType } from "markdown-to-jsx";
-import { useState } from "react";
+import { useState, useEffect, useId } from "react";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import mermaid from "mermaid";
+
+// Mermaid Diagram Component
+function MermaidDiagram({ chart, isDark }: { chart: string; isDark: boolean }) {
+    const id = useId().replace(/:/g, "mermaid");
+    const [svg, setSvg] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Initialize mermaid with theme settings
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: isDark ? "dark" : "default",
+            securityLevel: "loose",
+            fontFamily: "ui-sans-serif, system-ui, sans-serif",
+        });
+
+        const renderChart = async () => {
+            try {
+                // Clear any previous error
+                setError(null);
+
+                // Render the mermaid diagram
+                const { svg: renderedSvg } = await mermaid.render(id, chart.trim());
+                setSvg(renderedSvg);
+            } catch (err: any) {
+                console.error("Mermaid rendering error:", err);
+                setError(err?.message || "Failed to render diagram");
+            }
+        };
+
+        renderChart();
+    }, [chart, isDark, id]);
+
+    if (error) {
+        return (
+            <div className="my-4 p-4 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive text-sm">
+                <p className="font-medium">Failed to render diagram</p>
+                <pre className="mt-2 text-xs opacity-70 whitespace-pre-wrap">{chart}</pre>
+            </div>
+        );
+    }
+
+    if (!svg) {
+        return (
+            <div className="my-4 p-4 rounded-lg bg-muted animate-pulse flex items-center justify-center min-h-[100px]">
+                <span className="text-muted-foreground text-sm">Rendering diagram...</span>
+            </div>
+        );
+    }
+
+    return (
+        <div
+            className="my-4 p-4 rounded-lg bg-card border border-border overflow-x-auto"
+            dangerouslySetInnerHTML={{ __html: svg }}
+        />
+    );
+}
 
 interface MarkdownRenderProps {
     children?: string;
@@ -163,6 +221,16 @@ function MarkdownRender(props: MarkdownRenderProps) {
                                     {copyState === "not_copied" && <CopyIcon className="h-2 w-2" />}
                                 </Button>
                             </div>
+                        );
+                    }
+                    // Handle mermaid diagrams
+                    if (node.type === RuleType.codeBlock && node.lang === "mermaid") {
+                        return (
+                            <MermaidDiagram
+                                key={state.key}
+                                chart={node.text}
+                                isDark={isDark}
+                            />
                         );
                     }
                     if (node.type === RuleType.codeBlock && node.lang === "latex") {

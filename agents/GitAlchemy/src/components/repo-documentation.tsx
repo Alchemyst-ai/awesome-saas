@@ -15,6 +15,8 @@ import {
   Menu,
   X,
   Loader2,
+  Check,
+  Copy,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -50,6 +52,15 @@ export function RepoDocumentation({ owner, repo, initialDocs = {} }: RepoDocumen
   // Initialize with server-provided docs (instant load, no flicker!)
   const [documentation, setDocumentation] = useState<DocumentationContent>(initialDocs)
   const [loadingSections, setLoadingSections] = useState<Set<string>>(new Set())
+  const [shareCopied, setShareCopied] = useState(false)
+
+  // Handle share button click
+  const handleShare = async () => {
+    const url = window.location.href
+    await navigator.clipboard.writeText(url)
+    setShareCopied(true)
+    setTimeout(() => setShareCopied(false), 2000)
+  }
 
   // Save section to server after generating
   const saveToServer = async (section: string, content: string) => {
@@ -317,6 +328,24 @@ export function RepoDocumentation({ owner, repo, initialDocs = {} }: RepoDocumen
             </h1>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShare}
+              className="gap-2"
+            >
+              {shareCopied ? (
+                <>
+                  <Check className="h-4 w-4 text-green-500" />
+                  <span className="hidden sm:inline">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Share</span>
+                </>
+              )}
+            </Button>
             <Button variant="outline" size="sm" asChild>
               <a
                 href={`https://github.com/${owner}/${repo}`}
