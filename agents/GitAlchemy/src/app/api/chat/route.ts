@@ -18,14 +18,21 @@ interface AlchemystItem {
   [key: string]: any;
 }
 
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    "HTTP-Referer": "http://localhost:3000",
-    "X-Title": "Github Repo Explainer",
-  },
-});
+// Lazy-initialize OpenAI client to avoid build-time errors
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env.OPENROUTER_API_KEY,
+      defaultHeaders: {
+        "HTTP-Referer": "http://localhost:3000",
+        "X-Title": "Github Repo Explainer",
+      },
+    });
+  }
+  return _openai;
+}
 
 function extractKeywords(query: string): string {
   let cleaned = query
@@ -279,7 +286,7 @@ INSTRUCTIONS:
 
 Format code with markdown.`;
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: "xiaomi/mimo-v2-flash:free",
       messages: [
         { role: "system", content: systemPrompt },

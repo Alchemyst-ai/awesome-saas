@@ -2,8 +2,9 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import { useReactToPrint } from "react-to-print"
 import {
   FlaskConical,
   ChevronRight,
@@ -17,6 +18,7 @@ import {
   Loader2,
   Check,
   Copy,
+  Download,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -53,6 +55,15 @@ export function RepoDocumentation({ owner, repo, initialDocs = {} }: RepoDocumen
   const [documentation, setDocumentation] = useState<DocumentationContent>(initialDocs)
   const [loadingSections, setLoadingSections] = useState<Set<string>>(new Set())
   const [shareCopied, setShareCopied] = useState(false)
+
+  // Ref for printable content
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  // PDF download handler
+  const handlePrint = useReactToPrint({
+    contentRef,
+    documentTitle: `${owner}-${repo}-documentation`,
+  })
 
   // Handle share button click
   const handleShare = async () => {
@@ -331,6 +342,15 @@ export function RepoDocumentation({ owner, repo, initialDocs = {} }: RepoDocumen
             <Button
               variant="outline"
               size="sm"
+              onClick={() => handlePrint()}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">PDF</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleShare}
               className="gap-2"
             >
@@ -362,7 +382,7 @@ export function RepoDocumentation({ owner, repo, initialDocs = {} }: RepoDocumen
 
         {/* Documentation content */}
         <main className="flex-1 overflow-auto pb-20">
-          <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+          <div ref={contentRef} className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 print:max-w-none print:p-8">
             {/* Introduction */}
             <section id="introduction" className="mb-20 scroll-mt-20">
               <h2 className="mb-8 text-3xl font-bold text-foreground tracking-tight">Introduction</h2>

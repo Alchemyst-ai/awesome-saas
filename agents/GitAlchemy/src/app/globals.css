@@ -123,3 +123,64 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Print styles for PDF export */
+@media print {
+  /* Reset to light theme for printing */
+  :root {
+    --background: white;
+    --foreground: black;
+    --muted: #f5f5f5;
+    --muted-foreground: #666;
+    --card: white;
+    --card-foreground: black;
+    --border: #ddd;
+  }
+  
+  /* Hide non-essential elements */
+  header, aside, nav, 
+  .no-print, 
+  [data-radix-scroll-area-viewport] > div:first-child {
+    display: none !important;
+  }
+  
+  /* Full width content */
+  main {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Clean text styling */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* Code blocks */
+  pre, code {
+    background: #f5f5f5 !important;
+    color: black !important;
+    border: 1px solid #ddd !important;
+    font-size: 10pt !important;
+  }
+  
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    color: black !important;
+    page-break-after: avoid;
+  }
+  
+  /* Sections */
+  section {
+    page-break-inside: avoid;
+  }
+  
+  /* Mermaid diagrams */
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}

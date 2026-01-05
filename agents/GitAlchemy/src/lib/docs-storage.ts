@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { getSupabase } from './supabase';
 
 interface DocumentationContent {
     [key: string]: string | null;
@@ -7,7 +7,7 @@ interface DocumentationContent {
 // Get stored documentation for a repo (all sections)
 export async function getStoredDocs(owner: string, repo: string): Promise<DocumentationContent | null> {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
             .from('documentation')
             .select('section, content')
             .eq('owner', owner.toLowerCase())
@@ -38,7 +38,7 @@ export async function getStoredDocs(owner: string, repo: string): Promise<Docume
 // Get a single section of documentation
 export async function getStoredSection(owner: string, repo: string, section: string): Promise<string | null> {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
             .from('documentation')
             .select('content')
             .eq('owner', owner.toLowerCase())
@@ -71,7 +71,7 @@ export async function updateStoredSection(
     sources?: string[]
 ): Promise<void> {
     try {
-        const { error } = await supabase
+        const { error } = await getSupabase()
             .from('documentation')
             .upsert({
                 owner: owner.toLowerCase(),
@@ -111,7 +111,7 @@ export async function saveStoredDocs(
             updated_at: new Date().toISOString(),
         }));
 
-        const { error } = await supabase
+        const { error } = await getSupabase()
             .from('documentation')
             .upsert(rows, {
                 onConflict: 'owner,repo,section',
@@ -132,7 +132,7 @@ export async function saveStoredDocs(
 // Check if a repo has any documentation stored
 export async function hasStoredDocs(owner: string, repo: string): Promise<boolean> {
     try {
-        const { count, error } = await supabase
+        const { count, error } = await getSupabase()
             .from('documentation')
             .select('*', { count: 'exact', head: true })
             .eq('owner', owner.toLowerCase())
