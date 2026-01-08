@@ -1,0 +1,32 @@
+{
+  "name": "portfolio-generator-backend",
+  "version": "1.0.0",
+  "description": "Backend service for portfolio generation using AlchemystAI SDK",
+  "main": "src/app.ts",
+  "scripts": {
+    "start": "node src/app.ts",
+    "dev": "nodemon src/app.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "portfolio",
+    "generator",
+    "alchemystai",
+    "backend"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@alchemystai/sdk": "^1.0.0",
+    "express": "^4.18.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "nodemon": "^3.0.0",
+    "ts-node": "^10.0.0"
+  }
+}
