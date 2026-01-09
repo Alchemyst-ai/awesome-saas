@@ -22,7 +22,7 @@
     "dotenv": "^17.2.3",
     "lucide-react": "^0.545.0",
     "motion": "^12.23.24",
-    "next": "15.5.4",
+    "next": "15.5.8",
     "react": "19.1.0",
     "react-d3-tree": "^3.6.6",
     "react-dom": "19.1.0",
