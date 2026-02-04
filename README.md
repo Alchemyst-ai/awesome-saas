@@ -4,7 +4,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/AI-Platform-blue?style=for-the-badge&logo=artificial-intelligence" alt="AI Platform" />
   <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status" />
-  <img src="https://img.shields.io/badge/Community-19%20Projects-orange?style=for-the-badge" alt="Community Projects" />
+  <img src="https://img.shields.io/badge/Community-22%20Projects-orange?style=for-the-badge" alt="Community Projects" />
   <img src="https://img.shields.io/badge/Team-4%20Templates-purple?style=for-the-badge" alt="Team Templates" />
 </div>
 
@@ -210,7 +210,7 @@ This is an ever expanding list - we'll keep on adding open source templates!
 ### 🚀 Community Templates
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Community%20Templates-19%20(Total%2097%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
+  <img src="https://img.shields.io/badge/Community%20Templates-22%20(Total%20104%20stars)-FF6B6B?style=for-the-badge" alt="Community Templates" />
 </div>
 
 <br />
@@ -342,6 +342,20 @@ This is an ever expanding list - we'll keep on adding open source templates!
   </tr>
   <tr>
     <td>
+      <a href="https://github.com/harshit07kr/Insta-Caption-Generator">
+        <img src="https://img.shields.io/badge/Insta--Caption--Generator-1f2937?style=for-the-badge&logo=github" alt="Insta-Caption-Generator" />
+      </a>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/github/stars/harshit07kr/Insta-Caption-Generator?style=social" alt="Stars" />
+    </td>
+    <td>No description available</td>
+    <td>
+      -
+    </td>
+  </tr>
+  <tr>
+    <td>
       <a href="https://github.com/hatif03/travel_mcp_agent">
         <img src="https://img.shields.io/badge/travel_mcp_agent-1f2937?style=for-the-badge&logo=github" alt="travel_mcp_agent" />
       </a>
@@ -427,6 +441,20 @@ This is an ever expanding list - we'll keep on adding open source templates!
   </tr>
   <tr>
     <td>
+      <a href="https://github.com/oelamazonas/email-agent">
+        <img src="https://img.shields.io/badge/email--agent-1f2937?style=for-the-badge&logo=github" alt="email-agent" />
+      </a>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/github/stars/oelamazonas/email-agent?style=social" alt="Stars" />
+    </td>
+    <td>📧 Streamline your inbox with Email Agent AI; it automatically sorts, classifies, and archives emails across multiple accounts for effortless management.</td>
+    <td>
+      -
+    </td>
+  </tr>
+  <tr>
+    <td>
       <a href="https://github.com/Rustix69/HackerNews-Podcast">
         <img src="https://img.shields.io/badge/HackerNews--Podcast-1f2937?style=for-the-badge&logo=github" alt="HackerNews-Podcast" />
       </a>
@@ -452,6 +480,20 @@ This is an ever expanding list - we'll keep on adding open source templates!
     <td>🤖 AI-Powered PDF Chat App | Dual AI Engine (Alchemyst + Gemini) | RAG Pipeline | Vector Search | MERN + TypeScript</td>
     <td>
       -
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/siddhantthegts/agent0">
+        <img src="https://img.shields.io/badge/agent0-1f2937?style=for-the-badge&logo=github" alt="agent0" />
+      </a>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/github/stars/siddhantthegts/agent0?style=social" alt="Stars" />
+    </td>
+    <td>🚀 Create and run TypeScript code on the fly with agent0, a self-healing tool that adapts to your API needs and provides seamless integration.</td>
+    <td>
+      <img src="https://img.shields.io/badge/marketing-blue?style=flat-square" alt="marketing" />
     </td>
   </tr>
   <tr>

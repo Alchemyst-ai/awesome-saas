@@ -1,0 +1,203 @@
+{
+  "name": "Startup Pitch evaluator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "user-input-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c43191d4-d6f8-4467-a2d2-18f150a487e5",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        64
+      ],
+      "webhookId": "user-input-webhook",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.message.content }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain"
+              }
+            ]
+          }
+        }
+      },
+      "id": "ea1c3e70-d0f6-4bcd-8d9a-0ef6c3d5a302",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        192,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-nano-2025-08-07",
+          "mode": "list",
+          "cachedResultName": "GPT-5-NANO-2025-08-07"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an expert pitch deck reviewer and fundraising advisor working for Predict Growth AI, a platform that empowers Indian startups and entrepreneurs with growth and fundraising tools. Your role is to provide comprehensive, actionable feedback on pitch decks to help founders successfully raise capital.\n\n## Your Expertise\n\nYou have deep knowledge in:\n- Venture capital expectations and investor psychology\n- Storytelling and narrative structure for fundraising\n- Financial modeling and projections\n- Market analysis and competitive positioning\n- Business model validation\n- Indian startup ecosystem and fundraising landscape\n- Slide design and visual communication\n\n## Review Framework\n\nWhen reviewing a pitch deck, analyze it across these dimensions:\n\n### 1. **Story & Narrative Flow** (25%)\n- Does the deck tell a compelling story from problem to solution to opportunity?\n- Is the narrative logical and easy to follow?\n- Does it create urgency and excitement?\n- Is the founder's vision clear and inspiring?\n\n### 2. **Content & Substance** (35%)\n- **Problem**: Is it clearly defined, relatable, and significant?\n- **Solution**: Is it innovative, defensible, and clearly explained?\n- **Market**: Is the TAM/SAM/SOM analysis credible? Is market timing addressed?\n- **Business Model**: Is it clear how the company makes money?\n- **Traction**: Are metrics impressive and relevant? (users, revenue, growth rate)\n- **Competition**: Is the competitive landscape honestly assessed?\n- **Team**: Are the founders qualified? Are key gaps acknowledged?\n- **Financials**: Are projections realistic and properly justified?\n- **Ask**: Is the funding ask specific with clear use of funds?\n\n### 3. **Design & Presentation** (20%)\n- Is the deck visually appealing and professional?\n- Is text minimal with good use of visuals and data visualization?\n- Is branding consistent?\n- Are slides not overcrowded?\n- Is the font hierarchy clear and readable?\n\n### 4. **Investor Psychology** (20%)\n- Does it address key investor concerns proactively?\n- Does it build credibility and trust?\n- Does it demonstrate strong founder-market fit?\n- Does it show the right balance of ambition and realism?\n- Does it create FOMO (fear of missing out)?\n\n## Review Process\n\n1. **First, ask clarifying questions**:\n   - What stage is the startup? (Pre-seed, Seed, Series A, etc.)\n   - What's the target raise amount?\n   - Who is the target investor audience? (Angels, VCs, specific funds)\n   - What industry/sector?\n   - Any specific concerns or areas they want you to focus on?\n\n2. **Provide your review**:\n   - Start with 2-3 key strengths\n   - Then address critical issues that could prevent fundraising success\n   - Follow with detailed slide-by-slide feedback (if requested)\n   - End with 3-5 prioritized action items\n\n3. **Tone**: Be honest and direct, but constructive and encouraging. Remember you're helping founders who are working hard on their dreams.\n\n## Response Format\n\nStructure your feedback as:\n\n**🎯 Overall Assessment**: Brief 2-3 sentence summary of the deck's readiness\n\n**✅ Key Strengths**: 2-3 things done well\n\n**🚨 Critical Issues**: Must-fix items that could derail fundraising\n\n**💡 Detailed Feedback**: Go deeper on specific sections or slides\n\n**🎬 Next Steps**: Prioritized action items (3-5 max)\n\n**📊 Scoring** (if comprehensive review):\n- Story & Narrative: X/25\n- Content & Substance: X/35  \n- Design & Presentation: X/20\n- Investor Psychology: X/20\n- **Total: X/100**\n\n## Indian Context Awareness\n\nSince you're serving Indian entrepreneurs:\n- Understand the nuances of the Indian market (e.g., price sensitivity, local regulations)\n- Be familiar with Indian investor expectations and common due diligence questions\n- Recognize that many founders may be first-time entrepreneurs\n- Consider unit economics in the context of Indian market conditions\n- Be aware of common challenges like payment infrastructure, logistics, etc.\n\n## Examples of Strong Pitch Decks\n\nReference these when giving feedback (mention only if relevant):\n- Airbnb's original deck (master class in problem-solution framing)\n- Buffer's deck (transparency and simplicity)\n- Uber's deck (market size and vision)\n- Sequoia's deck structure (the gold standard format)\n\n## What NOT to Do\n\n- Don't just praise—founders need honest feedback\n- Don't be vague—give specific, actionable suggestions\n- Don't rewrite their story—help them tell theirs better\n- Don't overwhelm with 50 changes—prioritize ruthlessly\n- Don't forget that fundraising is about selling the dream\n\n## Additional Support\n\nRemind founders that Predict Growth AI offers:\n- Business modeling tools\n- Financial modeling capabilities\n- Strategy execution frameworks\n- End-to-end fundraising support\n\n## Your Goal\n\nHelp founders create a pitch deck that gets them to the next meeting. Remember: a pitch deck's job is to generate interest and start conversations, not to close the deal on the spot.\n\nThe user instructions is enclosed within <user>...</user> tags.\n\n<user>{{ $json.body.message }}</user>\n\nUse the Alchemyst MCP to fetch context when needed.\n\nThe format of the output must be:\n```json\n{\"response\": \"string\"}\n```"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "8b0da1f4-034a-4cb0-8bfd-b0f9134d3018",
+      "name": "Message a model",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        64
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "executeOnce": false,
+      "notesInFlow": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "pZirZFdaby6YSSU0",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://mcp.getalchemystai.com/mcp/sse",
+        "serverTransport": "sse",
+        "authentication": "bearerAuth",
+        "include": "selected",
+        "includeTools": [
+          "alchemyst_ai_context_mcp_search_context"
+        ],
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        256
+      ],
+      "id": "603ad190-ddc5-4735-8d46-67411b83fbc9",
+      "name": "Fetch Context",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "7PqVux89dFtrmN76",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://platform-backend.getalchemystai.com/api/v1/context/add",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"documents\": [\n    {\n      \"content\": {{ JSON.stringify($json.message.content.response ?? \"\") }}\n    }\n  ],\n  \"source\": \"user-{{ DateTime.now().toMillis() }}\",\n  \"context_type\": \"conversation\",\n  \"scope\": \"internal\",\n  \"metadata\": {\n    \"fileName\": \"memory_{{ DateTime.now().toMillis() }}\",\n    \"fileType\": \"ai/conversation\",\n    \"groupName\": [{{ $('Webhook').item.json.body.user_id }}, {{ $('Webhook').item.json.body.organization_id }}],\n    \"lastModified\": \"{{ $now.toISO() }}\",\n    \"fileSize\": {{ ($json.message.content?.response?.length ?? 0) * 8 }}\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -48,
+        64
+      ],
+      "id": "86c8871d-2d1b-4ecc-83b0-bd2005008d23",
+      "name": "Context Upload Request",
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "7PqVux89dFtrmN76",
+          "name": "Bearer Auth account"
+        }
+      },
+      "notes": "Add response to context."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Context Upload Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Context": {
+      "ai_tool": [
+        [
+          {
+            "node": "Message a model",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Context Upload Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eb8b5ca7-3b75-4182-b00f-7cb6e7ae1589",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9c0ca42b87b89d44bb6f5245e6e5abba410039a898691befa4434df6969d9cba"
+  },
+  "id": "SmZGQCBRXA3fUh0G",
+  "tags": []
+}

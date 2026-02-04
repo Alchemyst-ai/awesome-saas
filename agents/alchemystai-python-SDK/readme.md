@@ -1,4 +1,4 @@
-````markdown
+
 # 🧪 Alchemyst AI CLI (Python SDK)
 
 A Python command-line tool that uses **Alchemyst AI** for contextual code understanding and **Google Gemini** for intelligent responses.
