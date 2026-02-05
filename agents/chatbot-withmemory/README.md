@@ -4,6 +4,7 @@ A tiny CLI chatbot that demonstrates:
 - Using Alchemyst AI for memory + contextual search
 - Answering related questions with Gemini
 - Storing each user + assistant turn as searchable memory
+- Seeding raw Markdown docs from `agents/chatbot-withmemory/docs`
 
 ## Setup
 
@@ -23,7 +24,7 @@ SESSION_ID=demo-session-1
 USER_ID=demo-user
 ```
 
-3. (Optional) Seed memory
+3. (Optional) Seed docs memory
 ```bash
 npm run seed
 ```
@@ -34,10 +35,11 @@ npm run chat
 ```
 
 ## Example prompts
-- "How do I trigger a refund?"
-- "What events should I listen for in webhooks?"
-- "Can you explain subscription trials?"
+- "How do I implement capture payments?"
+- "What are the api endpoints available?"
+- "What data types are used in the apis?"
 
 ## Notes
-- Memory is stored in Alchemyst AI and retrieved on each question.
+- Docs are stored as raw markdown from `agents/chatbot-withmemory/docs`.
+- Each user + assistant turn is stored as memory and retrieved on each question.
 - If no memory is found, the bot replies using general knowledge.
