@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import AlchemystAI from '@alchemystai/sdk';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const alchemystApiKey = process.env.ALCHEMYST_AI_API_KEY || '';
 if (!alchemystApiKey) {
@@ -9,41 +11,42 @@ if (!alchemystApiKey) {
 
 const alchemyst = new AlchemystAI({ apiKey: alchemystApiKey });
 
-const seedDocs = [
-  {
-    title: 'Razorpay Onboarding',
-    content:
-      'Merchants can sign up, complete KYC, and activate their account before accepting live payments. Test mode is available for integration and QA.'
-  },
-  {
-    title: 'Payments and Refunds',
-    content:
-      'Refunds can be initiated from the dashboard or via API. Partial and full refunds are supported depending on payment method.'
-  },
-  {
-    title: 'Subscriptions',
-    content:
-      'Subscriptions allow recurring billing. You can define plans, trial periods, and capture payments automatically on schedule.'
-  },
-  {
-    title: 'Webhooks',
-    content:
-      'Webhooks notify your server about events like payment.captured, refund.processed, and subscription.charged. Secure with a secret and verify signatures.'
-  },
-  {
-    title: 'Payouts',
-    content:
-      'Payouts let you transfer funds to vendors or customers. You can create contacts and fund accounts before initiating payouts.'
-  }
-];
+const docsDir = path.join(process.cwd(), 'docs');
 
 async function seed() {
   const timestamp = new Date().toISOString();
+  const entries = await fs.readdir(docsDir, { withFileTypes: true });
+  const mdFiles = entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => entry.name);
+
+  if (mdFiles.length === 0) {
+    console.error(`No markdown files found in ${docsDir}.`);
+    process.exit(1);
+  }
+
+  const documents = await Promise.all(
+    mdFiles.map(async (fileName) => {
+      const fullPath = path.join(docsDir, fileName);
+      const [content, stats] = await Promise.all([
+        fs.readFile(fullPath, 'utf8'),
+        fs.stat(fullPath),
+      ]);
+
+      return {
+        content,
+        metadata: {
+          fileName,
+          fileType: 'text/markdown',
+          lastModified: stats.mtime.toISOString(),
+          fileSize: stats.size,
+        },
+      };
+    })
+  );
 
   await alchemyst.v1.context.add({
-    documents: seedDocs.map((doc) => ({
-      content: `${doc.title}: ${doc.content}`,
-    })),
+    documents,
     context_type: 'resource',
     source: `razorpay-demo-seed-${timestamp}`,
     scope: 'internal',
@@ -51,7 +54,8 @@ async function seed() {
       fileName: `razorpay-demo-seed-${timestamp}.txt`,
       fileType: 'text/plain',
       lastModified: timestamp,
-      fileSize: seedDocs.reduce((sum, doc) => sum + doc.content.length, 0),
+      fileSize: documents.reduce((sum, doc) => sum + doc.content.length, 0),
+      groupName: ["Razorpay", "docs", "apis"]
     },
   });
 

@@ -14,7 +14,7 @@ if (!alchemystApiKey || !geminiApiKey) {
 
 const alchemyst = new AlchemystAI({ apiKey: alchemystApiKey });
 const genAI = new GoogleGenerativeAI(geminiApiKey);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
