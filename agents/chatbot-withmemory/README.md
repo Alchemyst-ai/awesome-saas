@@ -1,4 +1,4 @@
-# Razorpay Demo Chatbot (Alchemyst AI + Memory)
+# Demo Chatbot (Alchemyst AI + Memory)
 
 A tiny CLI chatbot that demonstrates:
 - Using Alchemyst AI for memory + contextual search
