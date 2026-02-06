@@ -1,20 +1,21 @@
 import 'dotenv/config';
-import AlchemystAI from '@alchemystai/sdk';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-
-const alchemystApiKey = process.env.ALCHEMYST_AI_API_KEY || '';
-if (!alchemystApiKey) {
-  console.error('Missing env var ALCHEMYST_AI_API_KEY.');
-  process.exit(1);
-}
-
-const alchemyst = new AlchemystAI({ apiKey: alchemystApiKey });
+import { addRazorpayDocs } from './alchemyst-helpers';
 
 const docsDir = path.join(process.cwd(), 'docs');
 
-async function seed() {
-  const timestamp = new Date().toISOString();
+interface FileDocument {
+  content: string;
+  metadata: {
+    fileName: string;
+    fileType: string;
+    lastModified: string;
+    fileSize: number;
+  };
+}
+
+async function seed(): Promise<void> {
   const entries = await fs.readdir(docsDir, { withFileTypes: true });
   const mdFiles = entries
     .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
@@ -25,7 +26,7 @@ async function seed() {
     process.exit(1);
   }
 
-  const documents = await Promise.all(
+  const documents: FileDocument[] = await Promise.all(
     mdFiles.map(async (fileName) => {
       const fullPath = path.join(docsDir, fileName);
       const [content, stats] = await Promise.all([
@@ -45,21 +46,8 @@ async function seed() {
     })
   );
 
-  await alchemyst.v1.context.add({
-    documents,
-    context_type: 'resource',
-    source: `razorpay-demo-seed-${timestamp}`,
-    scope: 'internal',
-    metadata: {
-      fileName: `razorpay-demo-seed-${timestamp}.txt`,
-      fileType: 'text/plain',
-      lastModified: timestamp,
-      fileSize: documents.reduce((sum, doc) => sum + doc.content.length, 0),
-      groupName: ["Razorpay", "docs", "apis"]
-    },
-  });
-
-  console.log('Seeded Razorpay demo memory into Alchemyst AI.');
+  await addRazorpayDocs({ documents });
+  console.log('✅ Seeded Razorpay documentation into Alchemyst AI.');
 }
 
 seed().catch((error) => {

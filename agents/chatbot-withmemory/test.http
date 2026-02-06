@@ -1,0 +1,9 @@
+
+POST http://localhost:3000/chat
+Content-Type: application/json
+
+{
+  "input": "What is Razorpay payments?",
+  "sessionId": "demo",
+  "userId": "demo-user"
+}
