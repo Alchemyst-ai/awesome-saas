@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { streamText, StreamTextResult, ModelMessage } from 'ai';
 import { google } from '@ai-sdk/google';
 import {openai} from '@ai-sdk/openai';
-import { alchemystTools } from '@alchemystai/aisdk';
+// import { alchemystTools } from '@alchemystai/aisdk';
 import AlchemystAI from '@alchemystai/sdk';
 import { razorpayNavigationTool } from './navigation-tool';
 import { jsonSchema } from 'ai';
@@ -73,8 +73,8 @@ export async function generateRazorpayResponse({
 You provide accurate, concise answers about Razorpay's payment gateway, APIs, webhooks, payouts, refunds, and integrations.
 
 Available tools:
-1. alchemyst_context_search - Search documentation content
-2. alchemyst_memory_add - Store conversation context
+1. search_context - Search documentation content
+2. add_to_memory - Store conversation context
 3. razorpay_navigation - Navigate users to specific documentation pages
 
 When users ask about specific topics or want to read more:
@@ -90,26 +90,25 @@ Always provide helpful, accurate answers with proper navigation when needed.`;
     { role: 'user', content: userMessage },
   ];
 
-  const alchemystToolsObj = alchemystTools({ apiKey: alchemystApiKey, groupName : [ 'memory' ]  });
+  // const alchemystToolsObj = alchemystTools({ apiKey: alchemystApiKey, groupName : [ 'memory' ]  });
 
-  const convertedTools = Object.entries(alchemystToolsObj).reduce((acc, [name, tool]: [string, any]) => {
-  acc[name] = {
-    description: tool.description,
-    parameters: jsonSchema(tool.parameters), // Convert Zod to JSON Schema
-    execute: tool.execute,
-  };
-  return acc;
-}, {} as Record<string, any>);
+//   const convertedTools = Object.entries(alchemystToolsObj).reduce((acc, [name, tool]: [string, any]) => {
+//   acc[name] = {
+//     description: tool.description,
+//     parameters: jsonSchema(tool.parameters), // Convert Zod to JSON Schema
+//     execute: tool.execute,
+//   };
+//   return acc;
+// }, {} as Record<string, any>);
 
   const result = streamText({
     model: openai("gpt-4o-mini"),
     messages,
+    // tools : convertedTools,
+    // stopWhen: stepCountIs(5),
     // tools: {
     //   razorpay_navigation: razorpayNavigationTool,
     // },
-    // tools : alchemystTools({ apiKey: alchemystApiKey, groupName : [ 'memory' ]  }),
-    // maxRetries: 5,s
-   
     // tools: {
     //   ...convertedTools,
     //   razorpay_navigation: razorpayNavigationTool, // Custom navigation tool
@@ -137,7 +136,7 @@ Always provide helpful, accurate answers with proper navigation when needed.`;
 }
 
 /**
- * Search through Razorpay documentation context
+ * Search through Razorpay docu  console.log(result);mentation context
  */
 export async function searchRazorpayDocs({
   query,
