@@ -1,11 +1,9 @@
 import 'dotenv/config';
-import { streamText, StreamTextResult, ModelMessage } from 'ai';
+import { streamText, StreamTextResult, ModelMessage, stepCountIs } from 'ai';
 import { google } from '@ai-sdk/google';
-import {openai} from '@ai-sdk/openai';
-// import { alchemystTools } from '@alchemystai/aisdk';
+import {openai} from '@ai-sdk/openai'
 import AlchemystAI from '@alchemystai/sdk';
-import { razorpayNavigationTool } from './navigation-tool';
-import { jsonSchema } from 'ai';
+import { createRazorpayTools } from './tools';
 
 const alchemystApiKey = process.env.ALCHEMYST_AI_API_KEY || '';
 const geminiApiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || '';
@@ -49,6 +47,8 @@ interface Document {
 
 interface AddRazorpayDocsParams {
   documents: Document[];
+  groupName?: string[];
+  sourceLabel?: string;
 }
 
 interface ContextResult {
@@ -69,6 +69,10 @@ export async function generateRazorpayResponse({
   systemPrompt,
   history = [],
 }: GenerateRazorpayResponseParams): Promise<StreamTextResult<any, any>> {
+  const hasHistory = history.length > 0;
+  const memorySessionId = `rzpay_session_${Date.now()}`;
+  const memoryGroupName = [`user-${userId}`, `session-${sessionId}`, 'chat-memory'];
+
   const defaultSystemPrompt = `You are a helpful Razorpay documentation assistant.
 You provide accurate, concise answers about Razorpay's payment gateway, APIs, webhooks, payouts, refunds, and integrations.
 
@@ -77,10 +81,21 @@ Available tools:
 2. add_to_memory - Store conversation context
 3. razorpay_navigation - Navigate users to specific documentation pages
 
+Tool selection rules:
+- Use search_context for factual/product questions about Razorpay docs.
+- Use razorpay_navigation when user asks where to find docs, which section to open, or asks for links.
+
+Search policy:
+- Always search docs context with body_metadata: { "groupName": ["rzpay", "docs"] } before giving factual answers.
+${hasHistory
+  ? `- This conversation has history. Also search memory context with body_metadata: { "groupName": ${
+      memoryGroupName} } and combine both results.`
+  : '- If there is no history, docs context search is enough for retrieval.'}
+
 When users ask about specific topics or want to read more:
-- Use razorpay_navigation to find and provide direct links
-- Present the primary page link and mention alternatives if available
-- Guide users to the exact section they need
+- Use razorpay_navigation to find and provide direct links.
+- Present the primary page link and mention alternatives if available.
+- Guide users to the exact section they need.
 
 Always provide helpful, accurate answers with proper navigation when needed.`;
 
@@ -90,48 +105,50 @@ Always provide helpful, accurate answers with proper navigation when needed.`;
     { role: 'user', content: userMessage },
   ];
 
-  // const alchemystToolsObj = alchemystTools({ apiKey: alchemystApiKey, groupName : [ 'memory' ]  });
-
-//   const convertedTools = Object.entries(alchemystToolsObj).reduce((acc, [name, tool]: [string, any]) => {
-//   acc[name] = {
-//     description: tool.description,
-//     parameters: jsonSchema(tool.parameters), // Convert Zod to JSON Schema
-//     execute: tool.execute,
-//   };
-//   return acc;
-// }, {} as Record<string, any>);
-
   const result = streamText({
-    model: openai("gpt-4o-mini"),
+    model: openai('gpt-5-chat-latest'),
     messages,
-    // tools : convertedTools,
-    // stopWhen: stepCountIs(5),
-    // tools: {
-    //   razorpay_navigation: razorpayNavigationTool,
-    // },
-    // tools: {
-    //   ...convertedTools,
-    //   razorpay_navigation: razorpayNavigationTool, // Custom navigation tool
-    // },
-    // toolChoice: 'auto',
-    // onStepFinish: async ({ toolCalls }) => {
-    // if (toolCalls && toolCalls.length > 0) {
-    //   console.log('[debug] Tool calls:', toolCalls.map(tc => tc.toolName));
-      
-    //   // Log memory additions
-    //   toolCalls.forEach(tc => {
-    //     if (tc.toolName === 'add_to_memory') {
-    //       console.log('[debug] Memory added:', tc);
-    //     }
-    //     if (tc.toolName === 'search_context') {
-    //       console.log('[debug] Context searched:', tc);
-    //     }
-      // });
-    // }
-  // },
-
+    tools: createRazorpayTools({ apiKey: alchemystApiKey }),
+    toolChoice: 'auto',
+    stopWhen: stepCountIs(5),
+    onFinish: async ({ text }) => {
+      const now = new Date().toISOString();
+      try {
+        await alchemyst.v1.context.memory.add({
+          sessionId: memorySessionId,
+          contents: [
+            {
+              content: userMessage,
+              metadata: {
+                source: 'chat',
+                type: 'conversation',
+                messageId: `user_${Date.now()}`,
+                userId,
+              } as any,
+            },
+            {
+              content: text,
+              metadata: {
+                source: 'chat',
+                type: 'conversation',
+                messageId: `assistant_${Date.now()}`,
+                userId,
+              } as any,
+            },
+          ],
+          metadata: {
+            groupName: [`user-${userId}`, `session-${sessionId}`, 'chat-memory'],
+            userId,
+            source: 'chatbot-withmemory',
+            timestamp: now,
+          }
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(`Error saving conversation memory: ${message}`);
+      }
+    },
   });
-
   return result;
 }
 
@@ -174,7 +191,11 @@ export async function searchRazorpayDocs({
 /**
  * Add Razorpay documentation to context (for seeding)
  */
-export async function addRazorpayDocs({ documents }: AddRazorpayDocsParams): Promise<void> {
+export async function addRazorpayDocs({
+  documents,
+  groupName = ['rzpay', 'docs'],
+  sourceLabel = 'razorpay-documentation',
+}: AddRazorpayDocsParams): Promise<void> {
   const timestamp = new Date().toISOString();
   const latestModified = documents.reduce<Date | null>((latest, doc) => {
     const value = doc.metadata?.lastModified ? new Date(doc.metadata.lastModified) : null;
@@ -194,8 +215,8 @@ export async function addRazorpayDocs({ documents }: AddRazorpayDocsParams): Pro
       fileType: doc.metadata?.fileType ?? 'text/markdown',
       lastModified: doc.metadata?.lastModified ?? timestamp,
       fileSize: doc.metadata?.fileSize ?? 0,
-      groupName: ['rzpay', 'docs'],
-      source: doc.metadata?.source ?? 'razorpay-documentation',
+      groupName,
+      source: doc.metadata?.source ?? sourceLabel,
       addedAt: doc.metadata?.addedAt ?? timestamp,
     },
   })) as any;
@@ -203,14 +224,14 @@ export async function addRazorpayDocs({ documents }: AddRazorpayDocsParams): Pro
   await alchemyst.v1.context.add({
     documents: documentsWithMetadata,
     context_type: 'resource',
-    source: `rzpay_docs_${timestamp}`,
+    source: `${sourceLabel}_${timestamp}`,
     scope: 'internal',
     metadata: {
       fileName: 'razorpay-docs-batch',
       fileType: 'text/markdown',
       lastModified: (latestModified ?? new Date(timestamp)).toISOString(),
       fileSize: totalFileSize,
-      groupName: ['rzpay', 'docs'],
+      groupName,
     },
   });
 }

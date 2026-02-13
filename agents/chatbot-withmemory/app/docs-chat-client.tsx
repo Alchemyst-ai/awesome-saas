@@ -34,13 +34,15 @@ function cn(...inputs: ClassValue[]) {
 }
 
 function renderInline(text: string): React.ReactNode {
-  const chunks = text.split(/(`[^`]+`|\[[^\]]+\]\([^\)]+\))/g);
+  // Split by inline code, links, bold, and italic
+  const chunks = text.split(/(`[^`]+`|\[[^\]]+\]\([^\)]+\)|\*\*[^*]+\*\*|\*[^*]+\*|__[^_]+__|_[^_]+_)/g);
 
   return chunks.map((chunk, index) => {
     if (!chunk) {
       return null;
     }
 
+    // Inline code
     if (chunk.startsWith('`') && chunk.endsWith('`')) {
       return (
         <code key={index} className="doc-inline-code">
@@ -49,6 +51,7 @@ function renderInline(text: string): React.ReactNode {
       );
     }
 
+    // Links
     const linkMatch = chunk.match(/^\[([^\]]+)\]\(([^\)]+)\)$/);
     if (linkMatch) {
       return (
@@ -64,6 +67,26 @@ function renderInline(text: string): React.ReactNode {
       );
     }
 
+    // Bold (** or __)
+    if ((chunk.startsWith('**') && chunk.endsWith('**')) || 
+        (chunk.startsWith('__') && chunk.endsWith('__'))) {
+      return (
+        <strong key={index}>
+          {chunk.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    // Italic (* or _)
+    if ((chunk.startsWith('*') && chunk.endsWith('*') && !chunk.startsWith('**')) || 
+        (chunk.startsWith('_') && chunk.endsWith('_') && !chunk.startsWith('__'))) {
+      return (
+        <em key={index}>
+          {chunk.slice(1, -1)}
+        </em>
+      );
+    }
+
     return <Fragment key={index}>{chunk}</Fragment>;
   });
 }
@@ -72,6 +95,7 @@ function renderMarkdown(markdown: string): React.ReactNode {
   const lines = markdown.replace(/\r\n/g, '\n').split('\n');
   const blocks: React.ReactNode[] = [];
   let index = 0;
+  let blockKey = 0;
 
   while (index < lines.length) {
     const line = lines[index].trimEnd();
@@ -81,7 +105,10 @@ function renderMarkdown(markdown: string): React.ReactNode {
       continue;
     }
 
+    // Code blocks
     if (line.startsWith('```')) {
+      const langMatch = line.match(/^```(\w+)?/);
+      const language = langMatch?.[1] || '';
       const codeLines: string[] = [];
       index += 1;
 
@@ -91,8 +118,10 @@ function renderMarkdown(markdown: string): React.ReactNode {
       }
 
       blocks.push(
-        <pre key={`code-${index}`} className="doc-code-block">
-          <code>{codeLines.join('\n')}</code>
+        <pre key={`code-${blockKey++}`} className="doc-code-block">
+          <code className={language ? `language-${language}` : ''}>
+            {codeLines.join('\n')}
+          </code>
         </pre>,
       );
 
@@ -100,33 +129,41 @@ function renderMarkdown(markdown: string): React.ReactNode {
       continue;
     }
 
-    if (line === '---') {
-      blocks.push(<hr key={`hr-${index}`} className="doc-divider" />);
+    // Horizontal rule
+    if (line === '---' || line === '***' || line === '___') {
+      blocks.push(<hr key={`hr-${blockKey++}`} className="doc-divider" />);
       index += 1;
       continue;
     }
 
-    if (/^#{1,4}\s+/.test(line)) {
+    // Headings
+    if (/^#{1,6}\s+/.test(line)) {
       const depth = line.match(/^#+/)?.[0].length ?? 1;
-      const text = line.replace(/^#{1,4}\s+/, '');
+      const text = line.replace(/^#{1,6}\s+/, '');
 
       if (depth === 1) {
         blocks.push(
-          <h1 key={`h1-${index}`} className="doc-h1">
+          <h1 key={`h1-${blockKey++}`} className="doc-h1">
             {renderInline(text)}
           </h1>,
         );
       } else if (depth === 2) {
         blocks.push(
-          <h2 key={`h2-${index}`} className="doc-h2">
+          <h2 key={`h2-${blockKey++}`} className="doc-h2">
             {renderInline(text)}
           </h2>,
         );
-      } else {
+      } else if (depth === 3) {
         blocks.push(
-          <h3 key={`h3-${index}`} className="doc-h3">
+          <h3 key={`h3-${blockKey++}`} className="doc-h3">
             {renderInline(text)}
           </h3>,
+        );
+      } else {
+        blocks.push(
+          <h4 key={`h4-${blockKey++}`} className="text-base font-semibold">
+            {renderInline(text)}
+          </h4>,
         );
       }
 
@@ -134,23 +171,25 @@ function renderMarkdown(markdown: string): React.ReactNode {
       continue;
     }
 
-    if (/^[-*]\s+/.test(line)) {
+    // Unordered lists
+    if (/^[-*+]\s+/.test(line)) {
       const items: string[] = [];
-      while (index < lines.length && /^[-*]\s+/.test(lines[index])) {
-        items.push(lines[index].replace(/^[-*]\s+/, '').trim());
+      while (index < lines.length && /^[-*+]\s+/.test(lines[index])) {
+        items.push(lines[index].replace(/^[-*+]\s+/, '').trim());
         index += 1;
       }
 
       blocks.push(
-        <ul key={`ul-${index}`} className="doc-list">
+        <ul key={`ul-${blockKey++}`} className="doc-list">
           {items.map((item, itemIndex) => (
-            <li key={`${item}-${itemIndex}`}>{renderInline(item)}</li>
+            <li key={`li-${blockKey}-${itemIndex}`}>{renderInline(item)}</li>
           ))}
         </ul>,
       );
       continue;
     }
 
+    // Ordered lists
     if (/^\d+\.\s+/.test(line)) {
       const items: string[] = [];
       while (index < lines.length && /^\d+\.\s+/.test(lines[index])) {
@@ -159,25 +198,32 @@ function renderMarkdown(markdown: string): React.ReactNode {
       }
 
       blocks.push(
-        <ol key={`ol-${index}`} className="doc-list doc-list-numbered">
+        <ol key={`ol-${blockKey++}`} className="doc-list doc-list-numbered">
           {items.map((item, itemIndex) => (
-            <li key={`${item}-${itemIndex}`}>{renderInline(item)}</li>
+            <li key={`li-${blockKey}-${itemIndex}`}>{renderInline(item)}</li>
           ))}
         </ol>,
       );
       continue;
     }
 
+    // Blockquotes
     if (line.startsWith('>')) {
+      const quoteLines: string[] = [];
+      while (index < lines.length && lines[index].startsWith('>')) {
+        quoteLines.push(lines[index].replace(/^>\s?/, ''));
+        index += 1;
+      }
+      
       blocks.push(
-        <blockquote key={`quote-${index}`} className="doc-quote">
-          {renderInline(line.replace(/^>\s?/, ''))}
+        <blockquote key={`quote-${blockKey++}`} className="doc-quote">
+          {renderInline(quoteLines.join(' '))}
         </blockquote>,
       );
-      index += 1;
       continue;
     }
 
+    // Paragraphs
     const paragraphLines: string[] = [line];
     index += 1;
 
@@ -185,10 +231,10 @@ function renderMarkdown(markdown: string): React.ReactNode {
       index < lines.length &&
       lines[index].trim() &&
       !lines[index].startsWith('```') &&
-      !/^#{1,4}\s+/.test(lines[index]) &&
-      !/^[-*]\s+/.test(lines[index]) &&
+      !/^#{1,6}\s+/.test(lines[index]) &&
+      !/^[-*+]\s+/.test(lines[index]) &&
       !/^\d+\.\s+/.test(lines[index]) &&
-      lines[index] !== '---' &&
+      !['---', '***', '___'].includes(lines[index].trim()) &&
       !lines[index].startsWith('>')
     ) {
       paragraphLines.push(lines[index].trimEnd());
@@ -196,7 +242,7 @@ function renderMarkdown(markdown: string): React.ReactNode {
     }
 
     blocks.push(
-      <p key={`p-${index}`} className="doc-paragraph">
+      <p key={`p-${blockKey++}`} className="doc-paragraph">
         {renderInline(paragraphLines.join(' '))}
       </p>,
     );
@@ -338,6 +384,8 @@ export default function DocsChatClient({
         router.push(`/${resolvedSectionId}`);
       }
 
+      console.log("Generated Response : ", data.text);
+
       setMessages((prev) => [
         ...prev,
         {
@@ -465,9 +513,11 @@ export default function DocsChatClient({
                       ? 'Assistant'
                       : 'System'}
                 </p>
-                <p className="mt-1.5 whitespace-pre-wrap text-[0.92rem] leading-[1.58]">
-                  {message.content}
-                </p>
+                <div className="mt-1.5 text-[0.92rem] leading-[1.58] [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                  {message.role === 'assistant' || message.role === 'system'
+                    ? renderMarkdown(message.content)
+                    : <p className="m-0 whitespace-pre-wrap">{message.content}</p>}
+                </div>
               </div>
             ))}
             {isLoading && (

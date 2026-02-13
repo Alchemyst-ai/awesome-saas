@@ -6,6 +6,7 @@ import { resolveRazorpayNavigation } from '../../../navigation-tool';
 const defaultSessionId = process.env.SESSION_ID || `msg_${Date.now()}`;
 const defaultUserId = process.env.USER_ID || 'demo-user';
 
+
 // Simple in-memory history store (Note: In a real serverless env, use Redis/DB)
 const historyStore = new Map<string, ModelMessage[]>();
 
@@ -22,6 +23,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { input, sessionId = defaultSessionId, userId = defaultUserId } = body;
+
+    console.log(sessionId, userId);
 
     if (!input || typeof input !== 'string') {
       return NextResponse.json({ error: 'Input is required' }, { status: 400 });
