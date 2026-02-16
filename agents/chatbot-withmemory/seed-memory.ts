@@ -1,10 +1,13 @@
 import 'dotenv/config';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { addRazorpayDocs } from './alchemyst-helpers';
 
-const docsDir = path.join(process.cwd(), 'docs');
-const merchantDocsDir = path.join(process.cwd(), 'merchant-docs');
+const currentFilePath = fileURLToPath(import.meta.url);
+const projectRoot = path.dirname(currentFilePath);
+const docsDir = path.join(projectRoot, 'docs');
+const merchantDocsDir = path.join(projectRoot, 'merchant-docs');
 
 interface FileDocument {
   content: string;
@@ -17,35 +20,43 @@ interface FileDocument {
 }
 
 async function loadDocumentsFromDir(dir: string): Promise<FileDocument[]> {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-  const mdFiles = entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
-    .map((entry) => entry.name);
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    const mdFiles = entries
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+      .map((entry) => entry.name)
+      .sort((a, b) => a.localeCompare(b));
 
-  if (mdFiles.length === 0) {
-    return [];
+    if (mdFiles.length === 0) {
+      return [];
+    }
+
+    return Promise.all(
+      mdFiles.map(async (fileName) => {
+        const fullPath = path.join(dir, fileName);
+        const [content, stats] = await Promise.all([
+          fs.readFile(fullPath, 'utf8'),
+          fs.stat(fullPath),
+        ]);
+
+        return {
+          content,
+          metadata: {
+            fileName,
+            fileType: 'text',
+            lastModified: stats.mtime.toISOString(),
+            fileSize: stats.size,
+          },
+        };
+      })
+    );
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      console.warn(`Directory not found, skipping: ${dir}`);
+      return [];
+    }
+    throw error;
   }
-
-  return Promise.all(
-    mdFiles.map(async (fileName) => {
-      const fullPath = path.join(dir, fileName);
-      const [content, stats] = await Promise.all([
-        fs.readFile(fullPath, 'utf8'),
-        fs.stat(fullPath),
-      ]);
-
-      return {
-        content,
-        metadata: {
-          fileName,
-          fileType: 'text/markdown',
-          lastModified: stats.mtime.toISOString(),
-          fileSize: stats.size,
-        },
-      };
-    })
-  );
-
 }
 
 async function seed(): Promise<void> {
@@ -71,7 +82,7 @@ async function seed(): Promise<void> {
   if (merchantDocs.length > 0) {
     await addRazorpayDocs({
       documents: merchantDocs,
-      groupName: ['rzpay', 'docs', 'merchat'],
+      groupName: ['rzpay', 'docs', 'merchant'],
       sourceLabel: 'razorpay-merchant-documentation',
     });
     console.log(`✅ Seeded ${merchantDocs.length} merchant docs from ${merchantDocsDir}.`);
@@ -80,6 +91,11 @@ async function seed(): Promise<void> {
 
 seed().catch((error) => {
   const message = error instanceof Error ? error.message : 'Unknown error';
-  console.error(`Error: ${message}`);
+  console.error(`Error seeding docs: ${message}`);
+  if (message.toLowerCase().includes('connection')) {
+    console.error(
+      'Hint: verify network access and that ALCHEMYST_AI_API_KEY is valid in agents/chatbot-withmemory/.env.',
+    );
+  }
   process.exit(1);
 });
