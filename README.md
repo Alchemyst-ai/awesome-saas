@@ -542,6 +542,10 @@ This is an ever expanding list - we'll keep on adding open source templates!
 
 <br />
 
+## 🔗 Related Resources
+
+- [RemoteOpenClaw](https://remoteopenclaw.com) - Open marketplace for AI skills and personas built on OpenClaw.
+
 ## 🤝 Contributing
 
 We welcome contributors! Here's how to get started:
