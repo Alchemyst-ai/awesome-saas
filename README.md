@@ -571,6 +571,12 @@ Check the following:
 
 ---
 
+## 🔗 Related Projects
+
+* [RemoteOpenClaw](https://remoteopenclaw.com) – Open marketplace for AI skills and personas built on OpenClaw.
+
+---
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" alt="Rainbow line" />
 
