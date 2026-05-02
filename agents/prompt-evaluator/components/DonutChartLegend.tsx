@@ -3,7 +3,7 @@
 import { useDonutChartData } from "./data";
 import { DonutChart } from "./DonatChart";
 import { ImprovedPrompt } from "./ImprovedPrompt";
-import PointDiscription from "./PointDiscription";
+import PointDescription from "./PointDescription";
 import Summary from "./Summary";
 import TotalScore from "./TotalScore";
 import { motion } from "motion/react";
@@ -31,7 +31,7 @@ export function DonutChartLegend() {
         </motion.div>
       </div>
       <div className="flex flex-col md:flex-row justify-around items-center gap-10">
-        <PointDiscription />
+        <PointDescription />
         <div className="flex flex-col">
           <Summary improvedSuggestions={improvedSuggestions} />
           <ImprovedPrompt improvedPrompt={improvedPrompt} />

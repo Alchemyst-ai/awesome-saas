@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { EvaluationCriteria, EvaluationResults } from "../types/types";
 import dotenv from "dotenv";
-import { llmEvaluation } from "./llmEvaluatoin";
+import { llmEvaluation } from "./llmEvaluation";
 import { v4 as uuidv4 } from "uuid";
 import { searchContext } from "@/lib/alchemyst";
 dotenv.config();
