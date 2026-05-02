@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/AI-Platform-blue?style=for-the-badge&logo=artificial-intelligence" alt="AI Platform" />
   <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/Community-22%20Projects-orange?style=for-the-badge" alt="Community Projects" />
-  <img src="https://img.shields.io/badge/Team-3%20Templates-purple?style=for-the-badge" alt="Team Templates" />
+  <img src="https://img.shields.io/badge/Team-2%20Templates-purple?style=for-the-badge" alt="Team Templates" />
 </div>
 
 <div align="center">
@@ -127,7 +127,7 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 ### 💡 Official Templates
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Official%20Templates-3%20Available-4F46E5?style=for-the-badge" alt="Official Templates" />
+  <img src="https://img.shields.io/badge/Official%20Templates-2%20Available-4F46E5?style=for-the-badge" alt="Official Templates" />
 </div>
 
 <br />
@@ -167,21 +167,6 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
     <td>
       <img src="https://img.shields.io/badge/b2b-blue?style=flat-square" alt="b2b" />
       <img src="https://img.shields.io/badge/sales-green?style=flat-square" alt="sales" />
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://github.com/Alchemyst-ai/SyllabAI">
-        <img src="https://img.shields.io/badge/SyllabAI-1f2937?style=for-the-badge&logo=github" alt="SyllabAI" />
-      </a>
-    </td>
-    <td align="center">
-      <img src="https://img.shields.io/github/stars/Alchemyst-ai/SyllabAI?style=social" alt="Stars" />
-    </td>
-    <td>Upload your syllabus and study to the point based on the information provided without wasting any time</td>
-    <td>
-      <img src="https://img.shields.io/badge/education-blue?style=flat-square" alt="education" />
-      <img src="https://img.shields.io/badge/student-green?style=flat-square" alt="student" />
     </td>
   </tr></table>
 
