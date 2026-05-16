@@ -3,12 +3,12 @@
 import EvaluatePrompt from "@/components/EvaluatePrompt";
 import { DonutChartLegend } from "@/components/DonutChartLegend";
 import Header from "@/components/Header";
-import EvaluationDescription from "@/components/EvaluationDiscription";
+import EvaluationDescription from "@/components/EvaluationDescription";
 import Footer from "@/components/Footer";
 import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import { LoaderOne } from "@/components/ui/loader";
 import { useState, useEffect } from "react";
-import DiscriptionPage from "@/components/DiscriptionPage";
+import DescriptionPage from "@/components/DescriptionPage";
 
 
 export default function Home() {
@@ -36,7 +36,7 @@ export default function Home() {
       ) : hasData ? (
         <DonutChartLegend />
       ) : (
-        <DiscriptionPage/>
+        <DescriptionPage/>
       )}
       <EvaluationDescription/>
       <Footer />

@@ -1,4 +1,4 @@
-export default function DiscriptionPage(){
+export default function DescriptionPage(){
     return (
         <div className="mt-10 max-w-2xl mx-auto text-center bg-white rounded-3xl shadow-md p-6">
       {/* Description */}
