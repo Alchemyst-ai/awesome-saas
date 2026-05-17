@@ -94,6 +94,13 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
     <tbody>
   <tr>
 <td>
+<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/GitAlchemy">
+<img src="https://img.shields.io/badge/GitAlchemy-1f2937?style=for-the-badge&logo=github" alt="GitAlchemy" />
+</a>
+</td>
+<td>AI agent built by the community</td>
+</tr><tr>
+<td>
 <a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/b2b-newsletter-writer">
 <img src="https://img.shields.io/badge/b2b--newsletter--writer-1f2937?style=for-the-badge&logo=github" alt="b2b-newsletter-writer" />
 </a>
