@@ -1,4 +1,6 @@
 
+An error was encountered while gathering agents: TypeError: Cannot read properties of undefined (reading 'filter')
+An error was encountered while gathering team repos: TypeError: repoDataForTeam.filter is not a function
 # 🧪 Alchemyst Platform Cookbook
 
 <div align="center">
@@ -31,7 +33,6 @@
   - [🔗 API Documentation](#-api-documentation)
   - [🎯 Quick Start](#-quick-start)
 - [Get started with the Alchemyst Platform](#get-started-with-the-alchemyst-platform)
-    - [💡 Official Templates](#-official-templates)
     - [🚀 Community Templates](#-community-templates)
   - [🏆 Community](#-community)
   - [🤝 Contributing](#-contributing)
@@ -81,107 +82,7 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 
 > 💡 **Pro Tip**: Check out our [AI-native Documentation](https://zendocs.getalchemystai.com) for intelligent code examples!
 
-<br />
-  <h2 align="center">🧠 Community AI Agents</h2>
-  <p align="center">These agents are part of the <a href="https://github.com/Alchemyst-ai/awesome-saas">awesome-saas</a> collection.</p>
-  <table>
-    <thead>
-      <tr>
-        <th>Agent</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-  <tr>
-<td>
-<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/GitAlchemy">
-<img src="https://img.shields.io/badge/GitAlchemy-1f2937?style=for-the-badge&logo=github" alt="GitAlchemy" />
-</a>
-</td>
-<td>AI agent built by the community</td>
-</tr><tr>
-<td>
-<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/b2b-newsletter-writer">
-<img src="https://img.shields.io/badge/b2b--newsletter--writer-1f2937?style=for-the-badge&logo=github" alt="b2b-newsletter-writer" />
-</a>
-</td>
-<td>AI agent built by the community</td>
-</tr><tr>
-<td>
-<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/company_research">
-<img src="https://img.shields.io/badge/company_research-1f2937?style=for-the-badge&logo=github" alt="company_research" />
-</a>
-</td>
-<td>AI agent built by the community</td>
-</tr><tr>
-<td>
-<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/discord-bot">
-<img src="https://img.shields.io/badge/discord--bot-1f2937?style=for-the-badge&logo=github" alt="discord-bot" />
-</a>
-</td>
-<td>AI agent built by the community</td>
-</tr><tr>
-<td>
-<a href="https://github.com/Alchemyst-ai/awesome-saas/tree/main/agents/prompt-evaluator">
-<img src="https://img.shields.io/badge/prompt--evaluator-1f2937?style=for-the-badge&logo=github" alt="prompt-evaluator" />
-</a>
-</td>
-<td>AI agent built by the community</td>
-</tr>
-</tbody>
-</table>## 📦 Templates
-
-### 💡 Official Templates
-
-<div align="center">
-  <img src="https://img.shields.io/badge/Official%20Templates-2%20Available-4F46E5?style=for-the-badge" alt="Official Templates" />
-</div>
-
-<br />
-
-<table>
-  <tr>
-    <th width="200">🎯 Project</th>
-    <th width="100">⭐ Stars</th>
-    <th width="400">📝 Description</th>
-    <th width="150">🏷️ Topics</th>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://github.com/Alchemyst-ai/agent0-email">
-        <img src="https://img.shields.io/badge/agent0--email-1f2937?style=for-the-badge&logo=github" alt="agent0-email" />
-      </a>
-    </td>
-    <td align="center">
-      <img src="https://img.shields.io/github/stars/Alchemyst-ai/agent0-email?style=social" alt="Stars" />
-    </td>
-    <td>Agentic email automation for your email inboxes, built from the ground up with no dependencies on 3rd party providers</td>
-    <td>
-      <img src="https://img.shields.io/badge/email-blue?style=flat-square" alt="email" />
-      <img src="https://img.shields.io/badge/marketing-green?style=flat-square" alt="marketing" />
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://github.com/Alchemyst-ai/pitch-o-scope">
-        <img src="https://img.shields.io/badge/pitch--o--scope-1f2937?style=for-the-badge&logo=github" alt="pitch-o-scope" />
-      </a>
-    </td>
-    <td align="center">
-      <img src="https://img.shields.io/github/stars/Alchemyst-ai/pitch-o-scope?style=social" alt="Stars" />
-    </td>
-    <td>Pitch your idea according to the interests of the company you want to serve.</td>
-    <td>
-      <img src="https://img.shields.io/badge/b2b-blue?style=flat-square" alt="b2b" />
-      <img src="https://img.shields.io/badge/sales-green?style=flat-square" alt="sales" />
-    </td>
-  </tr></table>
-
-<br />
-
-This is an ever expanding list - we'll keep on adding open source templates!
-
-
+<br />⚠️ Could not fetch agents from awesome-saas.An error was encountered while gathering team repos. If you see this, don't worry - we'll get it up ASAP!
 <br />
 
 ### 🚀 Community Templates
