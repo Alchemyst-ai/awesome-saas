@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/AI-Platform-blue?style=for-the-badge&logo=artificial-intelligence" alt="AI Platform" />
   <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/Community-21%20Projects-orange?style=for-the-badge" alt="Community Projects" />
-  <img src="https://img.shields.io/badge/Team-2%20Templates-purple?style=for-the-badge" alt="Team Templates" />
+  <img src="https://img.shields.io/badge/Team-1%20Templates-purple?style=for-the-badge" alt="Team Templates" />
 </div>
 
 <div align="center">
@@ -134,7 +134,7 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
 ### 💡 Official Templates
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Official%20Templates-2%20Available-4F46E5?style=for-the-badge" alt="Official Templates" />
+  <img src="https://img.shields.io/badge/Official%20Templates-1%20Available-4F46E5?style=for-the-badge" alt="Official Templates" />
 </div>
 
 <br />
@@ -159,21 +159,6 @@ curl -X GET https://platform.getalchemystai.com/api/v1/
     <td>
       <img src="https://img.shields.io/badge/email-blue?style=flat-square" alt="email" />
       <img src="https://img.shields.io/badge/marketing-green?style=flat-square" alt="marketing" />
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://github.com/Alchemyst-ai/pitch-o-scope">
-        <img src="https://img.shields.io/badge/pitch--o--scope-1f2937?style=for-the-badge&logo=github" alt="pitch-o-scope" />
-      </a>
-    </td>
-    <td align="center">
-      <img src="https://img.shields.io/github/stars/Alchemyst-ai/pitch-o-scope?style=social" alt="Stars" />
-    </td>
-    <td>Pitch your idea according to the interests of the company you want to serve.</td>
-    <td>
-      <img src="https://img.shields.io/badge/b2b-blue?style=flat-square" alt="b2b" />
-      <img src="https://img.shields.io/badge/sales-green?style=flat-square" alt="sales" />
     </td>
   </tr></table>
 
