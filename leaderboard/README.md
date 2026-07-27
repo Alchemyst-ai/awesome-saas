@@ -13,7 +13,7 @@ Recognition for our amazing community of **17** contributors! 🏆
 | 🌟 6 | [haroon0x](https://github.com/haroon0x) | [haroon0x/CrawlWise](https://github.com/haroon0x/CrawlWise) (⭐4), [haroon0x/PromoAgent](https://github.com/haroon0x/PromoAgent) (⭐2), [haroon0x/CliAgent](https://github.com/haroon0x/CliAgent) (⭐0) | 6 |
 | 🌟 7 | [itsshresth](https://github.com/itsshresth) | [itsshresth/brainrot](https://github.com/itsshresth/brainrot) (⭐3), [itsshresth/dmdom](https://github.com/itsshresth/dmdom) (⭐2) | 5 |
 | 🌟 8 | [asengupta07](https://github.com/asengupta07) | [asengupta07/MASHire](https://github.com/asengupta07/MASHire) (⭐4) | 4 |
-| 🌟 9 | [oelamazonas](https://github.com/oelamazonas) | [oelamazonas/email-agent](https://github.com/oelamazonas/email-agent) (⭐3) | 3 |
+| 🌟 9 | [oelamazonas](https://github.com/oelamazonas) | [oelamazonas/email-agent](https://github.com/oelamazonas/email-agent) (⭐4) | 4 |
 | 🌟 10 | [mayank-sengar](https://github.com/mayank-sengar) | [mayank-sengar/VC_Compass](https://github.com/mayank-sengar/VC_Compass) (⭐2) | 2 |
 | 🌟 11 | [Ayushjo](https://github.com/Ayushjo) | [Ayushjo/CodeNarratorWhole](https://github.com/Ayushjo/CodeNarratorWhole) (⭐1) | 1 |
 | 🌟 12 | [KhushiMhasange](https://github.com/KhushiMhasange) | [KhushiMhasange/Twitter-lead](https://github.com/KhushiMhasange/Twitter-lead) (⭐0) | 0 |
