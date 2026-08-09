@@ -5,7 +5,7 @@ Recognition for our amazing community of **17** contributors! 🏆
 
 | **Rank** | **Contributor** | **Projects** | **Total Stars** |
 | -------------- | -------------- | ------------ | --------------- |
-| 🥇 1 | [Coden-inja](https://github.com/Coden-inja) | [Coden-inja/alchEmaiLyst](https://github.com/Coden-inja/alchEmaiLyst) (⭐41) | 41 |
+| 🥇 1 | [Coden-inja](https://github.com/Coden-inja) | [Coden-inja/alchEmaiLyst](https://github.com/Coden-inja/alchEmaiLyst) (⭐42) | 42 |
 | 🥈 2 | [soumyacodes007](https://github.com/soumyacodes007) | [soumyacodes007/AlcheAnimyst](https://github.com/soumyacodes007/AlcheAnimyst) (⭐23) | 23 |
 | 🥉 3 | [saksham-1304](https://github.com/saksham-1304) | [saksham-1304/AskMyPDF](https://github.com/saksham-1304/AskMyPDF) (⭐8) | 8 |
 | 🌟 4 | [srivathsav999](https://github.com/srivathsav999) | [srivathsav999/email-agent](https://github.com/srivathsav999/email-agent) (⭐6), [srivathsav999/crm-agent](https://github.com/srivathsav999/crm-agent) (⭐1) | 7 |
