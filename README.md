@@ -517,6 +517,7 @@ We welcome contributors! Here's how to get started:
 4. **Submit a pull request** with your awesome project!
 
 ### 🔍 Troubleshooting
+- [CV Forge](https://github.com/DeusAcc/cv-forge-ai-resume-builder) - Paste raw notes, get a typeset ATS-friendly PDF resume. Free tier, paid API.
 
 <details>
 <summary><b>My contribution doesn't appear in the list</b></summary>
