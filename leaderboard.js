@@ -36,6 +36,33 @@ const processContributorStats = (repos) => {
 };
 
 /**
+ * Generates a badge for top contributors
+ * @param {number} position - Rank position of the contributor
+ * @param {number} totalStars - Total number of stars
+ * @returns {string} - Badge markdown string
+ */
+const generateContributorBadge = (position, totalStars) => {
+  let badgeColor = "";
+  let badgeLabel = "";
+  
+  if (position === 1) {
+    badgeColor = "FFD700"; // Gold
+    badgeLabel = "🏆 Top Contributor";
+  } else if (position === 2) {
+    badgeColor = "C0C0C0"; // Silver
+    badgeLabel = "🥈 Silver Contributor";
+  } else if (position === 3) {
+    badgeColor = "CD7F32"; // Bronze
+    badgeLabel = "🥉 Bronze Contributor";
+  } else if (totalStars >= 10) {
+    badgeColor = "9F2B68"; // Purple
+    badgeLabel = "⭐ Rising Star";
+  }
+  
+  return badgeColor ? `![${badgeLabel}](https://img.shields.io/badge/${encodeURIComponent(badgeLabel)}-${badgeColor}?style=flat-square)` : "";
+};
+
+/**
  * Creates the leaderboard markdown string
  * @param {Map} contributorStats - Map of contributor statistics
  * @returns {string} - Formatted markdown string
@@ -46,6 +73,18 @@ const createLeaderboardString = (contributorStats) => {
 
   let leaderboardString = `# Alchemyst Platform Community Leaderboard\n\n`;
   leaderboardString += `Recognition for our amazing community of **${sortedContributors.length}** contributors! 🏆\n\n`;
+  leaderboardString += `## Top Contributors\n\n`;
+  leaderboardString += `<div align="center">\n\n`;
+  
+  // Add badges for top 3 contributors
+  sortedContributors.slice(0, 3).forEach((contrib, idx) => {
+    const badge = generateContributorBadge(idx + 1, contrib[1].totalStars);
+    if (badge) {
+      leaderboardString += `${badge}\n`;
+    }
+  });
+  
+  leaderboardString += `\n</div>\n\n`;
   leaderboardString += `| **Rank** | **Contributor** | **Projects** | **Total Stars** |\n`;
   leaderboardString += `| -------------- | -------------- | ------------ | --------------- |\n`;
 
@@ -58,20 +97,12 @@ const createLeaderboardString = (contributorStats) => {
 
     let position = idx + 1;
 
-    switch (position) {
-      case 1:
-        position = `🥇 ${position}`
-        break;
-      case 2:
-        position = `🥈 ${position}`
-        break;
-      case 3:
-        position = `🥉 ${position}`
-        break;
-      default:
-        position = `🌟 ${position}`
-    }
-    leaderboardString += `| ${position} | [${contributor}](${stats.profile}) | ${projectsList} | ${stats.totalStars} |\n`;
+    const badge = generateContributorBadge(position, stats.totalStars);
+    const displayPosition = position <= 3 ? ["🥇", "🥈", "🥉"][position - 1] : "🌟";
+    const positionDisplay = `${displayPosition} ${position}`;
+    const badgeDisplay = badge ? `${badge} ` : "";
+    
+    leaderboardString += `| ${positionDisplay} | ${badgeDisplay}[${contributor}](${stats.profile}) | ${projectsList} | ${stats.totalStars} |\n`;
   });
 
   return leaderboardString;
