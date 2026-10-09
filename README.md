@@ -12,6 +12,8 @@
   <h3>🚀 Make your next big AI idea come to life</h3>
   <p>Empowering developers and builders with cutting-edge AI tools and templates</p>
 
+- [ContinueWith](https://continuewith.ai) - Let visitors continue any website page inside ChatGPT, Claude, Gemini, Grok, Perplexity, Mistral, and other AI assistants in one click.
+
   <a href="https://platform.getalchemystai.com" target="_blank">
     <img src="https://img.shields.io/badge/🔥%20Start%20Building-platform.getalchemystai.com-6366f1?style=for-the-badge&labelColor=1f2937" alt="Start Building" />
   </a>
